@@ -1,79 +1,114 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow authenticated users to read/write their own data
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function role() {
+      return signedIn() && exists(userPath()) ? get(userPath()).data.role : null;
+    }
+
+    function isChairman() {
+      return signedIn() && (
+        request.auth.token.email == 'trunghaukimdunggroup@gmail.com' ||
+        role() == 'chairman'
+      );
+    }
+
+    function hasRole(roles) {
+      return isChairman() || (signedIn() && role() in roles);
+    }
+
+    function ownUser(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function serverOnly() {
+      return false;
+    }
+
+    // Users: everyone signed in can read roster; only safe self-profile edits allowed client-side.
+    // Role/permission changes must go through Cloud Functions/Admin SDK.
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read: if signedIn();
+      allow create: if ownUser(userId)
+        && request.resource.data.role in ['staff', 'chairman']
+        && (request.resource.data.role != 'chairman' || request.auth.token.email == 'trunghaukimdunggroup@gmail.com');
+      allow update: if ownUser(userId)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['name', 'photoURL', 'phone', 'updatedAt'])
+        || hasRole(['admin', 'ceo']);
+      allow delete: if hasRole(['admin', 'ceo']);
     }
-    
-    // Tasks - authenticated users can read all, write own
+
     match /tasks/{taskId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null && 
-        (resource.data.assignedTo == request.auth.uid || resource.data.createdBy == request.auth.uid);
+      allow read: if signedIn();
+      allow create: if hasRole(['manager', 'admin', 'ceo']);
+      allow update: if hasRole(['manager', 'admin', 'ceo'])
+        || (signedIn() && (resource.data.assigneeId == request.auth.uid || resource.data.assignedTo == request.auth.uid)
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['status', 'updatedAt', 'completedAt', 'note']));
+      allow delete: if hasRole(['admin', 'ceo']);
     }
-    
-    // Attendance - users can read/write own records
+
     match /attendance/{recordId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow read: if hasRole(['manager', 'admin', 'ceo']) || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if hasRole(['manager', 'admin', 'ceo']) || (signedIn() && resource.data.userId == request.auth.uid);
+      allow delete: if hasRole(['admin', 'ceo']);
     }
-    
-    // Notifications - users can read own
+
     match /notifications/{notifId} {
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow write: if request.auth != null;
+      allow read, update: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if hasRole(['manager', 'admin', 'ceo']);
+      allow delete: if hasRole(['admin', 'ceo']) || (signedIn() && resource.data.userId == request.auth.uid);
     }
-    
-    // Revenue, alerts, KPI - admin/CEO only via backend
-    match /revenue/{docId} {
-      allow read: if request.auth != null;
-      allow write: if false; // Server-side only
-    }
-    
+
     match /alerts/{alertId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
+      allow read: if signedIn();
+      allow create: if signedIn();
+      allow update: if hasRole(['manager', 'admin', 'ceo']);
+      allow delete: if hasRole(['admin', 'ceo']);
     }
-    
-    match /daily_kpi/{kpiId} {
-      allow read: if request.auth != null;
-      allow write: if false; // Server-side only
+
+    match /products/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /suppliers/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /finance_companies/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /customers/{docId} { allow read, create, update: if signedIn(); allow delete: if hasRole(['admin', 'ceo']); }
+    match /warranty_tickets/{docId} { allow read, create: if signedIn(); allow update: if hasRole(['manager', 'admin', 'ceo']); allow delete: if hasRole(['admin', 'ceo']); }
+
+    match /imei_items/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /stock_batches/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /purchase_orders/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /supplier_returns/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /stock_checks/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /stock_check_items/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+
+    match /supplier_debts/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /finance_debts/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /customer_debts/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /revenue/{docId} { allow read: if signedIn(); allow write: if serverOnly(); }
+    match /kpi/{docId} { allow read: if signedIn(); allow write: if hasRole(['manager', 'admin', 'ceo']); }
+    match /daily_kpi/{docId} { allow read: if signedIn(); allow write: if serverOnly(); }
+
+    match /chat_history/{docId} {
+      allow read: if hasRole(['admin', 'ceo']) || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if hasRole(['admin', 'ceo']);
     }
-    
-    // AI agents and improvements
-    match /ai_agents/{agentId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    
-    match /ai_improvements/{improvementId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    
-    // Customer debts
-    match /customer_debts/{debtId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    
-    // Scheduled jobs - admin only
-    match /scheduled_jobs/{jobId} {
-      allow read: if request.auth != null;
-      allow write: if false; // Server-side only
-    }
-    
-    // Pattern analyses
-    match /pattern_analyses/{analysisId} {
-      allow read: if request.auth != null;
-      allow write: if false; // Server-side only
-    }
-    
-    // Catch-all: deny by default
+
+    match /ai_agents/{docId} { allow read: if hasRole(['admin', 'ceo']); allow write: if hasRole(['admin']); }
+    match /ai_improvements/{docId} { allow read: if hasRole(['admin', 'ceo']); allow write: if hasRole(['admin']); }
+    match /trust_tiers/{docId} { allow read: if hasRole(['admin', 'ceo']); allow write: if hasRole(['admin']); }
+    match /orchestrator_plans/{docId} { allow read: if hasRole(['admin', 'ceo']); allow write: if hasRole(['admin', 'ceo']); }
+    match /scheduled_jobs/{docId} { allow read: if hasRole(['admin', 'ceo']); allow write: if serverOnly(); }
+    match /pattern_analyses/{docId} { allow read: if hasRole(['admin', 'ceo']); allow write: if serverOnly(); }
+    match /system_settings/{docId} { allow read: if hasRole(['admin', 'ceo']); allow write: if hasRole(['admin']); }
+    match /audit_trail/{docId} { allow read: if hasRole(['admin', 'ceo']); allow write: if serverOnly(); }
+
     match /{document=**} {
       allow read, write: if false;
     }

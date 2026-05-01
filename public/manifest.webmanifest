@@ -1,0 +1,9 @@
+{
+  "name": "CEO Trung Kim AI OS",
+  "short_name": "Trung Kim OS",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
+  "description": "AI Operating System for Di Động Trung Hậu Kim Dung"
+}

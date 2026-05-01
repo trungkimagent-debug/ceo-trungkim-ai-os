@@ -5,7 +5,6 @@ import express from "express";
 import cors from "cors";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const OpenAIModule: any = require("openai").default || require("openai");
-import { nanoid } from "nanoid";
 
 // ============================================================
 // INIT
@@ -13,8 +12,32 @@ import { nanoid } from "nanoid";
 admin.initializeApp();
 const db = admin.firestore();
 const app = express();
-app.use(cors({ origin: true }));
-app.use(express.json());
+
+const APP_VERSION = process.env.APP_VERSION || "1.1.0";
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.disable("x-powered-by");
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || ALLOWED_ORIGINS.length === 0 || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error("Origin not allowed by CORS"));
+  },
+  credentials: true,
+}));
+app.use(express.json({ limit: "1mb" }));
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.setHeader("Cache-Control", "no-store");
+  next();
+});
 
 let openai: any;
 try {
@@ -27,6 +50,16 @@ try {
 
 // Chairman email constant
 const CHAIRMAN_EMAIL = "trunghaukimdunggroup@gmail.com";
+const VALID_ROLES = new Set(["chairman", "ceo", "admin", "manager", "staff"]);
+
+app.get("/health", (_req, res) => {
+  res.json({
+    ok: true,
+    service: "CEO Trung Kim AI OS API",
+    version: APP_VERSION,
+    time: new Date().toISOString(),
+  });
+});
 
 // ============================================================
 // AUTH MIDDLEWARE
@@ -130,6 +163,14 @@ app.get("/auth/me", async (req: AuthRequest, res) => {
 
 app.put("/auth/role", requireRole("admin"), async (req: AuthRequest, res) => {
   const { userId, role } = req.body;
+  if (!userId || !VALID_ROLES.has(role)) {
+    res.status(400).json({ error: "Invalid userId or role" });
+    return;
+  }
+  if (role === "chairman" && req.userEmail !== CHAIRMAN_EMAIL) {
+    res.status(403).json({ error: "Only chairman can grant chairman role" });
+    return;
+  }
   await db.collection("users").doc(userId).update({ role, updatedAt: now() });
   await addAuditLog("role_change", req.uid!, { userId, role });
   res.json({ success: true });
@@ -143,8 +184,13 @@ app.get("/employees", async (req: AuthRequest, res) => {
 });
 
 app.post("/employees", requireRole("admin"), async (req: AuthRequest, res) => {
+  const role = req.body.role || "staff";
+  if (!VALID_ROLES.has(role) || role === "chairman") {
+    res.status(400).json({ error: "Invalid employee role" });
+    return;
+  }
   const ref = await db.collection("users").add({
-    ...req.body, role: req.body.role || "staff", createdAt: now(), updatedAt: now(),
+    ...req.body, role, createdAt: now(), updatedAt: now(),
   });
   await addAuditLog("employee_create", req.uid!, { id: ref.id });
   res.json({ success: true, id: ref.id });
@@ -1161,6 +1207,14 @@ app.post("/scheduled-jobs/:id/run", requireRole("admin"), async (req: AuthReques
   if (!doc.exists) return res.status(404).json({ error: "Job not found" });
   await doc.ref.update({ lastRun: now(), runCount: (doc.data()?.runCount || 0) + 1 });
   res.json({ success: true, message: `Job ${doc.data()?.name} executed` });
+});
+
+// ============================================================
+// ERROR HANDLER
+// ============================================================
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("[API Error]", err);
+  res.status(err?.status || 500).json({ error: err?.message || "Internal server error" });
 });
 
 // ============================================================
