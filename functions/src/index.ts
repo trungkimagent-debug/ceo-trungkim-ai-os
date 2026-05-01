@@ -547,19 +547,133 @@ app.delete("/products/:id", requireRole("manager", "admin", "ceo"), async (req: 
 });
 
 // ============================================================
-// SUPPLIERS
+// SUPPLIERS / NCC
 // ============================================================
+const SUPPLIER_STATUSES = new Set(["active", "paused", "blacklisted"]);
+
+function normalizeSupplierPayload(body: any, partial = false) {
+  const payload: any = {};
+  const textFields = ["name", "code", "phone", "email", "address", "contactName", "taxCode", "bankName", "bankAccount", "bankOwner", "note", "category"];
+  for (const field of textFields) {
+    if (body[field] !== undefined) payload[field] = String(body[field] || "").trim();
+  }
+  if (body.paymentTermDays !== undefined) payload.paymentTermDays = Math.max(0, Number(body.paymentTermDays) || 0);
+  if (body.creditLimit !== undefined) payload.creditLimit = Math.max(0, Number(body.creditLimit) || 0);
+  if (body.rating !== undefined) payload.rating = Math.min(5, Math.max(1, Number(body.rating) || 5));
+  if (body.status !== undefined) payload.status = SUPPLIER_STATUSES.has(body.status) ? body.status : "active";
+  if (!partial) {
+    payload.name = payload.name || "Nhà cung cấp mới";
+    payload.status = payload.status || "active";
+    payload.rating = payload.rating || 5;
+    payload.paymentTermDays = payload.paymentTermDays ?? 0;
+    payload.creditLimit = payload.creditLimit ?? 0;
+  }
+  return payload;
+}
+
+async function getSupplierFinancials(supplierId: string) {
+  const [debtSnap, imeiSnap, batchSnap, returnSnap, poSnap] = await Promise.all([
+    db.collection("supplier_debts").where("supplierId", "==", supplierId).get(),
+    db.collection("imei_items").where("supplierId", "==", supplierId).get(),
+    db.collection("stock_batches").where("supplierId", "==", supplierId).get(),
+    db.collection("supplier_returns").where("supplierId", "==", supplierId).get(),
+    db.collection("purchase_orders").where("supplierId", "==", supplierId).get(),
+  ]);
+  const debts = debtSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
+  const returns = returnSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
+  const unpaid = debts.filter(d => d.status !== "paid");
+  const paid = debts.filter(d => d.status === "paid");
+  const totalDebt = unpaid.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+  const totalPaid = paid.reduce((sum, d) => sum + (Number(d.paidAmount ?? d.amount) || 0), 0);
+  const returnValue = returns.reduce((sum, d) => sum + (Number(d.totalAmount) || 0), 0);
+  const nowDate = new Date();
+  const overdueCount = unpaid.filter(d => d.dueDate && new Date(d.dueDate) < nowDate).length;
+  const riskScore = Math.min(100, overdueCount * 20 + Math.floor(totalDebt / 10000000) * 5 + Math.floor(returnValue / 5000000) * 5);
+  return {
+    totalDebt,
+    totalPaid,
+    debtCount: debts.length,
+    unpaidCount: unpaid.length,
+    overdueCount,
+    imeiImported: imeiSnap.size,
+    nonImeiBatches: batchSnap.size,
+    purchaseOrders: poSnap.size,
+    returnCount: returnSnap.size,
+    returnValue,
+    riskScore,
+  };
+}
+
 app.get("/suppliers", async (req: AuthRequest, res) => {
-  res.json(await queryToJson(db.collection("suppliers").orderBy("name")));
+  const { search, status, limit } = req.query;
+  let ref: admin.firestore.Query = db.collection("suppliers").orderBy("name").limit(Math.min(Number(limit) || 300, 500));
+  if (status) ref = db.collection("suppliers").where("status", "==", status).limit(Math.min(Number(limit) || 300, 500));
+  let suppliers = await queryToJson(ref) as any[];
+  suppliers.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "vi"));
+  if (search) {
+    const q = String(search).toLowerCase();
+    suppliers = suppliers.filter(s => [s.name, s.code, s.phone, s.email, s.contactName, s.taxCode]
+      .some(v => String(v || "").toLowerCase().includes(q)));
+  }
+  const enriched = await Promise.all(suppliers.map(async (supplier: any) => ({
+    ...supplier,
+    financials: await getSupplierFinancials(supplier.id),
+  })));
+  res.json(enriched);
+});
+
+app.get("/suppliers/summary", async (_req: AuthRequest, res) => {
+  const suppliers = await queryToJson(db.collection("suppliers")) as any[];
+  const financials = await Promise.all(suppliers.map(s => getSupplierFinancials(s.id)));
+  res.json({
+    totalSuppliers: suppliers.length,
+    activeSuppliers: suppliers.filter(s => (s.status || "active") === "active").length,
+    pausedSuppliers: suppliers.filter(s => s.status === "paused").length,
+    blacklistedSuppliers: suppliers.filter(s => s.status === "blacklisted").length,
+    totalDebt: financials.reduce((sum, f) => sum + f.totalDebt, 0),
+    totalPaid: financials.reduce((sum, f) => sum + f.totalPaid, 0),
+    overdueCount: financials.reduce((sum, f) => sum + f.overdueCount, 0),
+    returnValue: financials.reduce((sum, f) => sum + f.returnValue, 0),
+    highRiskSuppliers: financials.filter(f => f.riskScore >= 60).length,
+  });
+});
+
+app.get("/suppliers/:id", async (req: AuthRequest, res) => {
+  const doc = await db.collection("suppliers").doc(req.params.id).get();
+  if (!doc.exists) return res.status(404).json({ error: "Supplier not found" });
+  res.json({ ...docToJson(doc), financials: await getSupplierFinancials(req.params.id) });
+});
+
+app.get("/suppliers/:id/ledger", async (req: AuthRequest, res) => {
+  const [debts, returns, pos] = await Promise.all([
+    queryToJson(db.collection("supplier_debts").where("supplierId", "==", req.params.id)),
+    queryToJson(db.collection("supplier_returns").where("supplierId", "==", req.params.id)),
+    queryToJson(db.collection("purchase_orders").where("supplierId", "==", req.params.id)),
+  ]);
+  res.json({ supplierId: req.params.id, debts, returns, purchaseOrders: pos });
 });
 
 app.post("/suppliers", requireRole("manager", "admin", "ceo"), async (req: AuthRequest, res) => {
-  const ref = await db.collection("suppliers").add({ ...req.body, createdAt: now(), updatedAt: now() });
+  const payload = normalizeSupplierPayload(req.body);
+  const existing = payload.code
+    ? await db.collection("suppliers").where("code", "==", payload.code).limit(1).get()
+    : null;
+  if (existing && !existing.empty) return res.status(409).json({ error: "Supplier code already exists" });
+  const ref = await db.collection("suppliers").add({ ...payload, createdBy: req.uid, createdAt: now(), updatedAt: now() });
+  await addAuditLog("supplier_create", req.uid!, { id: ref.id, name: payload.name });
   res.json({ success: true, id: ref.id });
 });
 
 app.put("/suppliers/:id", requireRole("manager", "admin", "ceo"), async (req: AuthRequest, res) => {
-  await db.collection("suppliers").doc(req.params.id).update({ ...req.body, updatedAt: now() });
+  const payload = normalizeSupplierPayload(req.body, true);
+  await db.collection("suppliers").doc(req.params.id).update({ ...payload, updatedBy: req.uid, updatedAt: now() });
+  await addAuditLog("supplier_update", req.uid!, { id: req.params.id, fields: Object.keys(payload) });
+  res.json({ success: true });
+});
+
+app.delete("/suppliers/:id", requireRole("admin", "ceo"), async (req: AuthRequest, res) => {
+  await db.collection("suppliers").doc(req.params.id).update({ status: "paused", deletedAt: now(), deletedBy: req.uid, updatedAt: now() });
+  await addAuditLog("supplier_soft_delete", req.uid!, { id: req.params.id });
   res.json({ success: true });
 });
 
