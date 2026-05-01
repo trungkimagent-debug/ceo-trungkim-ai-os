@@ -119,3 +119,10 @@ Last reviewed: 2026-05-01.
 - Screenshot showed customer debt detail/Thu tiền popup had a huge blank white pay area and unusable density.
 - Added scoped `#customerDebtDetailModal` overrides to make pay panel non-sticky, compact, visible inputs/textarea/buttons, smaller summary and detail row.
 - Preserve payment/reminder IDs and APIs.
+
+
+## 2026-05-01 — All places 1:1 correction
+
+- User clarified angrily: `1:1 ở tất cả mọi nơi` means list, detail modal, pay form, buttons, and spacing must all share the same reference visual language.
+- Replaced customer detail modal HTML/classes away from NCC/supplier style into `customer-settlement-detail-*` and `customer-settlement-pay-*`.
+- Detail modal now uses the same white/orange compact settlement language as the Nợ KH list.

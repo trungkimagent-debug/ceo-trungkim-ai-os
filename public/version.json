@@ -1,7 +1,9 @@
 {
-  "version": "v20260501_1349_customer_debt_detail_popup_fix",
-  "updatedAt": "2026-05-01T13:49:17+0700",
+  "version": "v20260501_1353_customer_debt_all_1to1_detail",
+  "updatedAt": "2026-05-01T13:53:22+0700",
   "changedModules": [
+    "customer-debt-remove-ncc-blue-detail-language",
+    "customer-debt-detail-all-1to1-white-orange",
     "customer-debt-detail-pay-panel-compact",
     "customer-debt-detail-popup-blank-fix",
     "customer-debt-empty-search-reference-match",

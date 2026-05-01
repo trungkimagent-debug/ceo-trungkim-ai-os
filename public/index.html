@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1349_customer_debt_detail_popup_fix';
+window.__TK_APP_VERSION__ = 'v20260501_1353_customer_debt_all_1to1_detail';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5167,180 +5167,278 @@ window.__TK_APP_VERSION__ = 'v20260501_1349_customer_debt_detail_popup_fix';
 
 
 
-    /* Nợ KH detail popup hotfix: remove huge blank pay area */
+    /* Nợ KH detail: same white/orange compact settlement language everywhere */
     #customerDebtDetailModal.open {
-      padding: 10px;
+      padding: 8px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.56);
     }
 
-    #customerDebtDetailModal .customer-debt-detail-card {
+    #customerDebtDetailModal .customer-settlement-detail-card {
       width: min(100%, 520px);
       max-width: min(100%, 520px);
-      max-height: calc(100vh - 34px);
-      padding: 14px;
+      max-height: calc(100vh - 24px);
       display: grid;
-      gap: 10px;
+      gap: 9px;
+      padding: 12px;
       border-radius: 22px;
+      border: 0;
+      background: #f4f5f7;
+      color: #111827;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.28);
       overflow-y: auto;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-head {
-      margin: 0;
+    .customer-settlement-detail-head {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) 38px;
+      align-items: center;
       gap: 8px;
+      padding: 4px 4px 2px;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-copy strong {
+    .customer-settlement-detail-back {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    .customer-settlement-detail-title {
+      display: grid;
+      gap: 3px;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .customer-settlement-detail-title strong {
+      color: #111827;
       font-size: 18px;
-      line-height: 1.15;
+      line-height: 1.18;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-copy span {
-      font-size: 11px;
+    .customer-settlement-detail-title span {
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-summary {
+    .customer-settlement-detail-summary {
+      display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
-      margin: 0;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-summary .supplier-stat-card {
-      min-height: 76px;
-      padding: 11px;
-      border-radius: 13px;
+    .customer-settlement-detail-stat {
+      min-height: 68px;
+      display: grid;
+      align-content: center;
+      gap: 5px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+      overflow: hidden;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-summary .supplier-stat-card:last-child {
+    .customer-settlement-detail-stat.due {
       grid-column: 1 / -1;
-      min-height: 66px;
+      min-height: 58px;
+      background: linear-gradient(90deg, #ffa600 0%, #f59b00 46%, #e08300 100%);
+      border-color: transparent;
+      color: #ffffff;
     }
 
-    #customerDebtDetailModal .supplier-table-head-detail {
-      display: none;
+    .customer-settlement-detail-stat small {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #9ca3af;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-tags {
+    .customer-settlement-detail-stat small i { color: #d59b2f; }
+    .customer-settlement-detail-stat.due small,
+    .customer-settlement-detail-stat.due small i { color: rgba(255,255,255,0.75); }
+
+    .customer-settlement-detail-stat strong {
+      color: #d59b2f;
+      font-family: var(--font-num);
+      font-size: 18px;
+      line-height: 1.05;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .customer-settlement-detail-stat.due strong { color: #ffffff; }
+
+    .customer-settlement-detail-stat span {
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .customer-settlement-detail-stat.due span { color: rgba(255,255,255,0.75); }
+
+    .customer-settlement-detail-list {
       display: grid;
       gap: 8px;
-      margin: 0;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-row {
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 88px;
+    .customer-settlement-detail-item {
+      display: grid;
+      gap: 7px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .customer-settlement-detail-item .customer-settlement-row {
+      grid-template-columns: minmax(58px, .7fr) minmax(0, 1.45fr) minmax(88px, 1fr);
+      min-height: 20px;
+    }
+
+    .customer-settlement-pay-card {
+      display: grid;
       gap: 8px;
       padding: 10px;
-      border-radius: 13px;
-    }
-
-    #customerDebtDetailModal .customer-debt-detail-row .supplier-table-cell:nth-child(3),
-    #customerDebtDetailModal .customer-debt-detail-row .supplier-table-cell:nth-child(5) {
-      display: none;
-    }
-
-    #customerDebtDetailModal .customer-debt-pay-panel {
-      position: static !important;
-      bottom: auto !important;
-      min-height: 0 !important;
-      padding: 12px;
-      gap: 9px;
       border-radius: 14px;
-      border-top: 1px solid #e5e7eb;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
     }
 
-    #customerDebtDetailModal .customer-debt-pay-head {
+    .customer-settlement-pay-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
     }
 
-    #customerDebtDetailModal .customer-debt-pay-head strong {
-      padding: 0;
-      background: transparent;
+    .customer-settlement-pay-head strong {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       color: #111827;
-      font-size: 16px;
+      font-size: 15px;
+      line-height: 1.2;
+      font-weight: 800;
     }
 
-    #customerDebtDetailModal .customer-debt-pay-head span {
-      display: none;
+    .customer-settlement-pay-head strong i { color: #d59b2f; }
+    .customer-settlement-pay-head span { display: none; }
+
+    .customer-settlement-pay-fields {
+      display: grid;
+      gap: 7px;
     }
 
-    #customerDebtDetailModal .customer-debt-pay-panel .form-grid {
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 8px;
-    }
-
-    #customerDebtDetailModal .customer-debt-pay-panel label {
-      display: grid !important;
-      gap: 5px;
-      color: #6b7280;
+    .customer-settlement-pay-fields label {
+      display: grid;
+      gap: 4px;
+      color: #9ca3af;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: .03em;
     }
 
-    #customerDebtDetailModal .customer-debt-pay-panel input,
-    #customerDebtDetailModal .customer-debt-pay-panel textarea {
-      display: block !important;
-      min-height: 0;
-      height: 42px;
-      padding: 9px 11px;
-      border-radius: 12px;
+    .customer-settlement-pay-fields input,
+    .customer-settlement-pay-fields textarea {
+      width: 100%;
+      height: 40px;
+      min-height: 40px;
+      display: block;
+      padding: 8px 10px;
       border: 1px solid #e5e7eb;
+      border-radius: 12px;
       background: #f9fafb;
       color: #111827;
       font-size: 13px;
+      font-weight: 700;
+      outline: none;
     }
 
-    #customerDebtDetailModal .customer-debt-pay-panel textarea {
-      height: 48px;
-      min-height: 48px;
-      max-height: 72px;
+    .customer-settlement-pay-fields textarea {
+      height: 44px;
+      min-height: 44px;
       resize: none;
+      font-weight: 600;
     }
 
-    #customerDebtDetailModal .customer-debt-pay-actions {
+    .customer-settlement-pay-actions {
       display: grid;
-      grid-template-columns: .8fr .8fr 1.1fr;
-      gap: 8px;
+      grid-template-columns: .75fr .75fr 1.1fr;
+      gap: 7px;
     }
 
-    #customerDebtDetailModal .customer-debt-pay-actions .btn {
-      min-height: 42px;
+    .customer-settlement-pay-actions .btn {
+      min-height: 40px;
       border-radius: 12px;
-      padding: 0 8px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      color: #111827;
       font-size: 12px;
+      font-weight: 800;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .customer-settlement-pay-actions .btn.primary {
+      border-color: #111827;
+      background: #111827;
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(17, 24, 39, 0.16);
     }
 
     @media (max-width: 640px) {
-      #customerDebtDetailModal.open { padding: 7px; }
-      #customerDebtDetailModal .customer-debt-detail-card {
-        width: calc(100vw - 22px);
-        max-width: calc(100vw - 22px);
-        max-height: calc(100vh - 28px);
-        padding: 12px;
+      #customerDebtDetailModal.open { padding: 6px; }
+      #customerDebtDetailModal .customer-settlement-detail-card {
+        width: calc(100vw - 16px);
+        max-width: calc(100vw - 16px);
+        max-height: calc(100vh - 20px);
+        padding: 10px;
+        gap: 8px;
         border-radius: 20px;
       }
-      #customerDebtDetailModal .customer-debt-detail-summary .supplier-stat-card {
-        min-height: 66px;
-        padding: 9px;
+      .customer-settlement-detail-head { grid-template-columns: 34px minmax(0, 1fr) 34px; }
+      .customer-settlement-detail-back { width: 34px; height: 34px; border-radius: 11px; }
+      .customer-settlement-detail-title strong { font-size: 17px; }
+      .customer-settlement-detail-stat { min-height: 60px; padding: 8px; }
+      .customer-settlement-detail-stat.due { min-height: 50px; }
+      .customer-settlement-detail-stat strong { font-size: 16px; }
+      .customer-settlement-detail-item { padding: 8px; }
+      .customer-settlement-detail-item .customer-settlement-row {
+        grid-template-columns: minmax(54px, .62fr) minmax(0, 1.45fr) minmax(80px, .95fr);
       }
-      #customerDebtDetailModal .customer-debt-detail-row {
-        grid-template-columns: minmax(0, 1fr) 86px;
-        padding: 9px;
-      }
-      #customerDebtDetailModal .customer-debt-detail-row .supplier-table-cell:nth-child(2) {
-        display: none;
-      }
-      #customerDebtDetailModal .customer-debt-pay-panel {
-        padding: 10px;
-      }
-      #customerDebtDetailModal .customer-debt-pay-panel input,
-      #customerDebtDetailModal .customer-debt-pay-panel textarea,
-      #customerDebtDetailModal .customer-debt-pay-actions .btn {
-        height: 40px;
-        min-height: 40px;
-      }
+      .customer-settlement-pay-card { padding: 9px; }
+      .customer-settlement-pay-actions .btn { min-height: 38px; font-size: 11px; }
     }
 
     .supplier-debt-open,
@@ -13744,63 +13842,56 @@ window.__TK_APP_VERSION__ = 'v20260501_1349_customer_debt_detail_popup_fix';
       </div>
     </div>
 
-    <div id="customerDebtDetailModal" class="modal-overlay centered">
-      <div class="modal-card supplier-detail-modal-card customer-debt-detail-card">
-        <div class="modal-head compact supplier-detail-head customer-debt-detail-head">
-          <button id="customerDebtDetailCloseBtn" class="toolbar-btn" type="button" title="Đóng"><i class="fa-solid fa-arrow-left"></i></button>
-          <div class="supplier-detail-head-copy customer-debt-detail-copy">
+    <div id="customerDebtDetailModal" class="modal-overlay centered customer-settlement-detail-overlay">
+      <div class="modal-card customer-settlement-detail-card">
+        <div class="customer-settlement-detail-head">
+          <button id="customerDebtDetailCloseBtn" class="customer-settlement-detail-back" type="button" title="Đóng"><i class="fa-solid fa-arrow-left"></i></button>
+          <div class="customer-settlement-detail-title">
             <strong id="customerDebtDetailTitle">Chi tiết khách</strong>
             <span id="customerDebtDetailSubtitle">Đang tải dữ liệu...</span>
           </div>
         </div>
 
-        <div class="supplier-detail-summary customer-debt-detail-summary">
-          <div class="supplier-stat-card">
-            <small><i class="fa-solid fa-wallet"></i>Còn nợ</small>
+        <div class="customer-settlement-detail-summary">
+          <div class="customer-settlement-detail-stat debt">
+            <small><i class="fa-solid fa-wallet"></i> CÒN NỢ</small>
             <strong id="customerDebtDetailAmount">0đ</strong>
             <span id="customerDebtDetailStatus">Chưa chọn hồ sơ</span>
           </div>
-          <div class="supplier-stat-card">
-            <small><i class="fa-solid fa-circle-check"></i>Đã thu</small>
+          <div class="customer-settlement-detail-stat paid">
+            <small><i class="fa-solid fa-circle-check"></i> ĐÃ THU</small>
             <strong id="customerDebtDetailPaid">0đ</strong>
             <span id="customerDebtDetailCreatedAt">--</span>
           </div>
-          <div class="supplier-stat-card">
-            <small><i class="fa-solid fa-calendar-days"></i>Hẹn trả</small>
+          <div class="customer-settlement-detail-stat due">
+            <small><i class="fa-solid fa-calendar-days"></i> HẸN TRẢ</small>
             <strong id="customerDebtDetailDueDate">--</strong>
             <span id="customerDebtDetailAge">--</span>
           </div>
         </div>
 
-        <div class="supplier-table-head supplier-table-head-detail">
-          <span>Đơn</span>
-          <span>Ghi chú</span>
-          <span>Trạng thái</span>
-          <span>Số tiền</span>
-          <span>Thao tác</span>
-        </div>
-        <div id="customerDebtDetailTags" class="supplier-detail-list customer-debt-detail-tags">
+        <div id="customerDebtDetailTags" class="customer-settlement-detail-list">
           <div class="empty">Chọn khách để xem chi tiết công nợ...</div>
         </div>
         <div id="customerDebtDetailNote" class="customer-debt-detail-note" hidden>Chưa có ghi chú.</div>
 
-        <div class="supplier-pay-panel customer-debt-pay-panel">
-          <div class="supplier-pay-head customer-debt-pay-head">
+        <div class="customer-settlement-pay-card customer-debt-pay-panel">
+          <div class="customer-settlement-pay-head customer-debt-pay-head">
             <strong><i class="fa-solid fa-credit-card"></i> Thu tiền</strong>
             <span id="customerDebtDetailPayHint">Nhập số tiền thực thu rồi bấm xác nhận.</span>
           </div>
-          <div class="form-grid">
+          <div class="customer-settlement-pay-fields">
             <label>Số tiền
               <input id="customerDebtPayAmount" class="money-input" type="text" inputmode="numeric" autocomplete="off" data-money-input="true" data-money-input-lazy="true" placeholder="Nhập số tiền" />
             </label>
             <label>Ghi chú
-              <textarea id="customerDebtPayNote" placeholder="Ví dụ: chuyển khoản / thu tiền mặt / hẹn phần còn lại"></textarea>
+              <textarea id="customerDebtPayNote" placeholder="Ví dụ: chuyển khoản / tiền mặt"></textarea>
             </label>
           </div>
-          <div class="btn-row btn-row-3 customer-debt-pay-actions">
-            <button id="customerDebtPayFillBtn" class="btn btn-secondary" type="button"><i class="fa-solid fa-wand-magic-sparkles"></i> Điền</button>
-            <button id="customerDebtRemindBtn" class="btn btn-secondary" type="button"><i class="fa-regular fa-bell"></i> Nhắc</button>
-            <button id="customerDebtPaySubmitBtn" class="btn btn-primary" type="button"><i class="fa-solid fa-money-bill-wave"></i> Thu nợ</button>
+          <div class="customer-settlement-pay-actions customer-debt-pay-actions">
+            <button id="customerDebtPayFillBtn" class="btn" type="button"><i class="fa-solid fa-wand-magic-sparkles"></i> Điền</button>
+            <button id="customerDebtRemindBtn" class="btn" type="button"><i class="fa-regular fa-bell"></i> Nhắc</button>
+            <button id="customerDebtPaySubmitBtn" class="btn primary" type="button"><i class="fa-solid fa-money-bill-wave"></i> Thu nợ</button>
           </div>
           <div id="customerDebtDetailMsg" class="msg"></div>
         </div>
@@ -23908,25 +23999,25 @@ window.__TK_APP_VERSION__ = 'v20260501_1349_customer_debt_detail_popup_fix';
       const isUnpaid = item.status !== 'paid' && Number(item.amount || 0) > 0;
       const actionAt = formatCustomerDebtDateTime(item.paidAt || item.updatedAt || item.createdAt || '');
       const title = item.orderCode ? `Đơn ${escapeHtml(item.orderCode)}` : escapeHtml(item.id || 'Khoản nợ');
-      const note = escapeHtml(item.note || (isUnpaid ? 'Từ đơn bán trả thiếu.' : 'Đã ghi nhận thu.'));
-      const statusLabel = isUnpaid ? (item.isOverdue ? 'Quá hẹn' : 'Nợ mở') : 'Đã thu';
-      const statusIcon = isUnpaid ? 'fa-hourglass-half' : 'fa-circle-check';
-      const actionButton = isUnpaid ? `<button class="supplier-mini-btn primary" type="button" data-customer-fill-current="true"><i class="fa-solid fa-money-bill-wave"></i>Thu nợ</button>` : '<span class="supplier-table-sub">--</span>';
+      const note = escapeHtml(item.note || (isUnpaid ? 'Khoản phải thu' : 'Đã ghi nhận thu.'));
+      const statusLabel = isUnpaid ? (item.isOverdue ? `QH ${item.overdueDays} ngày` : 'Nợ mở') : 'Đã thu';
       return `
-        <div class="supplier-detail-item supplier-table-row supplier-table-row-detail customer-debt-detail-row selected">
-          <div class="supplier-table-cell supplier-table-main" data-label="Đơn">
-            <div class="supplier-detail-item-name">${title}</div>
-            <div class="supplier-detail-item-sub">${actionAt ? escapeHtml(actionAt) : 'Realtime'}</div>
+        <div class="customer-settlement-detail-item">
+          <div class="customer-settlement-row customer-settlement-row-top">
+            <span class="customer-settlement-check"><i class="fa-solid fa-check"></i></span>
+            <span class="customer-settlement-value strong">${title}</span>
+            <span class="customer-settlement-date"><i class="fa-solid fa-sack-dollar"></i>${actionAt ? escapeHtml(actionAt) : '--'}</span>
           </div>
-          <div class="supplier-table-cell" data-label="Ghi chú">
-            <div class="supplier-table-value">${isUnpaid ? 'Khoản phải thu' : 'Đã ghi nhận'}</div>
-            <div class="supplier-table-sub">${note}</div>
+          <div class="customer-settlement-row">
+            <span class="customer-settlement-label">Chi tiết</span>
+            <span class="customer-settlement-value">${note}</span>
+            <span class="customer-settlement-status">${escapeHtml(statusLabel)}</span>
           </div>
-          <div class="supplier-table-cell" data-label="Trạng thái">
-            <span class="supplier-table-status ${isUnpaid ? 'warn' : 'ok'}"><i class="fa-solid ${statusIcon}"></i>${statusLabel}</span>
+          <div class="customer-settlement-row customer-settlement-row-money">
+            <span class="customer-settlement-label">Còn nợ</span>
+            <span class="customer-settlement-money">${money(item.originalAmount || item.amount || 0)}</span>
+            <span class="customer-settlement-money green">${money(item.amount || 0)}</span>
           </div>
-          <div class="supplier-table-cell supplier-table-money" data-label="Số tiền">${money(item.amount || 0)}</div>
-          <div class="supplier-table-cell supplier-table-actions" data-label="Thao tác">${actionButton}</div>
         </div>
       `;
     }
