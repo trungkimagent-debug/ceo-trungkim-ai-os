@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <script>
+    (function(){
+      try {
+        var token = String(localStorage.getItem('thkd_pos_session_token') || '').trim();
+        var hash = String(window.location.hash || '').trim();
+        if (!token && hash !== '#' && hash !== '#+' && hash !== '#-') {
+          window.location.replace('/1?_rt=' + Date.now());
+        }
+      } catch (_) {
+        window.location.replace('/1?_rt=' + Date.now());
+      }
+    })();
+  </script>
+  <title>THKD • Thu máy</title>
+  <meta name="theme-color" content="#f59e0b" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --card: rgba(255,255,255,.94);
+      --line: rgba(148,163,184,.18);
+      --text: #111827;
+      --muted: #64748b;
+      --accent: #f59e0b;
+      --accent-strong: #d97706;
+      --blue: #2563eb;
+      --green: #059669;
+      --danger: #dc2626;
+      --shadow: 0 18px 40px rgba(15,23,42,.1);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; background: linear-gradient(180deg, #fff7ed 0%, #f8fafc 45%, #fff 100%); color: var(--text); }
+    body { padding: max(14px, env(safe-area-inset-top)) 14px 24px; }
+    .app { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
+    .hero { position: sticky; top: 0; z-index: 30; backdrop-filter: blur(18px); background: rgba(248,250,252,.84); margin: -14px -14px 0; padding: max(14px, env(safe-area-inset-top)) 14px 12px; border-bottom: 1px solid rgba(148,163,184,.12); }
+    .hero-card { background: linear-gradient(135deg, rgba(251,191,36,.2), rgba(191,219,254,.26)); border: 1px solid rgba(251,146,60,.18); border-radius: 22px; box-shadow: var(--shadow); padding: 16px; display: grid; gap: 12px; }
+    .hero-top, .toolbar, .card-head, .summary-grid, .inline-form, .pill-row, .drawer-actions, .field-grid, .toolbar-actions, .review-filter-row { display: flex; gap: 10px; }
+    .hero-top, .card-head, .drawer-actions { align-items: center; justify-content: space-between; }
+    .brand { display: grid; gap: 4px; }
+    .eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .14em; color: var(--accent-strong); text-transform: uppercase; }
+    h1, h2, h3 { margin: 0; }
+    h1 { font-size: 24px; line-height: 1.05; }
+    h2 { font-size: 16px; }
+    .sub { margin: 0; font-size: 13px; color: var(--muted); }
+    .primary-btn, .ghost-btn, .small-btn { border: 0; border-radius: 16px; padding: 12px 14px; font-size: 14px; font-weight: 800; cursor: pointer; }
+    .primary-btn { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%); color: #fff; box-shadow: 0 14px 28px rgba(217,119,6,.25); }
+    .ghost-btn, .small-btn { background: rgba(255,255,255,.82); color: var(--text); border: 1px solid rgba(148,163,184,.22); }
+    .small-btn { padding: 10px 12px; font-size: 13px; }
+    .toolbar, .inline-form, .field-grid { align-items: center; }
+    .toolbar input, .inline-form input, .sheet input, .sheet textarea, .sheet select {
+      width: 100%; border: 1px solid rgba(148,163,184,.24); background: rgba(255,255,255,.94); color: var(--text); border-radius: 16px; padding: 13px 14px; font-size: 14px; outline: none;
+    }
+    .sheet textarea { min-height: 88px; resize: vertical; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .summary-card { background: var(--card); border: 1px solid rgba(255,255,255,.7); border-radius: 18px; padding: 14px; display: grid; gap: 6px; box-shadow: var(--shadow); }
+    .summary-card b { font-size: 24px; line-height: 1; }
+    .summary-card span { font-size: 12px; color: var(--muted); font-weight: 700; }
+    .section { background: var(--card); border: 1px solid rgba(255,255,255,.7); border-radius: 22px; box-shadow: var(--shadow); padding: 14px; display: grid; gap: 12px; }
+    .card-list { display: grid; gap: 10px; }
+    .ticket-card, .detail-card { background: rgba(255,255,255,.92); border: 1px solid rgba(148,163,184,.16); border-radius: 18px; padding: 14px; display: grid; gap: 10px; }
+    .ticket-card { cursor: pointer; }
+    .ticket-card:active { transform: scale(.99); }
+    .ticket-title { font-size: 15px; font-weight: 900; }
+    .ticket-meta, .detail-meta { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill-row { flex-wrap: wrap; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; background: #fff; border: 1px solid rgba(148,163,184,.18); color: #334155; }
+    .pill.processing { color: #92400e; border-color: rgba(245,158,11,.22); background: rgba(255,251,235,.95); }
+    .pill.review { color: var(--blue); border-color: rgba(59,130,246,.2); background: rgba(239,246,255,.95); }
+    .pill.completed { color: var(--green); border-color: rgba(5,150,105,.2); background: rgba(236,253,245,.95); }
+    .money { font-size: 20px; font-weight: 900; }
+    .hint { font-size: 12px; color: var(--muted); }
+    .status { font-size: 12px; font-weight: 800; color: var(--accent-strong); }
+    .empty { padding: 16px; border-radius: 18px; border: 1px dashed rgba(148,163,184,.35); color: var(--muted); text-align: center; font-size: 13px; }
+    .ticket-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .ticket-check { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; }
+    .ticket-check input { width: 18px; height: 18px; accent-color: var(--blue); }
+    .filter-chip { appearance: none; border: 1px solid rgba(148,163,184,.22); background: #fff; color: #334155; border-radius: 999px; padding: 9px 12px; font-size: 12px; font-weight: 900; cursor: pointer; }
+    .filter-chip.active { background: rgba(37,99,235,.08); color: var(--blue); border-color: rgba(37,99,235,.2); }
+    .sheet { position: fixed; inset: 0; z-index: 90; display: none; align-items: flex-end; justify-content: center; padding: 14px; background: rgba(15,23,42,.34); }
+    .sheet.open { display: flex; }
+    .sheet-panel { width: min(100%, 760px); max-height: min(90vh, 920px); overflow: auto; background: #fff; border-radius: 26px; box-shadow: 0 30px 80px rgba(15,23,42,.28); padding: 16px; display: grid; gap: 14px; }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .sheet-close { width: 38px; height: 38px; border-radius: 999px; border: 1px solid rgba(148,163,184,.24); background: #fff; font-size: 20px; cursor: pointer; }
+    .field { display: grid; gap: 8px; flex: 1; min-width: 0; }
+    .field label { font-size: 12px; font-weight: 800; color: #334155; }
+    .footer-space { height: 10px; }
+    @media (max-width: 640px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .summary-card { padding: 12px; }
+      .summary-card b { font-size: 20px; }
+      h1 { font-size: 22px; }
+      .hero-top, .toolbar, .inline-form, .field-grid, .drawer-actions, .toolbar-actions, .review-filter-row, .ticket-actions { flex-direction: column; align-items: stretch; }
+      .sheet { padding: 10px; }
+      .sheet-panel { border-radius: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="hero-card">
+        <div class="hero-top">
+          <div class="brand">
+            <div class="eyebrow">THKD local module</div>
+            <h1>Thu máy</h1>
+            <p class="sub">Local hẳn trong dự án. Có tạo phiếu mới, cập nhật tiến độ, duyệt chủ tịch.</p>
+          </div>
+          <button id="openCreateBtn" class="primary-btn" type="button">+ Phiếu mới</button>
+        </div>
+        <div class="toolbar">
+          <input id="searchInput" type="search" placeholder="Tìm mã phiếu, khách, model, IMEI" />
+          <div class="toolbar-actions">
+            <button id="approveSelectedBtn" class="ghost-btn" type="button">Duyệt đã chọn</button>
+          </div>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-card"><span>Đang xử lý</span><b id="processingCount">0</b></div>
+          <div class="summary-card"><span>Chờ duyệt</span><b id="reviewCount">0</b></div>
+          <div class="summary-card"><span>Đã duyệt</span><b id="completedCount">0</b></div>
+          <div class="summary-card"><span>Đã chọn</span><b id="selectedCount">0</b></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Người thao tác</h2>
+          <div class="hint">Tên này sẽ gắn vào tạo phiếu, cập nhật tiến độ và duyệt.</div>
+        </div>
+        <div id="saveActorStatus" class="status"></div>
+      </div>
+      <div class="inline-form">
+        <input id="actorNameInput" type="text" placeholder="Tên người thao tác" maxlength="60" />
+        <button id="saveActorBtn" class="ghost-btn" type="button">Lưu</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Đang xử lý</h2>
+          <div class="hint">Bấm phiếu để xem chi tiết, hoặc bấm Cập nhật để chuyển tiến độ.</div>
+        </div>
+      </div>
+      <div id="processingList" class="card-list"></div>
+    </section>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Chờ chủ tịch duyệt</h2>
+          <div class="hint">Lọc theo tiến độ rồi duyệt từng phiếu hoặc nhiều phiếu.</div>
+        </div>
+        <div id="selectedMeta" class="status">0 phiếu</div>
+      </div>
+      <div class="review-filter-row">
+        <button class="filter-chip active" type="button" data-review-filter="all">Tất cả</button>
+        <button class="filter-chip" type="button" data-review-filter="stock_in">Nhập kho</button>
+        <button class="filter-chip" type="button" data-review-filter="liquidation">Thanh lý</button>
+        <button class="filter-chip" type="button" data-review-filter="return_ncc">Trả NCC</button>
+      </div>
+      <div id="reviewList" class="card-list"></div>
+    </section>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Đã duyệt gần đây</h2>
+          <div class="hint">Check lại các phiếu đã được chủ tịch duyệt.</div>
+        </div>
+      </div>
+      <div id="completedList" class="card-list"></div>
+    </section>
+
+    <div class="footer-space"></div>
+  </div>
+
+  <div id="detailSheet" class="sheet" aria-hidden="true">
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">Chi tiết phiếu</div>
+          <h2 id="detailTitle">Phiếu</h2>
+        </div>
+        <button id="closeDetailBtn" class="sheet-close" type="button">×</button>
+      </div>
+      <div id="detailBody" class="detail-card"></div>
+      <div class="drawer-actions">
+        <button id="detailUpdateBtn" class="primary-btn" type="button">Cập nhật tiến độ</button>
+        <button id="detailApproveBtn" class="ghost-btn" type="button">Duyệt phiếu này</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="progressSheet" class="sheet" aria-hidden="true">
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">Cập nhật local</div>
+          <h2 id="progressTitle">Tiến độ phiếu</h2>
+        </div>
+        <button id="closeProgressBtn" class="sheet-close" type="button">×</button>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Tiến độ</label>
+          <select id="progressSelect">
+            <option value="processing">Đang xử lý</option>
+            <option value="stock_in">Nhập kho</option>
+            <option value="liquidation">Thanh lý</option>
+            <option value="return_ncc">Trả NCC</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Giá mua</label>
+          <input id="buyPriceInput" type="text" inputmode="numeric" placeholder="0" />
+        </div>
+      </div>
+      <div id="processingTechField" class="field">
+        <label>KTV / người xử lý</label>
+        <select id="techSelect"></select>
+      </div>
+      <div id="progressInfoField" class="field" style="display:none">
+        <label id="progressInfoLabel">Thông tin thêm</label>
+        <input id="progressInfoInput" type="text" placeholder="Nhập thông tin" />
+      </div>
+      <div class="field">
+        <label>Ghi chú</label>
+        <textarea id="progressNoteInput" placeholder="Ghi chú cập nhật"></textarea>
+      </div>
+      <div class="drawer-actions">
+        <button id="saveProgressBtn" class="primary-btn" type="button">Lưu cập nhật</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="createSheet" class="sheet" aria-hidden="true">
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">Phiếu mới local</div>
+          <h2>Tạo phiếu Thu máy</h2>
+        </div>
+        <button id="closeCreateBtn" class="sheet-close" type="button">×</button>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Loại phiếu</label>
+          <select id="createTypeSelect">
+            <option value="repair">Thu ngoài</option>
+            <option value="warranty">Đổi máy</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Giá mua</label>
+          <input id="createBuyPrice" type="text" inputmode="numeric" placeholder="0" />
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Khách hàng</label>
+          <input id="createCustomerName" type="text" placeholder="Tên khách" />
+        </div>
+        <div class="field">
+          <label>Số điện thoại</label>
+          <input id="createCustomerPhone" type="tel" placeholder="Số điện thoại" />
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Model máy</label>
+          <input id="createModel" type="text" placeholder="Ví dụ: iPhone 13 Pro Max" />
+        </div>
+        <div class="field">
+          <label>IMEI</label>
+          <input id="createImei" type="text" placeholder="IMEI / Serial" />
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Mật khẩu máy</label>
+          <input id="createDevicePass" type="text" placeholder="Nếu có" />
+        </div>
+        <div class="field">
+          <label>Ghi chú thêm</label>
+          <input id="createWorkNote" type="text" placeholder="Ghi chú ngắn" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Lỗi / mô tả máy</label>
+        <textarea id="createSymptom" placeholder="Mô tả tình trạng máy"></textarea>
+      </div>
+      <div id="createWarning" class="hint" style="color:#dc2626"></div>
+      <div class="drawer-actions">
+        <button id="saveCreateBtn" class="primary-btn" type="button">Tạo phiếu</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./thumay-local.js"></script>
+  <script src="./shared-bottom-nav.js?v20260427_041600"></script>
+</body>
+</html>

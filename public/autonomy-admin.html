@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+  window.__TK_APP_VERSION__ = "v20260418_231043";
+  window.__TK_RT_ROLLOUT__ = {
+    enabled: true,
+    pageId: "autonomy-admin",
+    checkMs: 30000,
+    forceReloadOnVersionChange: false,
+    enableModuleImport: false,
+    versionUrl: "./version.json"
+  };
+  </script>
+  <script src="./realtime-runtime.js?v20260424_213649"></script>
+  <script src="./realtime-bootstrap.js?v20260424_213649"></script>
+  <title>Autonomy Admin</title>
+  <style>
+    :root {
+      --bg: #f3f6f9;
+      --panel: #ffffff;
+      --ink: #13212c;
+      --muted: #5d6d7a;
+      --accent: #007a66;
+      --warn: #ad5d00;
+      --danger: #b73239;
+      --line: #d9e3ec;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 10%, #e1eefb 0, #f3f6f9 42%, #f7fbff 100%);
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+    .header {
+      background: linear-gradient(140deg, #0f5132, #007a66);
+      color: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 18px 45px rgba(0, 122, 102, .24);
+    }
+    .header h1 { margin: 0 0 8px; font-size: 28px; }
+    .header p { margin: 0; opacity: .95; }
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 20px rgba(19, 33, 44, .06);
+    }
+    .card h2 { margin: 0 0 10px; font-size: 18px; }
+    .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+    input, select, textarea, button {
+      font: inherit;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      background: #fff;
+    }
+    textarea { width: 100%; min-height: 90px; resize: vertical; }
+    button {
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+    button.warn { background: var(--warn); }
+    button.danger { background: var(--danger); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      padding: 8px 6px;
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .muted { color: var(--muted); }
+    .foot { margin-top: 8px; font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="header">
+      <h1>Autonomy Admin Control Center</h1>
+      <p>Bridge-first governance: proposals, approvals, sandbox, release, logs.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Connection</h2>
+        <div class="row">
+          <label>Base URL</label>
+          <input id="baseUrl" style="flex:1" value="/autonomyControlApi">
+        </div>
+        <div class="row">
+          <label>Actor</label>
+          <input id="actorId" value="web_admin">
+          <select id="actorRole">
+            <option value="admin">admin</option>
+            <option value="owner">owner</option>
+            <option value="ops">ops</option>
+            <option value="viewer">viewer</option>
+          </select>
+          <button onclick="health()">Health</button>
+        </div>
+        <div id="healthResult" class="foot">Chưa kiểm tra.</div>
+      </article>
+
+      <article class="card">
+        <h2>Create Proposal</h2>
+        <textarea id="proposalJson">{
+  "title": "Create HR Leave Approval Tool",
+  "type": "new_tool",
+  "objective": "Reduce manual leave approvals",
+  "problem": "HR handles repeated leave requests manually",
+  "target_users": ["hr", "manager"],
+  "channels": ["web", "telegram"],
+  "dependencies": ["user_db", "notification_service"],
+  "actions": ["create_api", "create_web_module", "create_telegram_command"],
+  "risk_level": "medium",
+  "priority_score": 82,
+  "estimated_impact": "high",
+  "rollback_plan": "disable module and revert version",
+  "approval_required": true
+}</textarea>
+        <div class="row">
+          <button onclick="createProposal()">Bridge Submit</button>
+          <button class="warn" onclick="generateProposal()">AI Generate</button>
+          <button onclick="loadProposals()">Refresh Proposals</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Proposals</h2>
+        <table id="proposalTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Title</th><th>Status</th><th>Risk</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h2>Tools Registry</h2>
+        <div class="row"><button onclick="loadTools()">Refresh Tools</button></div>
+        <table id="toolTable">
+          <thead>
+            <tr>
+              <th>Tool</th><th>Version</th><th>Status</th><th>Risk</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Recent Audit Logs</h2>
+        <div class="row"><button onclick="loadLogs()">Refresh Logs</button></div>
+        <table id="logTable">
+          <thead>
+            <tr>
+              <th>Time</th><th>Actor</th><th>Action</th><th>Target</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    function headers() {
+      return {
+        "Content-Type": "application/json",
+        "X-Actor-Id": document.getElementById("actorId").value.trim() || "web_admin",
+        "X-Actor-Role": document.getElementById("actorRole").value.trim() || "admin"
+      };
+    }
+
+    function apiBase() {
+      return document.getElementById("baseUrl").value.trim().replace(/\/+$/, "");
+    }
+
+    async function call(path, options = {}) {
+      const url = `${apiBase()}${path}`;
+      const res = await fetch(url, options);
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || `${res.status}`);
+      return json;
+    }
+
+    async function health() {
+      const el = document.getElementById("healthResult");
+      try {
+        const data = await call("/health", { method: "GET", headers: headers() });
+        el.textContent = `OK - ${data.ts || ""}`;
+      } catch (err) {
+        el.textContent = `Lỗi: ${err.message}`;
+      }
+    }
+
+    async function createProposal() {
+      try {
+        const payload = JSON.parse(document.getElementById("proposalJson").value);
+        const data = await call("/bridge/proposals", {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify(payload)
+        });
+        alert(`Created: ${data.proposal.proposal_id}`);
+        await loadProposals();
+      } catch (err) {
+        alert(`Create fail: ${err.message}`);
+      }
+    }
+
+    async function generateProposal() {
+      try {
+        const payload = JSON.parse(document.getElementById("proposalJson").value);
+        const data = await call("/ai/generate-proposal", {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify(payload)
+        });
+        alert(`AI proposal: ${data.proposal.proposal_id}`);
+        await loadProposals();
+      } catch (err) {
+        alert(`Generate fail: ${err.message}`);
+      }
+    }
+
+    function actionButtons(id) {
+      return `
+        <button onclick="evaluateProposal('${id}')">Evaluate</button>
+        <button class="warn" onclick="sandboxProposal('${id}')">Sandbox</button>
+        <button onclick="approveProposal('${id}')">Approve</button>
+        <button class="danger" onclick="rejectProposal('${id}')">Reject</button>
+        <button onclick="releaseProposal('${id}')">Release</button>
+      `;
+    }
+
+    async function loadProposals() {
+      const table = document.querySelector("#proposalTable tbody");
+      table.innerHTML = "";
+      try {
+        const data = await call("/bridge/proposals", { method: "GET", headers: headers() });
+        (data.proposals || []).forEach((p) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="mono">${p.proposal_id || p.id || ""}</td>
+            <td>${p.title || ""}</td>
+            <td>${p.status || ""}</td>
+            <td>${p.risk_level || ""}</td>
+            <td>${actionButtons(p.proposal_id || p.id || "")}</td>
+          `;
+          table.appendChild(tr);
+        });
+      } catch (err) {
+        alert(`Load proposals fail: ${err.message}`);
+      }
+    }
+
+    async function evaluateProposal(id) {
+      try {
+        await call(`/bridge/proposals/${id}/evaluate`, { method: "POST", headers: headers(), body: "{}" });
+        await loadProposals();
+      } catch (err) {
+        alert(`Evaluate fail: ${err.message}`);
+      }
+    }
+
+    async function sandboxProposal(id) {
+      try {
+        await call(`/bridge/proposals/${id}/send-to-sandbox`, { method: "POST", headers: headers(), body: "{}" });
+        await loadProposals();
+      } catch (err) {
+        alert(`Sandbox fail: ${err.message}`);
+      }
+    }
+
+    async function approveProposal(id) {
+      try {
+        await call(`/bridge/proposals/${id}/approve`, { method: "POST", headers: headers(), body: "{}" });
+        await loadProposals();
+      } catch (err) {
+        alert(`Approve fail: ${err.message}`);
+      }
+    }
+
+    async function rejectProposal(id) {
+      try {
+        await call(`/bridge/proposals/${id}/reject`, { method: "POST", headers: headers(), body: "{}" });
+        await loadProposals();
+      } catch (err) {
+        alert(`Reject fail: ${err.message}`);
+      }
+    }
+
+    async function releaseProposal(id) {
+      try {
+        await call(`/bridge/proposals/${id}/release`, { method: "POST", headers: headers(), body: "{}" });
+        await loadProposals();
+        await loadTools();
+      } catch (err) {
+        alert(`Release fail: ${err.message}`);
+      }
+    }
+
+    async function loadTools() {
+      const table = document.querySelector("#toolTable tbody");
+      table.innerHTML = "";
+      try {
+        const data = await call("/tools", { method: "GET", headers: headers() });
+        (data.tools || []).forEach((t) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${t.name || t.tool_id || ""}</td>
+            <td class="mono">${t.version || ""}</td>
+            <td>${t.status || ""}</td>
+            <td>${t.risk_level || ""}</td>
+          `;
+          table.appendChild(tr);
+        });
+      } catch (err) {
+        alert(`Load tools fail: ${err.message}`);
+      }
+    }
+
+    async function loadLogs() {
+      const table = document.querySelector("#logTable tbody");
+      table.innerHTML = "";
+      try {
+        const data = await call("/logs/recent", { method: "GET", headers: headers() });
+        (data.logs || []).slice(0, 80).forEach((log) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="mono">${log.created_at || ""}</td>
+            <td>${log.actor || ""}</td>
+            <td>${log.action || ""}</td>
+            <td class="mono">${log.target || ""}</td>
+          `;
+          table.appendChild(tr);
+        });
+      } catch (err) {
+        alert(`Load logs fail: ${err.message}`);
+      }
+    }
+
+    (async function boot() {
+      await health();
+      await loadProposals();
+      await loadTools();
+      await loadLogs();
+    })();
+  </script>
+</body>
+</html>

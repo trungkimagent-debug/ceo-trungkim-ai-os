@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <script>
+    (function(){
+      try {
+        var token = String(localStorage.getItem('thkd_pos_session_token') || '').trim();
+        var hash = String(window.location.hash || '').trim();
+        if (!token && hash !== '#' && hash !== '#+' && hash !== '#-') {
+          window.location.replace('/1?_rt=' + Date.now());
+        }
+      } catch (_) {
+        window.location.replace('/1?_rt=' + Date.now());
+      }
+    })();
+  </script>
+  <title>THKD • Thu góp</title>
+  <meta name="theme-color" content="#f59e0b" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fff7ed;
+      --card: rgba(255,255,255,.92);
+      --line: rgba(251,146,60,.18);
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #f59e0b;
+      --accent-strong: #d97706;
+      --success: #059669;
+      --danger: #dc2626;
+      --shadow: 0 18px 40px rgba(180, 83, 9, .12);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: linear-gradient(180deg, #fffbeb 0%, var(--bg) 40%, #fff 100%); color: var(--text); min-height: 100%; }
+    body { padding: max(14px, env(safe-area-inset-top)) 14px 24px; }
+    .app { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
+    .hero {
+      position: sticky; top: 0; z-index: 30; backdrop-filter: blur(18px);
+      background: rgba(255,247,237,.84); margin: -14px -14px 0; padding: max(14px, env(safe-area-inset-top)) 14px 12px; border-bottom: 1px solid rgba(251,146,60,.12);
+    }
+    .hero-card {
+      background: linear-gradient(135deg, rgba(251,191,36,.22), rgba(249,115,22,.12));
+      border: 1px solid rgba(251,146,60,.22); border-radius: 22px; box-shadow: var(--shadow); padding: 16px; display: grid; gap: 12px;
+    }
+    .hero-top, .summary-grid, .toolbar, .card-head, .pill-row, .inline-form, .drawer-actions, .field-grid, .toolbar-actions { display: flex; gap: 10px; }
+    .hero-top, .card-head, .drawer-actions { align-items: center; justify-content: space-between; }
+    .brand { display: grid; gap: 4px; }
+    .eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .14em; color: var(--accent-strong); text-transform: uppercase; }
+    h1, h2, h3 { margin: 0; }
+    h1 { font-size: 24px; line-height: 1.05; }
+    h2 { font-size: 16px; }
+    .sub { margin: 0; font-size: 13px; color: var(--muted); }
+    .ghost-btn, .primary-btn, .small-btn, .danger-btn {
+      border: 0; border-radius: 16px; padding: 12px 14px; font-weight: 800; cursor: pointer; font-size: 14px;
+    }
+    .primary-btn { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%); color: #fff; box-shadow: 0 14px 28px rgba(217,119,6,.25); }
+    .ghost-btn, .small-btn { background: rgba(255,255,255,.76); color: var(--text); border: 1px solid rgba(251,146,60,.18); }
+    .danger-btn { background: #fee2e2; color: #b91c1c; }
+    .toolbar, .inline-form, .field-grid { align-items: center; }
+    .toolbar input, .inline-form input, .sheet input, .sheet textarea {
+      width: 100%; border: 1px solid rgba(148,163,184,.24); background: rgba(255,255,255,.92); color: var(--text);
+      border-radius: 16px; padding: 13px 14px; font-size: 14px; outline: none;
+    }
+    .sheet textarea { min-height: 84px; resize: vertical; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .summary-card {
+      background: var(--card); border: 1px solid rgba(255,255,255,.6); border-radius: 18px; padding: 14px; display: grid; gap: 6px; box-shadow: var(--shadow);
+    }
+    .summary-card b { font-size: 24px; line-height: 1; }
+    .summary-card span { font-size: 12px; color: var(--muted); font-weight: 700; }
+    .section {
+      background: var(--card); border: 1px solid rgba(255,255,255,.7); border-radius: 22px; box-shadow: var(--shadow); padding: 14px; display: grid; gap: 12px;
+    }
+    .card-list { display: grid; gap: 10px; }
+    .ticket-card, .log-card, .detail-card {
+      background: rgba(255,255,255,.9); border: 1px solid rgba(251,146,60,.16); border-radius: 18px; padding: 14px; display: grid; gap: 10px;
+    }
+    .ticket-card { cursor: pointer; }
+    .ticket-card:active { transform: scale(.99); }
+    .ticket-main { display: grid; gap: 4px; }
+    .ticket-title { font-size: 15px; font-weight: 900; }
+    .ticket-meta, .detail-meta { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; }
+    .money { font-size: 20px; font-weight: 900; }
+    .pill-row { flex-wrap: wrap; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 999px; font-size: 12px; font-weight: 800;
+      background: #fff; border: 1px solid rgba(251,146,60,.16); color: #7c2d12;
+    }
+    .pill.done { color: var(--success); border-color: rgba(5,150,105,.2); background: rgba(236,253,245,.9); }
+    .pill.pending { color: #b45309; border-color: rgba(245,158,11,.24); background: rgba(255,251,235,.95); }
+    .pill.danger { color: var(--danger); border-color: rgba(220,38,38,.16); background: rgba(254,242,242,.95); }
+    .ticket-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .ticket-check { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; }
+    .ticket-check input { width: 18px; height: 18px; accent-color: var(--accent); }
+    .muted { color: var(--muted); }
+    .empty { padding: 16px; border-radius: 18px; border: 1px dashed rgba(148,163,184,.35); color: var(--muted); text-align: center; font-size: 13px; }
+    .status { font-size: 12px; font-weight: 800; color: var(--accent-strong); }
+    .hint { font-size: 12px; color: var(--muted); }
+    .sheet {
+      position: fixed; inset: 0; z-index: 90; display: none; align-items: flex-end; justify-content: center; padding: 14px; background: rgba(17,24,39,.34);
+    }
+    .sheet.open { display: flex; }
+    .sheet-panel {
+      width: min(100%, 760px); max-height: min(90vh, 900px); overflow: auto; background: #fff; border-radius: 26px; box-shadow: 0 30px 80px rgba(15,23,42,.28); padding: 16px; display: grid; gap: 14px;
+    }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .sheet-close { width: 38px; height: 38px; border-radius: 999px; border: 1px solid rgba(148,163,184,.24); background: #fff; font-size: 20px; cursor: pointer; }
+    .field { display: grid; gap: 8px; flex: 1; min-width: 0; }
+    .field label { font-size: 12px; font-weight: 800; color: #334155; }
+    .preview { width: 100%; min-height: 180px; border-radius: 18px; background: #f8fafc; border: 1px dashed rgba(148,163,184,.32); display: grid; place-items: center; overflow: hidden; }
+    .preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .footer-space { height: 10px; }
+    @media (max-width: 640px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .summary-card { padding: 12px; }
+      .summary-card b { font-size: 20px; }
+      h1 { font-size: 22px; }
+      .hero-top, .toolbar, .inline-form, .ticket-actions, .field-grid, .drawer-actions, .toolbar-actions { flex-direction: column; align-items: stretch; }
+      .sheet { padding: 10px; }
+      .sheet-panel { border-radius: 24px; }
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="hero-card">
+        <div class="hero-top">
+          <div class="brand">
+            <div class="eyebrow">THKD local module</div>
+            <h1>Thu góp</h1>
+            <p class="sub">Local hẳn trong dự án. Không còn nút quay về vỏ cũ.</p>
+          </div>
+          <button id="openCreateBtn" class="primary-btn" type="button">+ Phiếu mới</button>
+        </div>
+        <div class="toolbar">
+          <input id="searchInput" type="search" placeholder="Tìm mã phiếu, khách, nhân viên" />
+          <div class="toolbar-actions">
+            <button id="approveSelectedBtn" class="ghost-btn" type="button">Giao tiền</button>
+          </div>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-card"><span>Chưa đóng</span><b id="collectCount">0</b></div>
+          <div class="summary-card"><span>Chờ giao</span><b id="pendingCount">0</b></div>
+          <div class="summary-card"><span>Đã giao</span><b id="doneCount">0</b></div>
+          <div class="summary-card"><span>Lịch sử</span><b id="logCount">0</b></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Người thao tác</h2>
+          <div class="hint">Được dùng cho tạo phiếu, thu tiền và giao tiền.</div>
+        </div>
+        <div id="saveActorStatus" class="status"></div>
+      </div>
+      <div class="inline-form">
+        <input id="actorNameInput" type="text" placeholder="Tên người thao tác" maxlength="60" />
+        <button id="saveActorBtn" class="ghost-btn" type="button">Lưu</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Chưa đóng tiền</h2>
+          <div class="hint">Bấm phiếu để xem chi tiết, hoặc bấm Thu tiền để đóng tiền local.</div>
+        </div>
+      </div>
+      <div id="collectList" class="card-list"></div>
+    </section>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Chờ giao tiền</h2>
+          <div class="hint">Chọn nhiều phiếu rồi bấm Giao tiền.</div>
+        </div>
+        <div id="selectedMeta" class="status">0 phiếu</div>
+      </div>
+      <div id="pendingList" class="card-list"></div>
+    </section>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Đã giao gần đây</h2>
+          <div class="hint">Theo dõi phiếu vừa giao tiền xong.</div>
+        </div>
+      </div>
+      <div id="doneList" class="card-list"></div>
+    </section>
+
+    <section class="section">
+      <div class="card-head">
+        <div>
+          <h2>Lịch sử batch</h2>
+          <div class="hint">Log từ collection <code>thugop_cash_handover_logs</code>.</div>
+        </div>
+      </div>
+      <div id="logsList" class="card-list"></div>
+    </section>
+
+    <div class="footer-space"></div>
+  </div>
+
+  <div id="detailSheet" class="sheet" aria-hidden="true">
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">Chi tiết phiếu</div>
+          <h2 id="detailTitle">Phiếu</h2>
+        </div>
+        <button id="closeDetailBtn" class="sheet-close" type="button">×</button>
+      </div>
+      <div id="detailBody" class="detail-card"></div>
+      <div class="drawer-actions">
+        <button id="detailCollectBtn" class="primary-btn" type="button">Thu tiền</button>
+        <button id="detailSingleApproveBtn" class="ghost-btn" type="button">Giao tiền phiếu này</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="collectSheet" class="sheet" aria-hidden="true">
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">Thu tiền</div>
+          <h2 id="collectTitle">Đóng tiền</h2>
+        </div>
+        <button id="closeCollectBtn" class="sheet-close" type="button">×</button>
+      </div>
+      <div class="two-col">
+        <div class="detail-card">
+          <div class="field">
+            <label>Số tiền cần khớp</label>
+            <div id="collectExpectedAmount" class="money">0đ</div>
+          </div>
+          <div class="field">
+            <label>Số tiền đóng</label>
+            <input id="collectAmountInput" type="text" inputmode="numeric" placeholder="Nhập số tiền đóng" />
+          </div>
+          <div class="field">
+            <label>Ghi chú</label>
+            <textarea id="collectNoteInput" placeholder="Ghi chú thêm nếu cần"></textarea>
+          </div>
+          <div id="collectWarning" class="hint" style="color:#dc2626"></div>
+        </div>
+        <div class="detail-card">
+          <div class="field">
+            <label>Ảnh bill đóng tiền</label>
+            <div id="collectBillPreview" class="preview"><span class="hint">Chưa có ảnh</span></div>
+          </div>
+          <div class="field-grid">
+            <input id="collectBillInput" type="file" accept="image/*" capture="environment" style="display:none" />
+            <button id="pickBillBtn" class="ghost-btn" type="button">Chụp / chọn ảnh</button>
+            <button id="saveCollectBtn" class="primary-btn" type="button">Lưu đóng tiền</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="createSheet" class="sheet" aria-hidden="true">
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">Phiếu mới local</div>
+          <h2>Tạo phiếu Thu góp</h2>
+        </div>
+        <button id="closeCreateBtn" class="sheet-close" type="button">×</button>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Khách hàng</label>
+          <input id="createCustomerName" type="text" placeholder="Tên khách" />
+        </div>
+        <div class="field">
+          <label>Số điện thoại</label>
+          <input id="createCustomerPhone" type="tel" placeholder="Số điện thoại" />
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Số hợp đồng</label>
+          <input id="createContractNumber" type="text" placeholder="Số hợp đồng" />
+        </div>
+        <div class="field">
+          <label>Số tiền</label>
+          <input id="createDeposit" type="text" inputmode="numeric" placeholder="0" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Ghi chú</label>
+        <textarea id="createWorkNote" placeholder="Ghi chú phiếu"></textarea>
+      </div>
+      <div id="createWarning" class="hint" style="color:#dc2626"></div>
+      <div class="drawer-actions">
+        <button id="saveCreateBtn" class="primary-btn" type="button">Tạo phiếu</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./thugop-local.js"></script>
+  <script src="./shared-bottom-nav.js?v20260427_041600"></script>
+</body>
+</html>

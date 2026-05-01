@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <script>
+window.__TK_APP_VERSION__ = "v20260418_231043";
+window.__TK_RT_ROLLOUT__ = {
+  enabled: true,
+  pageId: "admin",
+  checkMs: 5000,
+  forceReloadOnVersionChange: false,
+  enableModuleImport: true,
+  versionUrl: "./version.json"
+};
+</script>
+<script src="./realtime-runtime.js?v20260424_213649"></script>
+<script src="./realtime-bootstrap.js?v20260424_213649"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>THKD Admin</title>
+
+  <!-- BẮT BUỘC: config.js -->
+  <script src="./config.js?v20260424_213649"></script>
+
+  <!-- =========================================================
+       ✅ UI 100% giống anh đưa (GIỮ NGUYÊN)
+       ========================================================= -->
+  <style>
+    /* =========================================
+       THKD "ULTRA-MODERN" ADMIN SYSTEM (2025)
+       ========================================= */
+    :root {
+      --bg-overlay: rgba(15, 23, 42, 0.6);
+      --bg-panel: #0f172a;
+      --bg-card: #1e293b;
+      --bg-hover: #334155;
+
+      --border-color: rgba(255, 255, 255, 0.08);
+
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+
+      --danger: #f43f5e;
+      --success: #10b981;
+      --warn: #f59e0b;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+
+      --radius: 12px;
+      --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    * { box-sizing: border-box; }
+
+    /* 1. OVERLAY NỀN */
+    #admin-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg-overlay);
+      backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.3s ease;
+      padding: 16px;
+    }
+    #admin-overlay.open { opacity: 1; }
+
+    /* 2. KHUNG CHÍNH */
+    #admin-container {
+      width: 100%; max-width: 1200px;
+      height: 90vh; max-height: 850px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--text-main);
+    }
+
+    /* 3. HEADER */
+    .adm-header {
+      height: 60px; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.5);
+      flex-shrink: 0;
+    }
+
+    .adm-header-left { display: flex; align-items: center; gap: 16px; }
+
+    #adm-main-toggle {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: transparent; color: var(--text-muted);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; transition: all 0.2s;
+    }
+    #adm-main-toggle:hover {
+      background: var(--bg-hover); color: #fff; border-color: var(--text-muted);
+    }
+
+    .adm-brand { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
+    .adm-brand span { font-weight: 400; color: var(--text-muted); font-size: 13px; margin-left: 6px; }
+
+    .adm-header-right { display: flex; gap: 10px; }
+
+    .adm-btn {
+      height: 36px; padding: 0 16px; border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: transparent; color: var(--text-main);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .adm-btn:hover { background: var(--bg-hover); }
+    .adm-btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .adm-btn.primary:hover { background: var(--primary-hover); }
+    .adm-btn.danger { color: var(--danger); border-color: rgba(244, 63, 94, 0.3); }
+    .adm-btn.danger:hover { background: rgba(244, 63, 94, 0.1); }
+
+    /* 4. BODY LAYOUT */
+    .adm-body { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+    /* LEFT */
+    .adm-left {
+      width: 340px; display: flex; flex-direction: column;
+      border-right: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.3);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .adm-left.collapsed { width: 0; border: none; overflow: hidden; }
+
+    .adm-search-wrap { padding: 16px; border-bottom: 1px solid var(--border-color); }
+    .adm-search-input {
+      width: 100%; height: 40px; background: var(--bg-card);
+      border: 1px solid var(--border-color); border-radius: 8px;
+      padding: 0 12px; color: #fff; outline: none; font-size: 13px;
+      transition: border 0.2s;
+    }
+    .adm-search-input:focus { border-color: var(--primary); }
+
+    .adm-list { flex: 1; overflow-y: auto; padding: 12px; }
+    .adm-list::-webkit-scrollbar { width: 4px; }
+    .adm-list::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 4px; }
+
+    .adm-card {
+      padding: 12px; border-radius: 10px; margin-bottom: 8px;
+      background: transparent; border: 1px solid transparent;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .adm-card:hover { background: var(--bg-hover); }
+    .adm-card.active {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+    }
+    .adm-card-top { display: flex; justify-content: space-between; align-items: center; }
+
+    .adm-name {
+      font-weight: 600; font-size: 14px; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 180px;
+    }
+    .adm-time { font-size: 11px; color: var(--text-muted); }
+
+    .adm-card-btm { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .s-green { background: var(--success); box-shadow: 0 0 8px rgba(16,185,129,0.4); }
+    .s-red { background: var(--danger); }
+    .s-yellow { background: var(--warn); animation: pulse 2s infinite; }
+
+    .adm-info-txt { font-size: 12px; color: var(--text-muted); }
+
+    /* RIGHT */
+    .adm-right {
+      flex: 1; display: flex; flex-direction: column;
+      background: var(--bg-panel);
+      min-width: 0;
+      position: relative; transition: transform 0.3s ease;
+    }
+
+    .adm-detail-head {
+      height: 60px; padding: 0 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(15, 23, 42, 0.8);
+    }
+    .adm-user-meta h3 { margin: 0; font-size: 16px; font-weight: 700; }
+    .adm-user-meta p { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
+
+    .adm-chat-area {
+      flex: 1; overflow-y: auto; padding: 24px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .adm-chat-area::-webkit-scrollbar { width: 6px; }
+    .adm-chat-area::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 6px; }
+
+    .msg-row { display: flex; flex-direction: column; max-width: 80%; }
+    .msg-row.bot { align-self: flex-start; }
+    .msg-row.user { align-self: flex-end; align-items: flex-end; }
+
+    .msg-name { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; padding-left: 2px; }
+    .msg-bubble {
+      padding: 10px 16px; border-radius: 16px;
+      font-size: 14px; line-height: 1.5;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+    .msg-row.bot .msg-bubble {
+      background: var(--bg-card); color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-top-left-radius: 4px;
+    }
+    .msg-row.user .msg-bubble {
+      background: var(--primary); color: #fff;
+      border-top-right-radius: 4px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    #adm-back-btn { display: none; }
+
+    /* =========================================
+       RESPONSIVE
+       ========================================= */
+    @media (max-width: 768px) {
+      #admin-overlay { padding: 0; }
+      #admin-container { height: 100%; border-radius: 0; border: none; max-height: none; }
+      .adm-header { padding: 0 16px; }
+
+      #adm-main-toggle { display: none; }
+      .adm-brand { margin-left: 0; }
+
+      .adm-left {
+        width: 100%; position: absolute; inset: 0; z-index: 10;
+        background: var(--bg-panel);
+      }
+      .adm-right {
+        width: 100%; position: absolute; inset: 0; z-index: 20;
+        background: var(--bg-panel);
+        transform: translateX(100%);
+      }
+
+      .adm-body.show-detail .adm-right { transform: translateX(0); }
+
+      #adm-back-btn { display: inline-flex; }
+      .adm-card-top { padding-right: 4px; }
+    }
+
+    /* MODALS */
+    .adm-modal-overlay {
+      position: absolute; inset: 0; z-index: 50;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+    }
+    .adm-modal {
+      width: 320px; background: var(--bg-card); padding: 24px;
+      border-radius: 16px; border: 1px solid var(--border-color);
+      text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .adm-modal h3 { margin: 0 0 16px; color: #fff; }
+    .adm-inp-full {
+      width: 100%; padding: 12px; margin-bottom: 12px;
+      background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+      border-radius: 8px; color: #fff; outline: none;
+    }
+    .adm-inp-full:focus { border-color: var(--primary); }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: .6; }
+      50% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: .6; }
+    }
+  </style>
+
+  <style id="thkd-admin-theme-overrides">
+    :root{
+      --bg-overlay: rgba(5, 5, 10, 0.65);
+
+      --bg-panel: rgba(10, 15, 30, 0.92);
+      --bg-card: rgba(255,255,255,0.035);
+      --bg-hover: rgba(255,255,255,0.08);
+
+      --border-color: rgba(255,255,255,0.10);
+
+      --primary: #00cfff;
+      --primary-hover: #1ad6ff;
+
+      --danger: #ff3b6b;
+      --success: #22c55e;
+      --warn: #f59e0b;
+
+      --text-main: #ffffff;
+      --text-muted: rgba(255,255,255,0.62);
+
+      --radius: 12px;
+      --shadow:
+        0 0 0 1px rgba(255,255,255,0.05) inset,
+        0 30px 70px -18px rgba(0,0,0,0.85);
+    }
+
+    #admin-overlay{
+      background:
+        radial-gradient(60vw 60vw at 12% 18%, rgba(0,242,255,0.10), transparent 60%),
+        radial-gradient(50vw 50vw at 86% 22%, rgba(189,0,255,0.10), transparent 62%),
+        radial-gradient(70vw 70vw at 30% 88%, rgba(80,140,255,0.08), transparent 65%),
+        radial-gradient(120vw 120vw at 50% 50%, rgba(0,0,0,0.35), rgba(0,0,0,0.92));
+      backdrop-filter: blur(10px) saturate(1.08);
+    }
+
+    #admin-container{
+      background: rgba(10, 15, 30, 0.88);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      position: relative;
+    }
+    #admin-container::before{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      border-radius: 18px;
+      padding: 1px;
+      background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.22),
+        transparent 50%,
+        rgba(255,255,255,0.12)
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .adm-header{
+      background:
+        linear-gradient(90deg,
+          rgba(255,255,255,0.02),
+          rgba(255,255,255,0.00) 40%,
+          rgba(255,255,255,0.03)
+        );
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .adm-brand{ text-transform: uppercase; letter-spacing: .6px; }
+    .adm-brand span{ color: rgba(255,255,255,0.55); }
+
+    .adm-btn{
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+    }
+    .adm-btn:hover{
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    .adm-btn.primary{
+      background: linear-gradient(90deg, #00f2ff, #bd00ff);
+      border-color: transparent;
+      box-shadow:
+        0 0 18px rgba(0,242,255,0.22),
+        0 0 22px rgba(189,0,255,0.22);
+      color: #fff;
+    }
+    .adm-btn.danger{
+      color: #fff;
+      background: rgba(255,59,107,0.08);
+      border-color: rgba(255,59,107,0.28);
+    }
+    .adm-btn.danger:hover{
+      background: rgba(255,59,107,0.16);
+      border-color: rgba(255,59,107,0.45);
+    }
+
+    #adm-main-toggle{ border-radius: 10px; background: rgba(255,255,255,0.02); }
+
+    .adm-left{
+      background: rgba(10, 15, 30, 0.55);
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .adm-search-input{
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+    }
+    .adm-search-input:focus{
+      border-color: rgba(0,242,255,0.45);
+      box-shadow: 0 0 0 2px rgba(0,242,255,0.18), 0 0 0 6px rgba(189,0,255,0.12);
+    }
+
+    .adm-card{
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+    }
+    .adm-card:hover{
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .adm-card.active{
+      background: linear-gradient(135deg, rgba(0,242,255,0.08), rgba(189,0,255,0.08));
+      border-color: rgba(0,242,255,0.35);
+      box-shadow: 0 0 0 1px rgba(0,242,255,0.08) inset;
+    }
+
+    .adm-time, .adm-info-txt{ color: rgba(255,255,255,0.55); }
+
+    .s-green{ box-shadow: 0 0 10px rgba(34,197,94,0.45); }
+    .s-red{ box-shadow: 0 0 8px rgba(255,59,107,0.32); }
+    .s-yellow{ box-shadow: 0 0 10px rgba(245,158,11,0.35); }
+
+    .adm-right{ background: transparent; }
+    .adm-detail-head{
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00) 50%, rgba(255,255,255,0.03));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .msg-row.bot .msg-bubble{
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top-left-radius: 6px;
+    }
+    .msg-row.user .msg-bubble{
+      background: linear-gradient(90deg, #00f2ff, #bd00ff);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 6px 18px rgba(0,242,255,0.18), 0 6px 18px rgba(189,0,255,0.18);
+    }
+
+    .adm-modal-overlay{
+      background:
+        radial-gradient(900px 600px at 15% 20%, rgba(0,242,255,0.06), transparent 55%),
+        radial-gradient(900px 600px at 85% 25%, rgba(189,0,255,0.06), transparent 55%),
+        rgba(0,0,0,0.82);
+      backdrop-filter: blur(6px);
+    }
+    .adm-modal{
+      background: rgba(10, 15, 30, 0.92);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .adm-inp-full{
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+    }
+    .adm-inp-full:focus{
+      border-color: rgba(0,242,255,0.45);
+      box-shadow: 0 0 0 2px rgba(0,242,255,0.18), 0 0 0 6px rgba(189,0,255,0.12);
+    }
+
+    @media (max-width: 768px){
+      .adm-left, .adm-right{ background: rgba(10, 15, 30, 0.95); }
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="admin-overlay">
+  <div id="admin-container">
+
+    <div class="adm-header">
+      <div class="adm-header-left">
+        <button id="adm-main-toggle" title="Thu gọn/Mở rộng">☰</button>
+        <div class="adm-brand">THKD <span>Admin</span></div>
+      </div>
+
+      <div class="adm-header-right">
+        <button id="adm-back-btn" class="adm-btn">← Quay lại</button>
+        <button id="adm-refresh-btn" class="adm-btn">Làm mới</button>
+        <button id="adm-close-btn" class="adm-btn danger">Thoát</button>
+      </div>
+    </div>
+
+    <div id="adm-body-wrap" class="adm-body">
+
+      <div id="adm-left-panel" class="adm-left">
+        <div class="adm-search-wrap">
+          <input id="adm-search" class="adm-search-input" placeholder="Tìm tên, SĐT, khu vực..." />
+        </div>
+        <div id="adm-candidate-list" class="adm-list"></div>
+      </div>
+
+      <div id="adm-right-panel" class="adm-right">
+        <div class="adm-detail-head">
+          <div class="adm-user-meta">
+            <h3 id="adm-d-name">Chưa chọn hồ sơ</h3>
+            <p id="adm-d-meta">Vui lòng chọn từ danh sách bên trái</p>
+          </div>
+          <button id="adm-delete-btn" class="adm-btn danger">Xoá Hồ Sơ</button>
+        </div>
+
+        <div id="adm-chat-area" class="adm-chat-area">
+          <div style="text-align:center; margin-top:60px; color:#64748b;">
+            <div style="font-size:40px; margin-bottom:10px;">📂</div>
+            Chọn ứng viên để xem nội dung phỏng vấn.
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTH MODAL -->
+      <div id="adm-auth-overlay" class="adm-modal-overlay">
+        <div class="adm-modal">
+          <h3>🔐 Đăng Nhập</h3>
+          <input id="adm-auth-email" class="adm-inp-full" placeholder="Tên đăng nhập..." />
+          <input id="adm-auth-otp" class="adm-inp-full" placeholder="Mật khẩu..." />
+          <button id="adm-login-btn" class="adm-btn primary" style="width:100%; height:40px;">Đăng nhập</button>
+          <div style="margin-top:12px;">
+            <a href="#" id="adm-get-otp-btn" style="color:var(--primary); font-size:12px; text-decoration:none;">
+              Quên mật khẩu?
+            </a>
+          </div>
+          <div id="adm-auth-msg" style="color:var(--danger); font-size:12px; margin-top:8px;"></div>
+        </div>
+      </div>
+
+      <!-- DELETE MODAL -->
+      <div id="adm-del-overlay" class="adm-modal-overlay">
+        <div class="adm-modal">
+          <h3 style="color:var(--danger)">⚠️ Xoá Vĩnh Viễn?</h3>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+            Nhập mã <b id="adm-del-code" style="color:#fff; background:var(--danger); padding:2px 6px; border-radius:4px;"></b> để xác nhận.
+          </p>
+          <input id="adm-del-input" class="adm-inp-full" style="text-align:center; font-weight:bold; letter-spacing:2px;" />
+          <div style="display:flex; gap:10px; margin-top:8px;">
+            <button id="adm-del-cancel" class="adm-btn" style="flex:1">Hủy</button>
+            <button id="adm-del-confirm" class="adm-btn danger" style="flex:1">Xoá Ngay</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // --- DOM ---
+  const overlay = document.getElementById('admin-overlay');
+  const bodyWrap = document.getElementById('adm-body-wrap');
+  const leftPanel = document.getElementById('adm-left-panel');
+  const listEl = document.getElementById('adm-candidate-list');
+  const chatArea = document.getElementById('adm-chat-area');
+  const dName = document.getElementById('adm-d-name');
+  const dMeta = document.getElementById('adm-d-meta');
+
+  // Buttons
+  const btnToggle = document.getElementById('adm-main-toggle');
+  const btnBack = document.getElementById('adm-back-btn');
+  const btnClose = document.getElementById('adm-close-btn');
+  const btnRefresh = document.getElementById('adm-refresh-btn');
+  const btnDelete = document.getElementById('adm-delete-btn');
+  const searchEl = document.getElementById('adm-search');
+
+  // Auth modal
+  const authOverlay = document.getElementById('adm-auth-overlay');
+  const btnLogin = document.getElementById('adm-login-btn');
+  const btnGetOtp = document.getElementById('adm-get-otp-btn');
+  const authMsg = document.getElementById('adm-auth-msg');
+  const authEmail = document.getElementById('adm-auth-email');
+  const authOtp = document.getElementById('adm-auth-otp');
+
+  // Delete modal
+  const delOverlay = document.getElementById('adm-del-overlay');
+  const btnDelConfirm = document.getElementById('adm-del-confirm');
+  const btnDelCancel = document.getElementById('adm-del-cancel');
+  const delCodeEl = document.getElementById('adm-del-code');
+  const delInput = document.getElementById('adm-del-input');
+
+  // --- STATE ---
+  let authToken = '';
+  let candidateMap = new Map();
+  let activeUserId = null;
+  let pollTimer = null;
+  let cursorIso = '';
+  let delTargetId = null;
+  let delCode = '';
+
+  // --- UTILS ---
+  function safe(s) { return s ? String(s) : ''; }
+  function isGASReady(){ return !!(window.THKD && typeof window.THKD.callApi === 'function'); }
+
+  function formatTime(iso){
+    if(!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} ${d.getDate()}/${d.getMonth()+1}`;
+  }
+
+  function showAuth(msg){
+    authOverlay.style.display = 'flex';
+    authMsg.textContent = msg || '';
+    authOtp.value = '';
+  }
+
+  function hideAuth(){
+    authOverlay.style.display = 'none';
+    authMsg.textContent = '';
+  }
+
+  function handleUnauthorized(){
+    authToken = '';
+    stopPolling();
+    showAuth('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+  }
+
+  function withFail(handler){
+    return function(err){
+      const m = safe(err && (err.message || err));
+      if (/UNAUTHORIZED/i.test(m)) {
+        handleUnauthorized();
+        return;
+      }
+      if (handler) handler(err);
+    };
+  }
+
+  async function api(action, payload){
+    if(!isGASReady()) return { ok:false, message:'NO_API' };
+    try{
+      return await window.THKD.callApi(action, payload || {});
+    }catch(e){
+      return { ok:false, message:'FETCH_FAIL', error:String(e) };
+    }
+  }
+
+  // --- UI ACTIONS ---
+  if (btnToggle) btnToggle.onclick = () => leftPanel.classList.toggle('collapsed');
+  function showMobileDetail(){ bodyWrap.classList.add('show-detail'); }
+  function hideMobileDetail(){ bodyWrap.classList.remove('show-detail'); }
+  if (btnBack) btnBack.onclick = hideMobileDetail;
+
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape' && overlay.style.display === 'flex') {
+      window.TH_ADMIN && window.TH_ADMIN.close();
+    }
+  });
+
+  // --- RENDER LIST ---
+  function renderList() {
+    const q = safe(searchEl.value).toLowerCase();
+
+    const arr = Array.from(candidateMap.values()).sort((a,b) => {
+      if (!!a.inProgress !== !!b.inProgress) return a.inProgress ? -1 : 1;
+      if (!!a.pass !== !!b.pass) return a.pass ? -1 : 1;
+      return new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0);
+    });
+
+    listEl.innerHTML = '';
+
+    arr.forEach(c => {
+      const txt = [c.fullName, c.phone, c.location, c.userId].join(' ').toLowerCase();
+      if (q && !txt.includes(q)) return;
+
+      const div = document.createElement('div');
+      div.className = `adm-card ${c.userId === activeUserId ? 'active' : ''}`;
+
+      let dotClass = 's-red';
+      if (c.pass) dotClass = 's-green';
+      if (c.inProgress) dotClass = 's-yellow';
+
+      const statusTxt = c.inProgress ? 'Đang Chat' : (c.pass ? 'Đạt' : 'Trượt');
+      const scoreTxt = (c.overallScore === null || c.overallScore === undefined) ? '' : `${c.overallScore}đ`;
+
+      div.innerHTML = `
+        <div class="adm-card-top">
+          <div class="adm-name">${safe(c.fullName) || safe(c.phone) || safe(c.userId)}</div>
+          <div class="adm-time">${formatTime(c.updatedAt)}</div>
+        </div>
+        <div class="adm-card-btm">
+          <div class="status-dot ${dotClass}"></div>
+          <div class="adm-info-txt">${safe(c.phone) || safe(c.userId)}</div>
+          <div class="adm-info-txt" style="color:rgba(255,255,255,0.75)">• ${statusTxt}</div>
+          <div class="adm-info-txt" style="margin-left:auto; font-weight:700;">${scoreTxt}</div>
+        </div>
+      `;
+
+      div.onclick = () => {
+        activeUserId = c.userId;
+        renderList();
+        loadDetail(c);
+        if (window.innerWidth <= 768) showMobileDetail();
+      };
+
+      listEl.appendChild(div);
+    });
+
+    if(!listEl.innerHTML) {
+      listEl.innerHTML =
+        '<div style="text-align:center; padding:20px; color:rgba(255,255,255,0.45); font-size:12px;">Không tìm thấy.</div>';
+    }
+  }
+
+  // --- RENDER CHAT ---
+  function renderChat(pairs) {
+    chatArea.innerHTML = '';
+    if (!pairs || !pairs.length) {
+      chatArea.innerHTML = '<div style="text-align:center; margin-top:50px; color:#64748b;">Chưa có nội dung chat.</div>';
+      return;
+    }
+
+    chatArea.innerHTML += `
+      <div class="msg-row bot">
+        <div class="msg-name">Hệ thống</div>
+        <div class="msg-bubble" style="font-style:italic; opacity:0.8">
+          Bắt đầu phiên phỏng vấn...
+        </div>
+      </div>
+    `;
+
+    pairs.forEach(p => {
+      if (p.question) {
+        chatArea.innerHTML += `
+          <div class="msg-row bot">
+            <div class="msg-name">Trung Kim</div>
+            <div class="msg-bubble">${safe(p.question)}</div>
+          </div>`;
+      }
+      if (p.answer) {
+        chatArea.innerHTML += `
+          <div class="msg-row user">
+            <div class="msg-name">Ứng viên</div>
+            <div class="msg-bubble">${safe(p.answer)}</div>
+          </div>`;
+      }
+    });
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  async function loadDetail(c) {
+    if (!c) return;
+
+    dName.textContent = c.fullName || c.phone || c.userId || 'Ứng viên';
+    dMeta.textContent = `${safe(c.phone || c.userId)} • ${c.location || 'Chưa rõ nơi ở'} • ${c.age || '?'} tuổi`;
+
+    chatArea.innerHTML = '<div style="padding:20px; text-align:center">Đang tải nội dung...</div>';
+
+    if (!isGASReady()) {
+      chatArea.innerHTML = '<div style="padding:20px; text-align:center; color:#64748b;">Không kết nối được Apps Script.</div>';
+      return;
+    }
+
+    const res = await api('getCandidateQa', { token: authToken, userId: c.userId });
+
+    if (res && res.ok === false && /UNAUTHORIZED/i.test(String(res.message||''))) {
+      handleUnauthorized();
+      return;
+    }
+
+    // server có thể trả trực tiếp mảng pairs
+    const pairs = res && (res.pairs || res.data || res.qa || res);
+    renderChat(Array.isArray(pairs) ? pairs : []);
+  }
+
+  // --- DATA SYNC ---
+  async function loadAll() {
+    if (!isGASReady()) return;
+
+    const res = await api('getAdminCandidateList', { token: authToken });
+
+    if (res && res.ok === false && /UNAUTHORIZED/i.test(String(res.message||''))) {
+      handleUnauthorized();
+      return;
+    }
+
+    const list = (res && (res.list || res.data || res.candidates || res)) || [];
+
+    candidateMap.clear();
+    (list || []).forEach(c => candidateMap.set(c.userId, c));
+    renderList();
+
+    cursorIso = new Date().toISOString();
+
+    if (!activeUserId && list && list.length && window.innerWidth > 768) {
+      activeUserId = list[0].userId;
+      loadDetail(list[0]);
+    }
+
+    startPolling();
+  }
+
+  function startPolling() {
+    stopPolling();
+    pollTimer = setInterval(async () => {
+      if (!authToken || !isGASReady()) return;
+
+      const res = await api('getAdminCandidateUpdates', { token: authToken, sinceIso: cursorIso });
+
+      if (res && res.ok === false && /UNAUTHORIZED/i.test(String(res.message||''))) {
+        handleUnauthorized();
+        return;
+      }
+
+      if (res && res.changed && res.changed.length) {
+        res.changed.forEach(c => candidateMap.set(c.userId, c));
+        renderList();
+
+        if (activeUserId && res.changed.find(x => x.userId === activeUserId)) {
+          const updated = candidateMap.get(activeUserId);
+          if (updated) loadDetail(updated);
+        }
+      }
+      if (res && res.serverTime) cursorIso = res.serverTime;
+
+    }, 4000);
+  }
+
+  function stopPolling(){
+    if (pollTimer) {
+      clearInterval(pollTimer);
+      pollTimer = null;
+    }
+  }
+
+  // --- AUTH ---
+  btnLogin.onclick = async () => {
+    const e = authEmail.value.trim();
+    const o = authOtp.value.trim();
+    if (!e || !o) { authMsg.textContent = 'Vui lòng nhập đủ thông tin.'; return; }
+
+    btnLogin.disabled = true;
+    btnLogin.textContent = 'Đang xác thực...';
+    authMsg.textContent = '';
+
+    const res = await api('adminLogin', { email: e, otp: o });
+
+    btnLogin.disabled = false;
+    btnLogin.textContent = 'Đăng nhập';
+
+    if (res && res.locked) {
+      authMsg.textContent = res.message || 'Tạm khóa đăng nhập.';
+      return;
+    }
+
+    if (res && res.ok && res.token) {
+      authToken = res.token;
+      hideAuth();
+      loadAll();
+    } else {
+      authMsg.textContent = (res && res.message) ? res.message : 'Đăng nhập thất bại.';
+    }
+  };
+
+  btnGetOtp.onclick = async (ev) => {
+    ev.preventDefault();
+    const e = authEmail.value.trim();
+    if (!e) { authMsg.textContent = 'Nhập tên đăng nhập.'; return; }
+
+    authMsg.textContent = 'Đang gửi ...';
+    const res = await api('requestAdminOtp', { email: e });
+    authMsg.textContent = (res && res.message) ? res.message : 'Đã gửi!.';
+  };
+
+  authOtp.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') btnLogin.click(); });
+  authEmail.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') authOtp.focus(); });
+
+  // --- DELETE ---
+  btnDelete.onclick = () => {
+    if (!activeUserId) return;
+
+    delTargetId = activeUserId;
+    delCode = String(Math.floor(1000 + Math.random()*9000));
+    delCodeEl.textContent = delCode;
+    delInput.value = '';
+    delOverlay.style.display = 'flex';
+  };
+
+  btnDelCancel.onclick = () => { delOverlay.style.display = 'none'; };
+
+  btnDelConfirm.onclick = async () => {
+    if (!delTargetId) return;
+    if (delInput.value !== delCode) { alert('Mã xác nhận không đúng!'); return; }
+
+    const res = await api('deleteCandidate', { token: authToken, userId: delTargetId });
+
+    if (res && res.ok === false && /UNAUTHORIZED/i.test(String(res.message||''))) {
+      handleUnauthorized();
+      return;
+    }
+
+    candidateMap.delete(delTargetId);
+    activeUserId = null;
+    delOverlay.style.display = 'none';
+
+    chatArea.innerHTML = '<div style="padding:20px; text-align:center">Đã xoá hồ sơ.</div>';
+    dName.textContent = 'Đã xoá';
+    dMeta.textContent = '';
+
+    hideMobileDetail();
+    renderList();
+  };
+
+  // --- HEADER ACTIONS ---
+  btnClose.onclick = () => window.TH_ADMIN && window.TH_ADMIN.close();
+  btnRefresh.onclick = () => { if(authToken) loadAll(); else showAuth('Vui lòng đăng nhập.'); };
+  searchEl.oninput = renderList;
+
+  // --- GLOBAL API ---
+  window.TH_ADMIN = {
+    open: () => {
+      overlay.style.display = 'flex';
+      setTimeout(()=>overlay.classList.add('open'),10);
+
+      if (!authToken) showAuth('');
+      else { hideAuth(); loadAll(); }
+    },
+    close: () => {
+      overlay.classList.remove('open');
+      setTimeout(()=>overlay.style.display='none',300);
+      stopPolling();
+      hideMobileDetail();
+    }
+  };
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>THUGOP_GOC</title>
+  <meta name="theme-color" content="#111111" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: #000;
+    }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: #f8fafc;
+    }
+    #thugopRootHost {
+      min-height: 100vh;
+    }
+    .tg-goc-badge {
+      position: fixed;
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      right: 10px;
+      z-index: 120;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, .82);
+      border: 1px solid rgba(245, 158, 11, .35);
+      color: #fbbf24;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.28);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="tg-goc-badge">THUGOP_GOC</div>
+  <div id="thugopRootHost"></div>
+
+  <script>
+    (function () {
+      try {
+        var token = String(localStorage.getItem('thkd_pos_session_token') || '').trim();
+        var internalKey = String(localStorage.getItem('thkd_internal_key') || '').trim();
+        if (!token && !internalKey) {
+          window.location.replace('/1');
+        }
+      } catch (_) {
+        window.location.replace('/1');
+      }
+    })();
+  </script>
+
+  <script type="module">
+    const API_BASE = 'https://api-ldnzetqooq-uc.a.run.app';
+    const SESSION_TOKEN_KEY = 'thkd_pos_session_token';
+    const INTERNAL_KEY_KEY = 'thkd_internal_key';
+    const FALLBACK_ACTOR_NAME_KEY = 'thkd_thugop_actor_name';
+
+    async function getGocVersion() {
+      try {
+        const response = await fetch('./thugop-goc-version.json', { cache: 'no-store' });
+        const payload = await response.json().catch(() => ({}));
+        return String(payload?.version || '').trim() || 'thugop_goc_static';
+      } catch (_) {
+        return 'thugop_goc_static';
+      }
+    }
+
+    async function bootstrapCurrentActor() {
+      const sessionToken = String(localStorage.getItem(SESSION_TOKEN_KEY) || '').trim();
+      const internalKey = String(localStorage.getItem(INTERNAL_KEY_KEY) || '').trim();
+      const fallbackActor = {
+        name: String(localStorage.getItem(FALLBACK_ACTOR_NAME_KEY) || 'Nhân viên').trim() || 'Nhân viên',
+        role: 'staff',
+      };
+      if (!sessionToken && !internalKey) {
+        window.__THKD_POS_CURRENT_ACTOR__ = fallbackActor;
+        return fallbackActor;
+      }
+      try {
+        const response = await fetch(`${API_BASE}/internal/pos/session`, {
+          method: 'GET',
+          headers: {
+            ...(sessionToken ? { 'x-pos-session-token': sessionToken } : {}),
+            ...(!sessionToken && internalKey ? { 'x-internal-admin-key': internalKey } : {}),
+          },
+          cache: 'no-store',
+        });
+        const payload = await response.json().catch(() => ({}));
+        const actor = payload?.success && payload?.actor ? payload.actor : fallbackActor;
+        window.__THKD_POS_CURRENT_ACTOR__ = actor;
+        window.dispatchEvent(new CustomEvent('thkd:actor-changed', { detail: actor }));
+        return actor;
+      } catch (_) {
+        window.__THKD_POS_CURRENT_ACTOR__ = fallbackActor;
+        return fallbackActor;
+      }
+    }
+
+    const version = await getGocVersion();
+    window.__THUGOP_GOC_VERSION__ = version;
+    await bootstrapCurrentActor();
+    await import(`./thugop-goc-root.js?v=${encodeURIComponent(version)}`);
+  </script>
+</body>
+</html>

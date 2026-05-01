@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function(){
+      try {
+        var token = String(localStorage.getItem('thkd_pos_session_token') || '').trim();
+        var hash = String(window.location.hash || '').trim();
+        if (!token && hash !== '#' && hash !== '#+' && hash !== '#-') {
+          window.location.replace('/1?_rt=' + Date.now());
+        }
+      } catch (_) {
+        window.location.replace('/1?_rt=' + Date.now());
+      }
+    })();
+  </script>
+  <title>Đồng bộ nội bộ</title>
+  <style>
+    :root {
+      --bg: #050816;
+      --panel: rgba(15,23,42,0.82);
+      --border: rgba(255,255,255,0.12);
+      --text: #e5eefc;
+      --muted: rgba(229,238,252,0.72);
+      --cyan: #34d9ff;
+      --violet: #9b5cff;
+      --green: #22c55e;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(52,217,255,0.18), transparent 26%),
+        radial-gradient(circle at top right, rgba(155,92,255,0.16), transparent 24%),
+        linear-gradient(135deg, #030712, #0f172a 45%, #111827);
+      padding: 24px;
+    }
+    .shell {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+      backdrop-filter: blur(18px);
+    }
+    h1, h2 { margin: 0 0 12px; }
+    p { color: var(--muted); line-height: 1.6; }
+    .row { display: grid; gap: 14px; grid-template-columns: 1.5fr 1fr 1fr; }
+    .field { display: grid; gap: 8px; }
+    label { font-size: 13px; color: var(--muted); }
+    input, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 15px;
+    }
+    .checks { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 6px; }
+    .check { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+    button, a.btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .primary { background: linear-gradient(135deg, var(--cyan), var(--violet)); color: #07111d; }
+    .secondary { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); }
+    .status {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: rgba(2,6,23,0.82);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 16px;
+      color: #cfe8ff;
+      min-height: 220px;
+      overflow: auto;
+    }
+    .ok { color: var(--green); }
+    .err { color: var(--red); }
+    @media (max-width: 760px) {
+      .row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="card">
+      <h1>Đồng bộ nội bộ</h1>
+      <p>Trang này dùng route nội bộ để chạy đồng bộ an toàn. Chỉ dùng khi có khóa nội bộ hợp lệ.</p>
+      <div class="row">
+        <div class="field">
+          <label for="internalKey">Internal sync key</label>
+          <input id="internalKey" type="password" placeholder="Dán internal key vào đây" />
+        </div>
+        <div class="field">
+          <label for="limit">Limit</label>
+          <input id="limit" type="number" min="1" max="1000" value="500" />
+        </div>
+      </div>
+      <div class="checks">
+        <label class="check"><input id="dryRun" type="checkbox" checked /> Dry run</label>
+        <label class="check"><input id="overwriteRole" type="checkbox" /> Overwrite role</label>
+      </div>
+      <div class="actions">
+        <button id="btnStatus" class="secondary">Xem trạng thái</button>
+        <button id="btnSync" class="primary">Chạy đồng bộ</button>
+        <a class="btn secondary" href="/">Về trang chủ</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Response</h2>
+      <div id="statusText" class="status">Sẵn sàng.</div>
+      <pre id="output">Chưa có dữ liệu.</pre>
+    </section>
+  </main>
+
+  <script>
+    const internalKeyEl = document.getElementById('internalKey');
+    const limitEl = document.getElementById('limit');
+    const dryRunEl = document.getElementById('dryRun');
+    const overwriteRoleEl = document.getElementById('overwriteRole');
+    const statusTextEl = document.getElementById('statusText');
+    const outputEl = document.getElementById('output');
+
+    function setStatus(text, type) {
+      statusTextEl.textContent = text;
+      statusTextEl.className = 'status ' + (type || '');
+    }
+
+    const API_BASE = 'https://api-ldnzetqooq-uc.a.run.app';
+
+    async function call(path, options = {}) {
+      const internalKey = internalKeyEl.value.trim();
+      if (!internalKey) {
+        throw new Error('Thiếu internal sync key');
+      }
+      const res = await fetch(API_BASE + path, {
+        method: options.method || 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-sync-key': internalKey,
+        },
+        body: options.body ? JSON.stringify(options.body) : undefined,
+      });
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = text; }
+      if (!res.ok) {
+        throw new Error(typeof data === 'string' ? data : (data.error || `HTTP ${res.status}`));
+      }
+      return data;
+    }
+
+    async function loadStatus() {
+      setStatus('Đang kiểm tra trạng thái...', '');
+      try {
+        const data = await call('/internal/sync-star/status');
+        setStatus('Lấy trạng thái thành công.', 'ok');
+        outputEl.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        setStatus(String(err.message || err), 'err');
+      }
+    }
+
+    async function runSync() {
+      setStatus('Đang chạy đồng bộ...', '');
+      try {
+        const data = await call('/internal/sync-star', {
+          method: 'POST',
+          body: {
+            limit: Number(limitEl.value || 500),
+            dryRun: dryRunEl.checked,
+            overwriteRole: overwriteRoleEl.checked,
+          },
+        });
+        setStatus('Đồng bộ xong.', 'ok');
+        outputEl.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        setStatus(String(err.message || err), 'err');
+      }
+    }
+
+    document.getElementById('btnStatus').addEventListener('click', loadStatus);
+    document.getElementById('btnSync').addEventListener('click', runSync);
+  </script>
+</body>
+</html>

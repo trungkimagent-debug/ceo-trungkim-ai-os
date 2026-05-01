@@ -1,0 +1,3008 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script>
+    (function(){
+      try {
+        var token = String(localStorage.getItem('thkd_pos_session_token') || '').trim();
+        var hash = String(window.location.hash || '').trim();
+        if (!token && hash !== '#' && hash !== '#+' && hash !== '#-') {
+          window.location.replace('/1?_rt=' + Date.now());
+        }
+      } catch (_) {
+        window.location.replace('/1?_rt=' + Date.now());
+      }
+    })();
+  </script>
+  <title>Lịch Làm Việc • THKD</title>
+  <script>
+window.__TK_APP_VERSION__ = "v20260418_231043";
+window.__TK_RT_ROLLOUT__ = {
+  enabled: true,
+  pageId: "lichlamviec",
+  checkMs: 15000,
+  forceReloadOnVersionChange: false,
+  enableModuleImport: true,
+  versionUrl: "./version.json"
+};
+</script>
+<script src="./realtime-runtime.js?v20260424_213649"></script>
+<script src="./realtime-bootstrap.js?v20260424_213649"></script>
+  <script>
+    (function () {
+      var lastTouch = 0;
+      document.addEventListener("gesturestart", function (e) { e.preventDefault(); }, { passive: false });
+      document.addEventListener("gesturechange", function (e) { e.preventDefault(); }, { passive: false });
+      document.addEventListener("gestureend", function (e) { e.preventDefault(); }, { passive: false });
+      document.addEventListener("touchend", function (e) {
+        var now = Date.now();
+        if (now - lastTouch <= 300) e.preventDefault();
+        lastTouch = now;
+      }, { passive: false });
+      document.addEventListener("wheel", function (e) {
+        if (e.ctrlKey) e.preventDefault();
+      }, { passive: false });
+    })();
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --bg: #000;
+      --accent: #fbbf24;
+      --danger: #ef4444;
+      --border: rgba(255, 255, 255, 0.08);
+      --panel: rgba(255, 255, 255, 0.05);
+      --panel-soft: rgba(255, 255, 255, 0.03);
+    }
+
+    html, body { height: 100%; width: 100%; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: #fff;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      padding: 10px;
+      -webkit-text-size-adjust: 100%;
+    }
+    html.thkd-page-lich body {
+      padding-bottom: 0 !important;
+      overflow: hidden;
+    }
+
+    * { scrollbar-width: none; }
+    *::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+    .shell {
+      min-height: calc(100dvh - 20px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    html.thkd-page-lich .shell {
+      height: calc(100dvh - 20px - var(--thkd-bottom-nav-offset, 0px));
+      min-height: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: none;
+    }
+
+    .brand-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background-image: url("https://lh3.googleusercontent.com/pw/AP1GczPGjiNlJAH5B9nOhOy9LXfHFh5c_Sx0OI_wmDx9OSt5CbeDeC3jmDeHJYdAhCxd1LfrhNA-Svpw_cg9kW_sqJdYdBlfqJ84OaYe_eVI1o-xhWBDSOzEGgxtckiVkPcRhFZkw2rgO4k1ZQxTduUhWdtSLA=w1840-h1840-s-no-gm?authuser=0");
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      flex: 0 0 auto;
+    }
+    .brand-name {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.92);
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brand-slogan {
+      margin-top: 2px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .head-right { display: flex; align-items: center; gap: 8px; }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .15s ease;
+      font-size: 14px;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+    .icon-btn.warn { border-color: rgba(251,191,36,0.45); color: var(--accent); }
+    .icon-btn.danger { border-color: rgba(239,68,68,0.4); color: #fecaca; }
+    .icon-btn.staff-link {
+      width: auto;
+      min-width: 40px;
+      padding: 0 10px;
+      gap: 6px;
+      border-color: rgba(251,191,36,0.55);
+      color: var(--accent);
+      max-width: min(52vw, 240px);
+    }
+    .staff-link-text {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      text-transform: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .staff-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 40px;
+      padding: 0 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      max-width: min(48vw, 260px);
+      min-width: 150px;
+    }
+    .staff-select {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      outline: none;
+      width: 100%;
+      cursor: pointer;
+      text-transform: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .staff-select option { background: #111; color: #fff; }
+    .head-right .staff-box {
+      max-width: min(52vw, 280px);
+      min-width: 160px;
+    }
+    .staff-pill {
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: #fbbf24;
+      font-size: 12px;
+      font-weight: 900;
+      max-width: min(48vw, 260px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .seg {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      width: 100%;
+    }
+    .seg-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      width: 100%;
+    }
+    .toolbar-meta {
+      text-align: right;
+      font-size: 11px;
+      color: rgba(255,255,255,.82);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .seg-btn {
+      height: 34px;
+      min-width: 0;
+      flex: 1;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.75);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .seg-btn.active {
+      background: linear-gradient(135deg,#fbbf24,#f59e0b);
+      color: #111;
+      border-color: rgba(251,191,36,0.7);
+    }
+
+    .date-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel-soft);
+      min-width: 0;
+    }
+    .date-label {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 10px;
+      min-height: 0;
+      flex: 1;
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel);
+      backdrop-filter: none;
+      overflow: hidden;
+    }
+    .card-head {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.9);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .week-inline-nav {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .week-inline-btn {
+      height: 32px;
+      min-width: 86px;
+      border-radius: 999px;
+      border: 1px solid rgba(251,191,36,0.55);
+      background: rgba(251,191,36,0.14);
+      color: #fbbf24;
+      font-size: 10px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      gap: 6px;
+      padding: 0 10px;
+    }
+    .date-inline-btn {
+      border: 1px solid rgba(251,191,36,0.65);
+      background: linear-gradient(135deg,#fbbf24,#f59e0b);
+      color: #111;
+      border-radius: 999px;
+      height: 28px;
+      padding: 0 10px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      margin-left: auto;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.28);
+    }
+    .calendar-modal-card {
+      width: min(340px, 94vw);
+      gap: 8px;
+    }
+    .calendar-modal-input {
+      width: 100%;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      padding: 0 10px;
+      outline: none;
+      font-weight: 700;
+      color-scheme: dark;
+    }
+    .card-body { padding: 12px; }
+
+    .shift-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .shift-btn {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.75);
+      cursor: pointer;
+      padding: 10px 8px;
+      text-align: center;
+      display: grid;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .shift-btn i { font-size: 14px; }
+    .shift-btn small { font-size: 10px; color: rgba(255,255,255,0.45); }
+    .shift-btn.on {
+      border-color: rgba(251,191,36,0.65);
+      color: var(--accent);
+      background: rgba(251,191,36,0.12);
+    }
+    .shift-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    .time-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .time-box label {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .time-box input {
+      width: 100%;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      padding: 0 10px;
+      font-weight: 700;
+      outline: none;
+    }
+    .time-preview {
+      margin-top: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.55);
+      text-align: right;
+      letter-spacing: 0.04em;
+    }
+    .time-select-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .time-select-box label {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.52);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .time-select-box select {
+      width: 100%;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      padding: 0 10px;
+      font-weight: 700;
+      outline: none;
+    }
+    .time-select-box select option {
+      background: #111;
+      color: #fff;
+    }
+    .time-fixed-note {
+      font-size: 10px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.62);
+      letter-spacing: .03em;
+      text-align: right;
+    }
+    .full-day-btn {
+      height: 38px;
+      align-self: end;
+      border-radius: 10px;
+      border: 1px solid rgba(251,191,36,0.55);
+      background: rgba(251,191,36,0.14);
+      color: #fbbf24;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 0 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+    .action-stack { display: grid; gap: 8px; }
+    .week-list { display: grid; gap: 8px; }
+    .off-cal-wrap { display: grid; gap: 8px; }
+    .off-cal-head {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: center;
+      gap: 8px;
+    }
+    .off-next-month-btn {
+      min-width: 0;
+      width: 100%;
+      border-radius: 10px;
+    }
+    .off-month-label-btn {
+      min-width: 0;
+      width: 100%;
+      border-radius: 10px;
+    }
+    .off-cal-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: #fbbf24;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .off-cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .off-cal-weekdays span {
+      text-align: center;
+      font-size: 10px;
+      color: rgba(255,255,255,.6);
+      font-weight: 800;
+    }
+    .off-cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .off-cal-empty {
+      height: 46px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(255,255,255,0.08);
+    }
+    .off-day-btn {
+      height: 46px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      display: grid;
+      align-items: center;
+      justify-items: center;
+      gap: 2px;
+      padding: 4px 2px;
+    }
+    .off-day-btn:disabled {
+      opacity: 1;
+      cursor: not-allowed;
+      filter: none;
+    }
+    .off-day-btn small {
+      font-size: 9px;
+      color: rgba(255,255,255,.72);
+      font-weight: 800;
+    }
+    .off-day-btn.selected {
+      box-shadow: 0 0 0 2px rgba(251,191,36,.5) inset;
+      border-color: rgba(251,191,36,.8);
+    }
+    .off-day-btn.lv1 { background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.58); }
+    .off-day-btn.lv2 { background: rgba(234,179,8,0.2); border-color: rgba(234,179,8,0.58); }
+    .off-day-btn.lv3 { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.58); }
+    .week-row {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      padding: 10px 12px;
+      display: grid;
+      gap: 4px;
+      text-align: left;
+      cursor: pointer;
+    }
+    .week-row:disabled {
+      opacity: 1;
+      cursor: not-allowed;
+    }
+    .week-row.active {
+      border-color: rgba(251,191,36,0.65);
+      background: rgba(251,191,36,0.12);
+    }
+    .week-row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .week-row-note {
+      font-size: 11px;
+      color: rgba(255,255,255,.72);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .setup-placeholder {
+      border: 1px dashed rgba(255,255,255,0.22);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 12px;
+      color: rgba(255,255,255,.75);
+      text-align: center;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      background: rgba(0,0,0,0.62);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+    .modal-card {
+      width: min(560px, 94vw);
+      max-height: 90dvh;
+      overflow: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(8,12,20,0.96);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.6);
+      padding: 10px 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .modal-head {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      text-align: center;
+      min-height: 36px;
+      padding: 0 42px 0 4px;
+    }
+    .modal-head .icon-btn {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .modal-card .action-stack { gap: 10px; }
+    .modal-card .shift-grid { gap: 6px; }
+    .modal-card .shift-btn { padding: 9px 6px; }
+      .modal-card .time-row { margin-top: 0; gap: 6px; }
+    .modal-card .solid-btn, .modal-card .ghost-btn { height: 40px; }
+    .modal-card .time-box label { margin-bottom: 3px; }
+      .modal-card .time-box input { height: 38px; }
+      .modal-card .time-preview { margin-top: 3px; }
+      @media (max-width: 560px) {
+        .modal-card { width: 96vw; padding: 9px 10px; }
+        .modal-head { font-size: 11px; padding-right: 38px; }
+      }
+    .solid-btn {
+      width: 100%;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid rgba(251,191,36,0.6);
+      background: linear-gradient(135deg,#fbbf24,#f59e0b);
+      color: #111;
+      font-weight: 900;
+      font-size: 12px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .ghost-btn {
+      width: 100%;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid rgba(239,68,68,0.45);
+      background: rgba(239,68,68,0.13);
+      color: #fecaca;
+      font-weight: 900;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ghost-btn.off {
+      background: rgba(34,197,94,0.14);
+      border-color: rgba(34,197,94,0.45);
+      color: #bbf7d0;
+    }
+    .off-reason-box {
+      width: 100%;
+      min-height: 70px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      padding: 10px 12px;
+      outline: none;
+      font-weight: 700;
+      font-size: 13px;
+      resize: vertical;
+    }
+    .off-reason-box.invalid {
+      border-color: rgba(239,68,68,0.85);
+      box-shadow: 0 0 0 1px rgba(239,68,68,0.45) inset;
+      background: rgba(239,68,68,0.08);
+    }
+
+    .table-wrap {
+      position: relative;
+      overflow: auto;
+      max-height: calc(100dvh - 204px - var(--thkd-bottom-nav-offset, 0px));
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+      contain: paint;
+    }
+    .employee-list-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .employee-list-card .table-wrap {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: 100%;
+      max-height: none;
+    }
+    .table-wrap thead th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: #0c1018;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.08);
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      will-change: transform;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    th, td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 12px; }
+    th { color: rgba(255,255,255,0.5); text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; text-align: left; }
+    .off-list-table {
+      table-layout: fixed;
+    }
+    .off-list-table th:nth-child(1),
+    .off-list-table td:nth-child(1) {
+      width: 38%;
+      min-width: 136px;
+    }
+    .off-list-table th:nth-child(2),
+    .off-list-table td:nth-child(2) {
+      width: 92px;
+    }
+    .off-name-cell {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .off-row-past {
+      opacity: .45;
+    }
+    .off-day-cell {
+      white-space: nowrap;
+      transition: none;
+      max-width: 140px;
+      overflow: hidden;
+    }
+    .off-reason-cell {
+      max-width: 0;
+      position: relative;
+      transition: none;
+    }
+    .off-reason-btn {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: 0;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0;
+      transition: none;
+    }
+    .off-row-expanded .off-day-cell {
+      width: 0;
+      max-width: 0;
+      padding-left: 0;
+      padding-right: 0;
+      opacity: 0;
+      transform: translateX(-16px);
+    }
+    .off-row-expanded .off-reason-cell {
+      padding-left: 0;
+    }
+    .off-row-expanded .off-reason-btn {
+      transform: translateX(-12px);
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .tag.on { color: #86efac; border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.08); }
+    .tag.off { color: #fca5a5; border-color: rgba(239,68,68,0.35); background: rgba(239,68,68,0.1); }
+    .tag.early { color: #86efac; border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.08); }
+    .tag.ontime { color: #93c5fd; border-color: rgba(59,130,246,0.38); background: rgba(59,130,246,0.12); }
+    .tag.late { color: #fcd34d; border-color: rgba(245,158,11,0.38); background: rgba(245,158,11,0.12); }
+    .tag.verylate { color: #fca5a5; border-color: rgba(239,68,68,0.38); background: rgba(239,68,68,0.12); }
+    .tag.pending { color: #cbd5e1; border-color: rgba(148,163,184,0.38); background: rgba(148,163,184,0.12); }
+    .time-chip-wrap {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 6px;
+      overflow-x: auto;
+    }
+    .time-chip-wrap.stacked {
+      position: relative;
+      overflow: visible;
+      min-height: 26px;
+      width: 138px;
+      gap: 0;
+    }
+    .time-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(251,191,36,0.35);
+      background: rgba(251,191,36,0.10);
+      color: #fbbf24;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+      transition: none;
+      backface-visibility: hidden;
+      perspective: 460px;
+      overflow: hidden;
+    }
+    .time-chip-text {
+      display: block;
+      width: auto;
+      text-align: center;
+      transform-origin: center center;
+      backface-visibility: hidden;
+    }
+    .summary-time-cell {
+      width: 1%;
+      white-space: nowrap;
+    }
+    .summary-time-cell .time-chip-wrap {
+      width: auto;
+      min-width: 0;
+      justify-content: flex-start;
+      overflow: visible;
+    }
+    .summary-time-cell .time-chip {
+      width: auto;
+      justify-content: center;
+    }
+    .time-chip-wrap.stacked .time-chip {
+      position: absolute;
+      top: 0;
+      left: calc(var(--i) * 18px);
+      transform: rotate(calc(var(--i) * -3deg));
+      box-shadow: 0 6px 14px rgba(0,0,0,.24);
+    }
+    .time-chip-wrap.stacked:hover .time-chip {
+      left: calc(var(--i) * 104px);
+      transform: rotateY(8deg) translateY(-1px);
+    }
+    .time-chip-wrap.stacked .time-chip:active {
+      transform: rotateY(12deg) translateY(-2px);
+    }
+    .shift-icon-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+      width: auto;
+      white-space: nowrap;
+    }
+    .shift-icon-chip {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(251,191,36,0.35);
+      background: rgba(251,191,36,0.10);
+      color: #fbbf24;
+      font-size: 11px;
+      flex: 0 0 auto;
+    }
+    .shift-icon-chip-btn {
+      cursor: pointer;
+      transition: none;
+      padding: 0;
+      appearance: none;
+    }
+    .shift-icon-chip-btn.active {
+      border-color: rgba(251,191,36,0.85);
+      box-shadow: 0 0 0 1px rgba(251,191,36,0.45) inset;
+      background: rgba(251,191,36,0.2);
+    }
+    .shift-icon-chip.status-early {
+      border-color: rgba(34,197,94,0.5);
+      background: rgba(34,197,94,0.14);
+      color: #86efac;
+    }
+    .shift-icon-chip.status-ontime {
+      border-color: rgba(59,130,246,0.5);
+      background: rgba(59,130,246,0.14);
+      color: #93c5fd;
+    }
+    .shift-icon-chip.status-late {
+      border-color: rgba(245,158,11,0.55);
+      background: rgba(245,158,11,0.16);
+      color: #fcd34d;
+    }
+    .shift-icon-chip.status-verylate {
+      border-color: rgba(239,68,68,0.5);
+      background: rgba(239,68,68,0.16);
+      color: #fca5a5;
+    }
+    .shift-icon-chip.status-off {
+      border-color: rgba(239,68,68,0.5);
+      background: rgba(239,68,68,0.16);
+      color: #fca5a5;
+    }
+    .shift-icon-chip.status-pending {
+      border-color: rgba(148,163,184,0.5);
+      background: rgba(148,163,184,0.16);
+      color: #cbd5e1;
+    }
+    .shift-icon-chip.shift-icon-chip-btn.active.status-early {
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.45) inset;
+      background: rgba(34,197,94,0.24);
+    }
+    .shift-icon-chip.shift-icon-chip-btn.active.status-ontime {
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.45) inset;
+      background: rgba(59,130,246,0.24);
+    }
+    .shift-icon-chip.shift-icon-chip-btn.active.status-late {
+      box-shadow: 0 0 0 1px rgba(245,158,11,0.45) inset;
+      background: rgba(245,158,11,0.24);
+    }
+    .shift-icon-chip.shift-icon-chip-btn.active.status-verylate,
+    .shift-icon-chip.shift-icon-chip-btn.active.status-off {
+      box-shadow: 0 0 0 1px rgba(239,68,68,0.45) inset;
+      background: rgba(239,68,68,0.24);
+    }
+    .shift-icon-chip.shift-icon-chip-btn.active.status-pending {
+      box-shadow: 0 0 0 1px rgba(148,163,184,0.45) inset;
+      background: rgba(148,163,184,0.24);
+    }
+    .summary-shift-cell {
+      width: 1%;
+      white-space: nowrap;
+    }
+    .staff-name-btn {
+      background: transparent;
+      border: 0;
+      color: #fbbf24;
+      font: inherit;
+      font-weight: 800;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      width: auto;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+    .staff-name-btn:disabled {
+      cursor: default;
+      opacity: 1;
+    }
+    .summary-staff-cell {
+      width: 1%;
+      white-space: nowrap;
+    }
+    .summary-filter-list {
+      display: grid;
+      gap: 8px;
+      max-height: min(52dvh, 360px);
+      overflow: auto;
+      padding-right: 2px;
+    }
+    .summary-filter-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .summary-filter-item input {
+      accent-color: #fbbf24;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    .summary-filter-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .summary-th-toggle {
+      cursor: pointer;
+      user-select: none;
+    }
+    .summary-fullscreen-card {
+      position: fixed;
+      inset: 8px;
+      z-index: 1100;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .summary-fullscreen-card .table-wrap {
+      max-height: none;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+    }
+    .summary-fullscreen-card thead th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: #0c1018;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .toast {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 999;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg,#fbbf24,#f59e0b);
+      color: #111;
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid rgba(251,191,36,0.6);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .calendar-fab {
+      position: fixed;
+      right: 16px;
+      bottom: calc(var(--thkd-bottom-nav-offset, 0px) + 8px);
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      border: 1px solid rgba(251,191,36,0.65);
+      background: linear-gradient(135deg,#fbbf24,#f59e0b);
+      color: #111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+      z-index: 990;
+      overflow: hidden;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .calendar-fab:active { transform: scale(.96); }
+    .calendar-fab-hit {
+      position: fixed;
+      right: 16px;
+      bottom: calc(var(--thkd-bottom-nav-offset, 0px) + 8px);
+      width: 46px;
+      height: 46px;
+      opacity: 0;
+      border: 0;
+      cursor: pointer;
+      z-index: 991;
+    }
+    .off-open-cal-fab {
+      position: fixed;
+      right: 16px;
+      bottom: calc(var(--thkd-bottom-nav-offset, 0px) + 8px);
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      border: 1px solid rgba(251,191,36,0.65);
+      background: linear-gradient(135deg,#fbbf24,#f59e0b);
+      color: #111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+      z-index: 990;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .off-open-cal-fab:active { transform: scale(.96); }
+
+    .login-screen {
+      min-height: calc(100dvh - 20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+    .login-card {
+      width: min(420px, 94vw);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.13);
+      background: rgba(8,12,20,0.95);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+    .login-top {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.04);
+    }
+    .login-title { font-size: 14px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+    .login-body { padding: 14px; display: grid; gap: 8px; }
+    .login-field {
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      padding: 0 12px;
+      outline: none;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .login-hint { font-size: 11px; color: rgba(255,255,255,0.55); }
+    .err {
+      font-size: 11px;
+      color: #fecaca;
+      border: 1px solid rgba(239,68,68,0.45);
+      background: rgba(239,68,68,0.1);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    @media (max-width: 900px) {
+      .toolbar { grid-template-columns: 1fr; gap: 8px; }
+      .content { grid-template-columns: 1fr; }
+      .table-wrap { max-height: calc(100dvh - 284px - var(--thkd-bottom-nav-offset, 0px)); }
+      .seg-row { justify-content: space-between; }
+      .seg { flex: 1; min-width: 0; }
+      .seg-btn { flex: 1; min-width: 0; }
+      .staff-box { max-width: 44vw; min-width: 140px; }
+      .date-nav { justify-content: space-between; }
+      .toolbar-meta { text-align: left; font-size: 10px; }
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 8px; }
+      .shell { min-height: calc(100dvh - 16px); gap: 8px; }
+      html.thkd-page-lich .shell {
+        height: calc(100dvh - 16px - var(--thkd-bottom-nav-offset, 0px));
+      }
+      .topbar { padding: 8px 10px; border-radius: 12px; }
+      .brand-logo { width: 36px; height: 36px; border-radius: 10px; }
+      .brand-name { font-size: 11px; letter-spacing: .05em; }
+      .icon-btn { width: 36px; height: 36px; border-radius: 10px; font-size: 13px; }
+      .icon-btn.staff-link { min-width: 36px; max-width: 46vw; padding: 0 8px; }
+      .staff-link-text { font-size: 10px; }
+      .toolbar { gap: 6px; }
+      .seg-row { flex-wrap: nowrap; }
+      .seg { width: 100%; padding: 5px; }
+      .seg-btn { height: 32px; font-size: 11px; gap: 5px; padding: 0 8px; }
+      .staff-box { width: 100%; max-width: 100%; min-width: 0; height: 36px; }
+      .head-right .staff-box { width: auto; max-width: 58vw; min-width: 120px; }
+      .staff-select { font-size: 11px; }
+      .staff-pill { height: 36px; font-size: 11px; max-width: 52vw; padding: 0 10px; }
+      .date-nav { padding: 4px; gap: 6px; }
+      .table-wrap { max-height: calc(100dvh - 304px - var(--thkd-bottom-nav-offset, 0px)); }
+      .date-label { font-size: 10px; letter-spacing: .01em; }
+      .toolbar-meta { font-size: 10px; letter-spacing: .02em; }
+      .card-head { padding: 10px; font-size: 11px; letter-spacing: .04em; }
+      .date-inline-btn { height: 26px; font-size: 10px; padding: 0 9px; }
+      .card-body { padding: 10px; }
+      .shift-grid { gap: 6px; }
+      .shift-btn { padding: 8px 6px; font-size: 10px; }
+      .shift-btn i { font-size: 12px; }
+      .shift-btn small { font-size: 9px; }
+      .time-row { gap: 6px; margin-top: 8px; }
+      .time-box input { height: 36px; }
+      .solid-btn, .ghost-btn { height: 38px; font-size: 11px; letter-spacing: .03em; }
+      th, td { padding: 8px 7px; font-size: 11px; }
+      th { font-size: 9px; }
+      .tag { font-size: 9px; padding: 2px 7px; }
+      .toast { top: 10px; right: 10px; font-size: 11px; padding: 8px 10px; }
+      .calendar-fab { right: 10px; bottom: calc(var(--thkd-bottom-nav-offset, 0px) + 6px); width: 42px; height: 42px; }
+      .calendar-fab-hit { right: 10px; bottom: calc(var(--thkd-bottom-nav-offset, 0px) + 6px); width: 42px; height: 42px; }
+      .off-open-cal-fab { right: 10px; bottom: calc(var(--thkd-bottom-nav-offset, 0px) + 6px); width: 42px; height: 42px; }
+    }
+
+    @media (max-width: 400px) {
+      .date-label { font-size: 9px; }
+      .toolbar-meta { font-size: 9px; }
+      .seg-btn { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useRef } = React;
+
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyD859GY8qg0O7bQMmnPuRt1eRjV9n4GHZg",
+      authDomain: "trungkimstar.firebaseapp.com",
+      projectId: "trungkimstar",
+      storageBucket: "trungkimstar.firebasestorage.app",
+      messagingSenderId: "627215857693",
+      appId: "1:627215857693:web:898245f32eba2ea554eef4"
+    };
+
+    const LS_KEY_SESSION = "thkd_rank_session_v1";
+    const LS_KEY_SUMMARY_VISIBLE = "thkd_summary_visible_v1";
+    const LS_KEY_SUMMARY_ROLES = "thkd_summary_roles_v1";
+    const PRESIDENT_EMAIL = "trunghaukimdunggroup@gmail.com";
+
+    let db = null;
+    try {
+      if (!window.firebase?.apps?.length) window.firebase.initializeApp(FIREBASE_CONFIG);
+      db = window.firebase.firestore();
+    } catch (err) {
+      console.error("Firebase init error:", err);
+    }
+
+    const SHIFTS = [
+      { id: "sang", label: "Sáng", icon: "fa-solid fa-sun" },
+      { id: "trua", label: "Trưa", icon: "fa-solid fa-mug-hot" },
+      { id: "chieu", label: "Chiều", icon: "fa-solid fa-cloud-sun" }
+    ];
+    const SHIFT_RULES = {
+      sang: { min: "07:00", max: "17:00" },
+      trua: { min: "12:00", max: "22:00" },
+      chieu: { min: "14:00", max: "22:00" },
+      cangay: { min: "07:00", max: "22:00" }
+    };
+    const EXCLUSIVE_SHIFTS = new Set(["trua", "cangay"]);
+    const SCHEDULE_COLLECTION = "tk_work_schedules";
+    const UI_PREFS_COLLECTION = "tk_ui_prefs";
+    const SUMMARY_VISIBLE_DOC = "summary_visible_v1";
+    const TIME_OPTIONS = (() => {
+      const arr = ["--:--"];
+      for (let h = 0; h < 24; h += 1) {
+        for (const m of [0, 30]) {
+          arr.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+        }
+      }
+      return arr;
+    })();
+
+    const loadSession = () => {
+      try {
+        const raw = localStorage.getItem(LS_KEY_SESSION);
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    };
+    const loadSummaryVisible = () => {
+      try {
+        const raw = localStorage.getItem(LS_KEY_SUMMARY_VISIBLE);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch {
+        return {};
+      }
+    };
+    const loadSummaryRoles = () => {
+      try {
+        const raw = localStorage.getItem(LS_KEY_SUMMARY_ROLES);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch {
+        return {};
+      }
+    };
+
+    const randomSessionId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+    const getCurrentMonthLabel = () => {
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const yyyy = String(now.getFullYear());
+      return `${mm}/${yyyy}`;
+    };
+    const formatDateVN = (iso) => {
+      if (!iso || !iso.includes("-")) return iso || "";
+      const [y, m, d] = iso.split("-");
+      if (!y || !m || !d) return iso;
+      return `${d}/${m}/${y}`;
+    };
+    const getTodayIsoHCM = () => {
+      const parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Ho_Chi_Minh",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(new Date());
+      const y = parts.find((p) => p.type === "year")?.value || "1970";
+      const m = parts.find((p) => p.type === "month")?.value || "01";
+      const d = parts.find((p) => p.type === "day")?.value || "01";
+      return `${y}-${m}-${d}`;
+    };
+
+    function App() {
+      const [selectedDate, setSelectedDate] = useState(getTodayIsoHCM());
+      const [setupOpen, setSetupOpen] = useState(false);
+      const [activeShiftId, setActiveShiftId] = useState("");
+      const [activeUser, setActiveUser] = useState("");
+      const [scheduleData, setScheduleData] = useState({});
+      const [viewMode, setViewMode] = useState("summary");
+      const [offCalendarOpen, setOffCalendarOpen] = useState(false);
+      const [offReasonInvalid, setOffReasonInvalid] = useState(false);
+      const [offReasonPreview, setOffReasonPreview] = useState(null);
+      const [summaryFilterOpen, setSummaryFilterOpen] = useState(false);
+      const [summaryVisibleIds, setSummaryVisibleIds] = useState(() => loadSummaryVisible());
+      const [summaryRoles, setSummaryRoles] = useState(() => loadSummaryRoles());
+      const [summaryShiftViewByEmp, setSummaryShiftViewByEmp] = useState({});
+      const [nowMinuteTick, setNowMinuteTick] = useState(null);
+      const [summaryFullScreen, setSummaryFullScreen] = useState(false);
+      const [notification, setNotification] = useState(null);
+
+      const [session, setSession] = useState(() => loadSession());
+      const [employees, setEmployees] = useState([]);
+      const [punchInMap, setPunchInMap] = useState({});
+      const [punchInTimesMap, setPunchInTimesMap] = useState({});
+      const [staffLoading, setStaffLoading] = useState(true);
+      const [staffError, setStaffError] = useState("");
+
+      const [loginId, setLoginId] = useState("");
+      const [loginPassword, setLoginPassword] = useState("");
+      const [loginError, setLoginError] = useState("");
+      const [loginBusy, setLoginBusy] = useState(false);
+      const autoCloneWeekRef = useRef(new Set());
+      const autoNoonShiftRef = useRef(new Set());
+
+      const canSwitchUser = !!session?.isPresident || !!session?.isManager || summaryRoles[session?.staffId] === "manager";
+      const canEditSummaryFilter = !!session?.isPresident;
+
+      const employeeMap = useMemo(() => {
+        const m = new Map();
+        employees.forEach((e) => m.set(e.id, e));
+        return m;
+      }, [employees]);
+
+      const getEmployeeLabel = (staffId) => {
+        const e = employeeMap.get(staffId);
+        return e ? e.name : staffId;
+      };
+
+      const toIsoLocal = (d) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      };
+      const getMinutesHCMFromMs = (ms) => {
+        if (!Number.isFinite(ms) || ms <= 0) return null;
+        const parts = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false
+        }).formatToParts(new Date(ms));
+        const hh = Number(parts.find((p) => p.type === "hour")?.value || 0);
+        const mm = Number(parts.find((p) => p.type === "minute")?.value || 0);
+        return hh * 60 + mm;
+      };
+      const getNowMinutesHCM = () => getMinutesHCMFromMs(Date.now());
+
+      const getWeekDays = (baseIso) => {
+        const base = new Date(`${baseIso}T00:00:00`);
+        const day = base.getDay(); // 0 = CN
+        const diffToMonday = day === 0 ? -6 : 1 - day;
+        const monday = new Date(base);
+        monday.setDate(base.getDate() + diffToMonday);
+        return Array.from({ length: 7 }, (_, i) => {
+          const d = new Date(monday);
+          d.setDate(monday.getDate() + i);
+          return {
+            iso: toIsoLocal(d),
+            label: d.toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit" })
+          };
+        });
+      };
+      const shiftIsoDays = (iso, deltaDays) => {
+        const d = new Date(`${iso}T00:00:00`);
+        d.setDate(d.getDate() + deltaDays);
+        return toIsoLocal(d);
+      };
+      const shiftMonthIso = (baseIso, deltaMonth) => {
+        const d = new Date(`${baseIso}T00:00:00`);
+        d.setDate(1);
+        d.setMonth(d.getMonth() + deltaMonth);
+        return toIsoLocal(d);
+      };
+      const getOffCalendarCells = (baseIso) => {
+        const d = new Date(`${baseIso}T00:00:00`);
+        const year = d.getFullYear();
+        const month = d.getMonth();
+        const first = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const startOffset = first.getDay() === 0 ? 6 : first.getDay() - 1; // T2 = 0
+        const cells = [];
+        for (let i = 0; i < startOffset; i += 1) cells.push(null);
+        for (let day = 1; day <= daysInMonth; day += 1) {
+          const current = new Date(year, month, day);
+          const iso = toIsoLocal(current);
+          const offCount = Object.values(scheduleData[iso] || {}).reduce((acc, row) => acc + (row?.isOff ? 1 : 0), 0);
+          cells.push({ iso, day, offCount });
+        }
+        return cells;
+      };
+
+      const weekDays = useMemo(() => getWeekDays(selectedDate), [selectedDate]);
+      const offCalendarCells = useMemo(() => getOffCalendarCells(selectedDate), [selectedDate, scheduleData]);
+      const offRows = useMemo(() => {
+        const monthPrefix = `${selectedDate.slice(0, 7)}-`;
+        const rows = [];
+        Object.entries(scheduleData || {}).forEach(([dayIso, byStaff]) => {
+          if (!dayIso.startsWith(monthPrefix)) return;
+          Object.entries(byStaff || {}).forEach(([staffId, row]) => {
+            if (!row?.isOff) return;
+            const name = employees.find((e) => e.id === staffId)?.name || staffId;
+            rows.push({
+              staffId,
+              name,
+              dayIso,
+              reason: String(row?.offReason || row?.reason || "-")
+            });
+          });
+        });
+        return rows.sort((a, b) => a.dayIso.localeCompare(b.dayIso) || a.name.localeCompare(b.name, "vi"));
+      }, [scheduleData, employees, selectedDate]);
+      const todayIso = getTodayIsoHCM();
+      const buildEmptyShiftTimes = () => ({
+        sang: { start: "--:--", end: "--:--" },
+        trua: { start: "--:--", end: "--:--" },
+        chieu: { start: "--:--", end: "--:--" },
+        cangay: { start: "--:--", end: "--:--" }
+      });
+      const ensureShiftTimes = (raw = {}) => {
+        const base = buildEmptyShiftTimes();
+        const src = raw && typeof raw === "object" ? raw : {};
+        for (const sid of Object.keys(base)) {
+          const node = src[sid] || {};
+          base[sid] = {
+            start: node.start || "--:--",
+            end: node.end || "--:--"
+          };
+        }
+        return base;
+      };
+      const toMinutes = (hhmm = "") => {
+        const m = /^(\d{2}):(\d{2})$/.exec(String(hhmm || ""));
+        if (!m) return null;
+        const hh = Number(m[1]);
+        const mm = Number(m[2]);
+        if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
+        return hh * 60 + mm;
+      };
+      const normalizePunchInTimesList = (raw) => {
+        if (Array.isArray(raw)) {
+          return raw
+            .map((v) => Number(v))
+            .filter((v) => Number.isFinite(v) && v > 0)
+            .sort((a, b) => a - b);
+        }
+        const single = Number(raw);
+        if (Number.isFinite(single) && single > 0) return [single];
+        return [];
+      };
+      const getActualMinutesForShift = (data, sid, rawPunchIns, nowMinutesOverride = null) => {
+        const times = ensureShiftTimes(data?.shiftTimes || {});
+        const rule = SHIFT_RULES[sid] || {};
+        const startText = String(times[sid]?.start || rule?.min || "");
+        const endText = String(times[sid]?.end || rule?.max || "");
+        const startMin = toMinutes(startText);
+        const endMin = toMinutes(endText);
+        if (!Number.isFinite(startMin) || !Number.isFinite(endMin)) return null;
+
+        const punchMins = normalizePunchInTimesList(rawPunchIns)
+          .map((ms) => getMinutesHCMFromMs(ms))
+          .filter((m) => Number.isFinite(m))
+          .sort((a, b) => a - b);
+        if (!punchMins.length) return null;
+
+        // Siết cửa sổ theo đúng ca để tránh ca chiều ăn nhầm mốc vào của ca trước
+        const EARLY_TOLERANCE_MIN = 60;  // chỉ cho phép vào sớm tối đa 60'
+        const LATE_TOLERANCE_MIN = 150;  // cho phép vào muộn trong phạm vi ca
+
+        // Nếu có ca trước đó trong ngày, không lấy mốc trước khi ca trước gần kết thúc
+        const shifts = Array.isArray(data?.shifts) ? data.shifts : [];
+        const previousShiftEnds = shifts
+          .filter((otherSid) => otherSid !== sid)
+          .map((otherSid) => {
+            const otherRule = SHIFT_RULES[otherSid] || {};
+            const otherStart = toMinutes(String(times[otherSid]?.start || otherRule?.min || ""));
+            const otherEnd = toMinutes(String(times[otherSid]?.end || otherRule?.max || ""));
+            return { otherStart, otherEnd };
+          })
+          .filter((x) => Number.isFinite(x.otherStart) && Number.isFinite(x.otherEnd) && x.otherStart < startMin)
+          .map((x) => x.otherEnd);
+        const previousLatestEnd = previousShiftEnds.length ? Math.max(...previousShiftEnds) : null;
+
+        const baseWindowStart = Math.max(0, startMin - EARLY_TOLERANCE_MIN);
+        const windowStart = Number.isFinite(previousLatestEnd)
+          ? Math.max(baseWindowStart, previousLatestEnd - 10)
+          : baseWindowStart;
+        // Nếu có ca kế tiếp thì ca hiện tại không được ăn mốc giờ vào của ca sau.
+        const nextShiftStarts = shifts
+          .filter((otherSid) => otherSid !== sid)
+          .map((otherSid) => {
+            const otherRule = SHIFT_RULES[otherSid] || {};
+            const otherStart = toMinutes(String(times[otherSid]?.start || otherRule?.min || ""));
+            return otherStart;
+          })
+          .filter((otherStart) => Number.isFinite(otherStart) && otherStart > startMin);
+        const nextEarliestStart = nextShiftStarts.length ? Math.min(...nextShiftStarts) : null;
+
+        const defaultWindowEnd = Math.min(24 * 60 - 1, endMin + LATE_TOLERANCE_MIN);
+        const windowEnd = Number.isFinite(nextEarliestStart)
+          ? Math.min(defaultWindowEnd, nextEarliestStart - 5)
+          : defaultWindowEnd;
+        const inShiftWindow = punchMins.filter((m) => m >= windowStart && m <= windowEnd);
+        if (inShiftWindow.length) return inShiftWindow[0];
+
+        const nowMin = Number.isFinite(nowMinutesOverride) ? nowMinutesOverride : getNowMinutesHCM();
+        if (Number.isFinite(nowMin) && nowMin < startMin) return null;
+        return null;
+      };
+      const hasPunchInLaterShift = (data, sid, rawPunchIns) => {
+        const times = ensureShiftTimes(data?.shiftTimes || {});
+        const shifts = Array.isArray(data?.shifts) ? data.shifts : [];
+        if (!shifts.length || !shifts.includes(sid)) return false;
+
+        const currentRule = SHIFT_RULES[sid] || {};
+        const currentStart = toMinutes(String(times[sid]?.start || currentRule?.min || ""));
+        if (!Number.isFinite(currentStart)) return false;
+
+        const nextShiftStarts = shifts
+          .filter((otherSid) => otherSid !== sid)
+          .map((otherSid) => {
+            const otherRule = SHIFT_RULES[otherSid] || {};
+            return toMinutes(String(times[otherSid]?.start || otherRule?.min || ""));
+          })
+          .filter((v) => Number.isFinite(v) && v > currentStart)
+          .sort((a, b) => a - b);
+        if (!nextShiftStarts.length) return false;
+
+        const nextStart = nextShiftStarts[0];
+        const punchMins = normalizePunchInTimesList(rawPunchIns)
+          .map((ms) => getMinutesHCMFromMs(ms))
+          .filter((m) => Number.isFinite(m))
+          .sort((a, b) => a - b);
+        if (!punchMins.length) return false;
+
+        // Có mốc vào ca kể từ đầu ca sau => xem như đã qua ca hiện tại
+        return punchMins.some((m) => m >= (nextStart - 5));
+      };
+      const getNextShiftStartMin = (data, sid) => {
+        const times = ensureShiftTimes(data?.shiftTimes || {});
+        const shifts = Array.isArray(data?.shifts) ? data.shifts : [];
+        const currentRule = SHIFT_RULES[sid] || {};
+        const currentStart = toMinutes(String(times[sid]?.start || currentRule?.min || ""));
+        if (!Number.isFinite(currentStart)) return null;
+        const nextShiftStarts = shifts
+          .filter((otherSid) => otherSid !== sid)
+          .map((otherSid) => {
+            const otherRule = SHIFT_RULES[otherSid] || {};
+            return toMinutes(String(times[otherSid]?.start || otherRule?.min || ""));
+          })
+          .filter((v) => Number.isFinite(v) && v > currentStart)
+          .sort((a, b) => a - b);
+        return nextShiftStarts.length ? nextShiftStarts[0] : null;
+      };
+      const getShiftTimeText = (data, sid) => {
+        const t = ensureShiftTimes(data?.shiftTimes || {})[sid];
+        const rule = SHIFT_RULES[sid];
+        const start = t.start || rule?.min || "--:--";
+        const end = t.end || rule?.max || "--:--";
+        return `${start} - ${end}`;
+      };
+      const getRealtimeShiftId = (data, nowMinutes) => {
+        const shifts = Array.isArray(data?.shifts) ? data.shifts : [];
+        if (!shifts.length) return "";
+        const parsed = shifts
+          .map((sid) => {
+            const t = ensureShiftTimes(data?.shiftTimes || {})[sid];
+            const rule = SHIFT_RULES[sid] || {};
+            const start = toMinutes(t.start || rule.min || "");
+            const end = toMinutes(t.end || rule.max || "");
+            return { sid, start, end };
+          })
+          .filter((x) => Number.isFinite(x.start) && Number.isFinite(x.end))
+          .sort((a, b) => a.start - b.start);
+        if (!parsed.length) return shifts[0];
+        const now = Number.isFinite(nowMinutes) ? nowMinutes : getNowMinutesHCM();
+        const inside = parsed.find((x) => now >= x.start && now <= x.end);
+        if (inside) return inside.sid;
+        const upcoming = parsed.find((x) => x.start > now);
+        if (upcoming) return upcoming.sid;
+        return parsed[parsed.length - 1].sid;
+      };
+      const getShiftLabel = (sid) => {
+        if (sid === "cangay") return "Cả ngày";
+        return SHIFTS.find((s) => s.id === sid)?.label || sid;
+      };
+      const getShiftIcon = (sid) => {
+        if (sid === "cangay") return "fa-solid fa-calendar-day";
+        return SHIFTS.find((s) => s.id === sid)?.icon || "fa-solid fa-clock";
+      };
+      const getOrderedShiftIds = (rawShifts) => {
+        const shifts = Array.isArray(rawShifts) ? rawShifts : [];
+        if (!shifts.length) return [];
+        const rank = { sang: 0, trua: 1, chieu: 2, cangay: 3 };
+        return Array.from(new Set(shifts)).sort((a, b) => (rank[a] ?? 99) - (rank[b] ?? 99));
+      };
+      const getAllShiftTimeText = (data, withLabel = false) => {
+        const shifts = getOrderedShiftIds(data?.shifts);
+        if (!shifts.length) return "-";
+        return shifts.map((sid) => {
+          const label = getShiftLabel(sid);
+          const range = getShiftTimeText(data, sid);
+          return withLabel ? `${label} ${range}` : range;
+        }).join(" • ");
+      };
+      useEffect(() => {
+        const onStorage = (e) => {
+          if (e.key === LS_KEY_SESSION) setSession(loadSession());
+        };
+        window.addEventListener("storage", onStorage);
+        return () => window.removeEventListener("storage", onStorage);
+      }, []);
+      useEffect(() => {
+        const tick = () => setNowMinuteTick(getNowMinutesHCM());
+        tick();
+        const timer = setInterval(tick, 1000);
+        return () => clearInterval(timer);
+      }, []);
+
+      useEffect(() => {
+        if (!db) {
+          setStaffLoading(false);
+          setStaffError("Không kết nối được Firebase.");
+          return;
+        }
+
+        const unsub = db.collection("staffs").onSnapshot(
+          (snap) => {
+            const list = snap.docs
+              .map((d) => ({ id: d.id, ...d.data() }))
+              .filter((s) => s.active !== false)
+              .map((s) => {
+                const roleText = String(s.role || s.position || s.title || s.chucVu || s.chucvu || "").toLowerCase();
+                const isManager = s.isManager === true || roleText.includes("quản lý") || roleText.includes("quan ly") || roleText.includes("manager");
+                return {
+                  id: String(s.phone || s.id || "").trim(),
+                  name: String(s.name || s.phone || s.id || "").trim(),
+                  isManager
+                };
+              })
+              .filter((s) => s.id)
+              .sort((a, b) => a.name.localeCompare(b.name, "vi"));
+
+            setEmployees((prev) => {
+              if (prev.length === list.length && prev.every((p, i) => p.id === list[i]?.id && p.name === list[i]?.name && p.isManager === list[i]?.isManager)) {
+                return prev;
+              }
+              return list;
+            });
+            setStaffLoading(false);
+            setStaffError("");
+          },
+          (err) => {
+            console.error("Load staffs error:", err);
+            setStaffLoading(false);
+            setStaffError("Lỗi tải danh sách nhân viên từ Firebase.");
+          }
+        );
+
+        return () => unsub();
+      }, []);
+
+      useEffect(() => {
+        if (!db) return;
+        const unsub = db.collection(SCHEDULE_COLLECTION).onSnapshot(
+          (snap) => {
+            setScheduleData((prev) => {
+              let next = prev;
+
+              const applyUpsert = (day, staffId, row) => {
+                const prevDay = next[day] || {};
+                const prevRow = prevDay[staffId];
+                if (
+                  prevRow &&
+                  prevRow.isOff === row.isOff &&
+                  JSON.stringify(prevRow.shifts || []) === JSON.stringify(row.shifts || []) &&
+                  JSON.stringify(prevRow.shiftTimes || {}) === JSON.stringify(row.shiftTimes || {}) &&
+                  String(prevRow.offReason || "") === String(row.offReason || "")
+                ) {
+                  return;
+                }
+                if (next === prev) next = { ...prev };
+                next[day] = { ...prevDay, [staffId]: row };
+              };
+
+              const applyRemove = (day, staffId) => {
+                const prevDay = next[day];
+                if (!prevDay || !prevDay[staffId]) return;
+                if (next === prev) next = { ...prev };
+                const dayClone = { ...prevDay };
+                delete dayClone[staffId];
+                if (Object.keys(dayClone).length === 0) {
+                  delete next[day];
+                } else {
+                  next[day] = dayClone;
+                }
+              };
+
+              snap.docChanges().forEach((chg) => {
+                const data = chg.doc.data() || {};
+                const day = String(data.day || "").trim();
+                const staffId = String(data.staffId || "").trim();
+                if (!day || !staffId) return;
+
+                if (chg.type === "removed") {
+                  applyRemove(day, staffId);
+                  return;
+                }
+
+                applyUpsert(day, staffId, {
+                  isOff: !!data.isOff,
+                  shifts: Array.isArray(data.shifts) ? data.shifts : [],
+                  shiftTimes: ensureShiftTimes(data.shiftTimes || {}),
+                  offReason: String(data.offReason || "")
+                });
+              });
+
+              return next;
+            });
+          },
+          (err) => {
+            console.error("Load schedules error:", err);
+          }
+        );
+        return () => unsub();
+      }, []);
+      useEffect(() => {
+        if (!db) return;
+        const ref = db.collection(UI_PREFS_COLLECTION).doc(SUMMARY_VISIBLE_DOC);
+        const unsub = ref.onSnapshot(
+          (snap) => {
+            const ids = snap.data()?.ids;
+            const roles = snap.data()?.roles;
+            if (ids && typeof ids === "object") {
+              setSummaryVisibleIds((prev) => {
+                let changed = false;
+                const next = { ...prev };
+                Object.keys(ids).forEach((k) => {
+                  if (next[k] !== ids[k]) {
+                    next[k] = ids[k];
+                    changed = true;
+                  }
+                });
+                return changed ? next : prev;
+              });
+            }
+            if (roles && typeof roles === "object") {
+              setSummaryRoles((prev) => ({ ...prev, ...roles }));
+            }
+          },
+          (err) => {
+            console.error("Load summary visible prefs error:", err);
+          }
+        );
+        return () => unsub();
+      }, []);
+
+      useEffect(() => {
+        if (!db || !selectedDate) return;
+        const unsub = db.collection("staff_punches")
+          .where("day", "==", selectedDate)
+          .onSnapshot(
+            (snap) => {
+              const next = {};
+              const nextTimes = {};
+              snap.forEach((d) => {
+                const p = d.data() || {};
+                const sid = String(p.staffId || "").trim();
+                if (!sid) return;
+                const type = String(p.type || "").toLowerCase();
+                if (type !== "in") return;
+                const atMs = Number(p.atClient || 0) || (p.createdAt?.toMillis?.() || 0);
+                if (!Number.isFinite(atMs) || atMs <= 0) return;
+                if (!next[sid] || atMs < next[sid]) next[sid] = atMs;
+                if (!nextTimes[sid]) nextTimes[sid] = [];
+                nextTimes[sid].push(atMs);
+              });
+              Object.keys(nextTimes).forEach((sid) => {
+                nextTimes[sid] = nextTimes[sid]
+                  .map((v) => Number(v))
+                  .filter((v) => Number.isFinite(v) && v > 0)
+                  .sort((a, b) => a - b);
+              });
+              setPunchInMap((prev) => {
+                const prevKeys = Object.keys(prev);
+                const nextKeys = Object.keys(next);
+                if (prevKeys.length === nextKeys.length && prevKeys.every((k) => prev[k] === next[k])) {
+                  return prev;
+                }
+                return next;
+              });
+              setPunchInTimesMap((prev) => {
+                const prevKeys = Object.keys(prev);
+                const nextKeys = Object.keys(nextTimes);
+                if (prevKeys.length === nextKeys.length && prevKeys.every((k) => {
+                  const a = Array.isArray(prev[k]) ? prev[k] : [];
+                  const b = Array.isArray(nextTimes[k]) ? nextTimes[k] : [];
+                  if (a.length !== b.length) return false;
+                  for (let i = 0; i < a.length; i += 1) {
+                    if (a[i] !== b[i]) return false;
+                  }
+                  return true;
+                })) {
+                  return prev;
+                }
+                return nextTimes;
+              });
+            },
+            (err) => {
+              console.error("Load punches error:", err);
+              setPunchInMap({});
+              setPunchInTimesMap({});
+            }
+          );
+        return () => unsub();
+      }, [selectedDate]);
+
+      useEffect(() => {
+        if (!db || !selectedDate) return;
+        const dayRows = scheduleData[selectedDate] || {};
+        const todayIso = getTodayIsoHCM();
+        if (selectedDate !== todayIso) return;
+
+        Object.entries(dayRows).forEach(([staffId, row]) => {
+          const shifts = Array.isArray(row?.shifts) ? row.shifts : [];
+          if (row?.isOff) return;
+          if (!(shifts.includes("sang") && shifts.includes("chieu"))) return;
+
+          const lockKey = `${selectedDate}__${staffId}`;
+          if (autoNoonShiftRef.current.has(lockKey)) return;
+
+          const punchInsRaw = punchInTimesMap[staffId] || punchInMap[staffId];
+          const punchMins = normalizePunchInTimesList(punchInsRaw)
+            .map((ms) => getMinutesHCMFromMs(ms))
+            .filter((m) => Number.isFinite(m))
+            .sort((a, b) => a - b);
+          if (!punchMins.length) return;
+
+          const hasCheckInBefore11 = punchMins.some((m) => m < (11 * 60));
+          if (hasCheckInBefore11) return;
+
+          const hasCheckInFrom11To13 = punchMins.some((m) => m >= (11 * 60) && m <= (13 * 60));
+          if (!hasCheckInFrom11To13) return;
+
+          autoNoonShiftRef.current.add(lockKey);
+
+          const nextTimes = ensureShiftTimes(row?.shiftTimes || {});
+          nextTimes.trua = { start: "12:00", end: "22:00" };
+
+          const payload = {
+            day: selectedDate,
+            staffId,
+            isOff: false,
+            shifts: ["trua"],
+            shiftTimes: nextTimes,
+            offReason: "",
+            updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
+          };
+
+          db.collection(SCHEDULE_COLLECTION).doc(lockKey).set(payload, { merge: true }).catch((err) => {
+            console.error("Auto noon shift adjust error:", err);
+            autoNoonShiftRef.current.delete(lockKey);
+          });
+        });
+      }, [db, selectedDate, scheduleData, punchInTimesMap, punchInMap]);
+
+      useEffect(() => {
+        if (session?.staffId && !canSwitchUser) {
+          setActiveUser(String(session.staffId));
+          return;
+        }
+        if (!activeUser && employees.length) setActiveUser(employees[0].id);
+      }, [session, canSwitchUser, activeUser, employees]);
+      useEffect(() => {
+        setSummaryVisibleIds((prev) => {
+          const next = {};
+          employees.forEach((e) => {
+            next[e.id] = prev[e.id] !== undefined ? prev[e.id] : true;
+          });
+          return next;
+        });
+      }, [employees]);
+      useEffect(() => {
+        setSummaryRoles((prev) => {
+          const next = { ...prev };
+          employees.forEach((e) => {
+            if (!next[e.id]) next[e.id] = e.isManager ? "manager" : "staff";
+          });
+          return next;
+        });
+      }, [employees]);
+      useEffect(() => {
+        try {
+          localStorage.setItem(LS_KEY_SUMMARY_VISIBLE, JSON.stringify(summaryVisibleIds || {}));
+        } catch {}
+      }, [summaryVisibleIds]);
+      useEffect(() => {
+        try {
+          localStorage.setItem(LS_KEY_SUMMARY_ROLES, JSON.stringify(summaryRoles || {}));
+        } catch {}
+      }, [summaryRoles]);
+      useEffect(() => {
+        if (!session?.staffId) return;
+        const currentRole = String(summaryRoles[session.staffId] || "").trim().toLowerCase();
+        if (!currentRole) return;
+        const nextIsManager = currentRole === "manager";
+        const prevRole = String(session.role || "").trim().toLowerCase();
+        if (session.isManager === nextIsManager && prevRole === currentRole) return;
+        persistSession({
+          ...session,
+          isManager: nextIsManager,
+          role: currentRole
+        });
+      }, [summaryRoles, session]);
+      useEffect(() => {
+        if (!db || !canEditSummaryFilter) return;
+        const ref = db.collection(UI_PREFS_COLLECTION).doc(SUMMARY_VISIBLE_DOC);
+        const timer = setTimeout(() => {
+          ref.set(
+            {
+              ids: summaryVisibleIds || {},
+              roles: summaryRoles || {},
+              updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
+            },
+            { merge: true }
+          ).catch((err) => console.error("Save summary visible prefs error:", err));
+        }, 550);
+        return () => clearTimeout(timer);
+      }, [summaryVisibleIds, summaryRoles, canEditSummaryFilter]);
+
+      useEffect(() => {
+        const raw = scheduleData[selectedDate]?.[activeUser] || {};
+        const shifts = Array.isArray(raw.shifts) ? raw.shifts : [];
+        if (!shifts.length) {
+          setActiveShiftId("");
+          return;
+        }
+        if (!activeShiftId || !shifts.includes(activeShiftId)) {
+          setActiveShiftId(shifts[0]);
+        }
+      }, [selectedDate, activeUser, scheduleData, activeShiftId]);
+      useEffect(() => {
+        if (selectedDate < todayIso) setSelectedDate(todayIso);
+      }, [selectedDate, todayIso]);
+      useEffect(() => {
+        if (!db || !activeUser || !selectedDate) return;
+        const week = getWeekDays(selectedDate);
+        if (!week.length) return;
+        const mondayIso = week[0].iso;
+        if (mondayIso <= todayIso) return;
+        const lockKey = `${activeUser}__${mondayIso}`;
+        if (autoCloneWeekRef.current.has(lockKey)) return;
+        autoCloneWeekRef.current.add(lockKey);
+
+        (async () => {
+          for (const d of week) {
+            if (scheduleData[d.iso]?.[activeUser]) continue;
+            const prevIso = shiftIsoDays(d.iso, -7);
+            const prevData = scheduleData[prevIso]?.[activeUser];
+            if (!prevData) continue;
+            const payload = {
+              day: d.iso,
+              staffId: activeUser,
+              isOff: !!prevData.isOff,
+              shifts: Array.isArray(prevData.shifts) ? prevData.shifts : [],
+              shiftTimes: ensureShiftTimes(prevData.shiftTimes || {}),
+              offReason: String(prevData.offReason || ""),
+              updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
+            };
+            try {
+              await db.collection(SCHEDULE_COLLECTION).doc(`${d.iso}__${activeUser}`).set(payload, { merge: true });
+            } catch (e) {
+              console.error("Auto clone next-week schedule error:", e);
+            }
+          }
+        })();
+      }, [activeUser, selectedDate, scheduleData, todayIso]);
+      useEffect(() => {
+        if (!setupOpen) setOffReasonInvalid(false);
+      }, [setupOpen, selectedDate, activeUser]);
+      useEffect(() => {
+        setOffReasonPreview(null);
+      }, [selectedDate, offCalendarOpen, viewMode]);
+      useEffect(() => {
+        if (viewMode !== "summary" && summaryFullScreen) setSummaryFullScreen(false);
+      }, [viewMode, summaryFullScreen]);
+      useEffect(() => {
+        const html = document.documentElement;
+        if (!html) return;
+        if (summaryFullScreen) {
+          html.classList.add("thkd-hide-bottom-nav");
+        } else {
+          html.classList.remove("thkd-hide-bottom-nav");
+        }
+        return () => {
+          html.classList.remove("thkd-hide-bottom-nav");
+        };
+      }, [summaryFullScreen]);
+      useEffect(() => {
+        const onKey = (e) => {
+          if (e.key === "Escape") setSummaryFullScreen(false);
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+      }, []);
+
+      const showNotify = (msg) => {
+        setNotification(msg);
+        setTimeout(() => setNotification(null), 2500);
+      };
+      const persistSession = (next) => {
+        if (!next) {
+          localStorage.removeItem(LS_KEY_SESSION);
+          setSession(null);
+          return;
+        }
+        localStorage.setItem(LS_KEY_SESSION, JSON.stringify(next));
+        setSession(next);
+      };
+
+      const handleLogin = async () => {
+        setLoginError("");
+        const id = String(loginId || "").trim();
+        const pass = String(loginPassword || "").trim();
+
+        if (!id || !pass) {
+          setLoginError("Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
+          return;
+        }
+        if (!db) {
+          setLoginError("Firebase chưa sẵn sàng.");
+          return;
+        }
+
+        setLoginBusy(true);
+        try {
+          const snap = await db.collection("staffs").doc(id).get();
+          if (!snap.exists) {
+            setLoginError("Không tìm thấy nhân viên.");
+            return;
+          }
+          const data = snap.data() || {};
+          const realPass = String(data.loginPassword || "").trim();
+          if (!realPass || realPass !== pass) {
+            setLoginError("Mật khẩu không đúng.");
+            return;
+          }
+          if (data.active === false) {
+            setLoginError("Tài khoản đang bị khóa.");
+            return;
+          }
+
+          const keepSessionId = session?.staffId === id ? session.sessionId : null;
+          const roleRaw = String(data.role || data.position || data.title || data.chucVu || data.chucvu || "").trim();
+          const roleText = roleRaw.toLowerCase();
+          const summaryRole = String(summaryRoles[id] || "").trim().toLowerCase();
+          const isManager = data.isManager === true || roleText.includes("quản lý") || roleText.includes("quan ly") || roleText.includes("manager") || summaryRole === "manager";
+          const nextSession = {
+            staffId: id,
+            name: String(data.name || id),
+            phone: String(data.phone || id),
+            sessionId: keepSessionId || randomSessionId(),
+            isPresident: id.toLowerCase() === PRESIDENT_EMAIL,
+            isManager,
+            role: summaryRole === "manager" ? "manager" : (roleRaw || (isManager ? "manager" : "staff"))
+          };
+
+          persistSession(nextSession);
+          setActiveUser(id);
+          setLoginPassword("");
+          showNotify("Đăng nhập thành công");
+        } catch (err) {
+          console.error("Login error:", err);
+          setLoginError("Có lỗi khi đăng nhập.");
+        } finally {
+          setLoginBusy(false);
+        }
+      };
+
+      const handleLogout = () => {
+        persistSession(null);
+        setLoginId("");
+        setLoginPassword("");
+      };
+
+      const handleUpdateSchedule = (update) => {
+        if (!activeUser) return;
+        setScheduleData((prev) => {
+          const dayData = prev[selectedDate] || {};
+          return {
+            ...prev,
+            [selectedDate]: {
+              ...dayData,
+              [activeUser]: { ...dayData[activeUser], ...update }
+            }
+          };
+        });
+      };
+
+      const currentDayScheduleRaw = scheduleData[selectedDate]?.[activeUser] || {};
+      const getDefaultEndForShift = (sid) => sid === "sang" ? "12:00" : (SHIFT_RULES[sid]?.max || "--:--");
+      const currentDayShiftTimes = ensureShiftTimes(currentDayScheduleRaw.shiftTimes || {});
+      (Array.isArray(currentDayScheduleRaw.shifts) ? currentDayScheduleRaw.shifts : []).forEach((sid) => {
+        const rule = SHIFT_RULES[sid];
+        if (!rule) return;
+        const sm = toMinutes(currentDayShiftTimes[sid].start);
+        const em = toMinutes(currentDayShiftTimes[sid].end);
+        const min = toMinutes(rule.min);
+        const max = toMinutes(rule.max);
+        const defaultEnd = getDefaultEndForShift(sid);
+        if (sm === null || sm < min || sm >= max) currentDayShiftTimes[sid].start = rule.min;
+        const safeStartMin = toMinutes(currentDayShiftTimes[sid].start);
+        if (em === null) {
+          currentDayShiftTimes[sid].end = defaultEnd;
+        } else if (safeStartMin === null || em <= safeStartMin || em > max) {
+          currentDayShiftTimes[sid].end = rule.max;
+        }
+      });
+      const currentDaySchedule = {
+        isOff: !!currentDayScheduleRaw.isOff,
+        shifts: Array.isArray(currentDayScheduleRaw.shifts) ? currentDayScheduleRaw.shifts : [],
+        shiftTimes: currentDayShiftTimes,
+        offReason: String(currentDayScheduleRaw.offReason || "")
+      };
+      const toggleShift = (shiftId) => {
+        const picked = Array.isArray(currentDaySchedule.shifts) ? currentDaySchedule.shifts : [];
+        const hasExclusive = picked.some((sid) => EXCLUSIVE_SHIFTS.has(sid));
+        const applyRuleTimes = (nextShifts) => {
+          const times = ensureShiftTimes(currentDaySchedule.shiftTimes);
+          nextShifts.forEach((sid) => {
+            const rule = SHIFT_RULES[sid];
+            if (!rule) return;
+            const sm = toMinutes(times[sid].start);
+            const em = toMinutes(times[sid].end);
+            const min = toMinutes(rule.min);
+            const max = toMinutes(rule.max);
+            const defaultEnd = getDefaultEndForShift(sid);
+            if (sm === null || sm < min || sm >= max) times[sid].start = rule.min;
+            const safeStartMin = toMinutes(times[sid].start);
+            if (em === null) {
+              times[sid].end = defaultEnd;
+            } else if (safeStartMin === null || em <= safeStartMin || em > max) {
+              times[sid].end = rule.max;
+            }
+          });
+          return times;
+        };
+        if (EXCLUSIVE_SHIFTS.has(shiftId)) {
+          if (picked.includes(shiftId)) {
+            handleUpdateSchedule({ shifts: [], shiftTimes: ensureShiftTimes(currentDaySchedule.shiftTimes), isOff: false });
+            setActiveShiftId("");
+            return;
+          }
+          handleUpdateSchedule({ shifts: [shiftId], shiftTimes: applyRuleTimes([shiftId]), isOff: false });
+          setActiveShiftId(shiftId);
+          return;
+        }
+        if (hasExclusive && !picked.includes(shiftId)) {
+          handleUpdateSchedule({ shifts: [shiftId], shiftTimes: applyRuleTimes([shiftId]), isOff: false });
+          setActiveShiftId(shiftId);
+          return;
+        }
+        if (picked.includes(shiftId)) {
+          const next = picked.filter((s) => s !== shiftId);
+          handleUpdateSchedule({ shifts: next, shiftTimes: applyRuleTimes(next), isOff: false });
+          setActiveShiftId(next[0] || "");
+          return;
+        }
+        const next = Array.from(new Set([...picked, shiftId]));
+        handleUpdateSchedule({ shifts: next, shiftTimes: applyRuleTimes(next), isOff: false });
+        setActiveShiftId(shiftId);
+      };
+
+      const getStartOptionsForShift = (sid) => {
+        const rule = SHIFT_RULES[sid];
+        if (!rule) return [];
+        const min = toMinutes(rule.min);
+        const max = toMinutes(rule.max);
+        return TIME_OPTIONS.filter((t) => {
+          const tm = toMinutes(t);
+          return tm !== null && tm >= min && tm < max;
+        });
+      };
+      const getEndOptionsForShift = (sid, startValue) => {
+        const rule = SHIFT_RULES[sid];
+        if (!rule) return [];
+        const startMin = toMinutes(startValue);
+        const max = toMinutes(rule.max);
+        return TIME_OPTIONS.filter((t) => {
+          const tm = toMinutes(t);
+          return tm !== null && startMin !== null && tm > startMin && tm <= max;
+        });
+      };
+
+      const handleShiftTimeChange = (value) => {
+        if (!activeShiftId) return;
+        const nextTimes = ensureShiftTimes(currentDaySchedule.shiftTimes);
+        const rule = SHIFT_RULES[activeShiftId];
+        const min = toMinutes(rule.min);
+        const max = toMinutes(rule.max);
+        const chosen = toMinutes(value);
+        const currentEnd = toMinutes(nextTimes[activeShiftId].end);
+        const nextStart = chosen !== null && chosen >= min && chosen < max ? value : rule.min;
+        const nextStartMin = toMinutes(nextStart);
+        const safeEnd = currentEnd !== null && currentEnd > nextStartMin && currentEnd <= max
+          ? nextTimes[activeShiftId].end
+          : rule.max;
+        nextTimes[activeShiftId] = {
+          start: nextStart,
+          end: safeEnd
+        };
+        handleUpdateSchedule({ shiftTimes: nextTimes, isOff: false });
+      };
+      const handleShiftEndChange = (value) => {
+        if (!activeShiftId) return;
+        const nextTimes = ensureShiftTimes(currentDaySchedule.shiftTimes);
+        const rule = SHIFT_RULES[activeShiftId];
+        const startMin = toMinutes(nextTimes[activeShiftId].start);
+        const endMin = toMinutes(value);
+        const max = toMinutes(rule.max);
+        nextTimes[activeShiftId] = {
+          ...nextTimes[activeShiftId],
+          end: endMin !== null && startMin !== null && endMin > startMin && endMin <= max ? value : rule.max
+        };
+        handleUpdateSchedule({ shiftTimes: nextTimes, isOff: false });
+      };
+
+      const applyFullDayPreset = () => {
+        const nextTimes = ensureShiftTimes(currentDaySchedule.shiftTimes);
+        nextTimes.cangay = { start: "07:00", end: "22:00" };
+        handleUpdateSchedule({ isOff: false, shifts: ["cangay"], shiftTimes: nextTimes });
+        setActiveShiftId("cangay");
+      };
+
+      const validateDaySchedule = (data) => {
+        if (data.isOff) {
+          if (!String(data.offReason || "").trim()) return "Vui lòng nhập lý do nghỉ.";
+          return "";
+        }
+        const shifts = Array.isArray(data.shifts) ? data.shifts : [];
+        if (!shifts.length) return "Chưa chọn ca.";
+        if (shifts.includes("trua") && shifts.length > 1) return "Ca trưa chỉ được chọn 1 ca duy nhất.";
+        const times = ensureShiftTimes(data.shiftTimes || {});
+        for (const sid of shifts) {
+          const rule = SHIFT_RULES[sid];
+          const t = times[sid] || { start: "--:--", end: "--:--" };
+          const sm = toMinutes(t.start);
+          const em = toMinutes(t.end);
+          if (sm === null || em === null) return `Ca ${getShiftLabel(sid)} chưa chọn đủ giờ.`;
+          if (sm >= em) return `Ca ${getShiftLabel(sid)} có giờ vào không hợp lệ.`;
+          const min = toMinutes(rule.min);
+          const max = toMinutes(rule.max);
+          if (sm < min || sm >= max) {
+            return `Ca ${getShiftLabel(sid)} chỉ hợp lệ ${rule.min}-${rule.max}.`;
+          }
+          if (em > max) return `Ca ${getShiftLabel(sid)} chỉ hợp lệ ${rule.min}-${rule.max}.`;
+        }
+        return "";
+      };
+
+      const getAttendanceStatus = (data, rawPunchIns, nowMinutesOverride = null, preferredSid = "") => {
+        if (data.isOff) return { key: "off", text: "OFF", icon: "fa-solid fa-bed", deltaLabel: "" };
+        const shifts = Array.isArray(data.shifts) ? data.shifts : [];
+        if (!shifts.length) return { key: "pending", text: "", icon: "fa-solid fa-clipboard", deltaLabel: "" };
+        const nowMin = Number.isFinite(nowMinutesOverride) ? nowMinutesOverride : getNowMinutesHCM();
+        const realtimeSid = getRealtimeShiftId(data, nowMin);
+        const refSid = shifts.includes(preferredSid)
+          ? preferredSid
+          : (shifts.includes(realtimeSid) ? realtimeSid : shifts[0]);
+        const shiftStatus = getShiftAttendanceStatus(data, refSid, rawPunchIns, nowMin);
+        const iconByKey = {
+          off: "fa-solid fa-bed",
+          early: "fa-solid fa-arrow-up",
+          ontime: "fa-solid fa-check",
+          late: "fa-solid fa-hourglass-half",
+          verylate: "fa-solid fa-triangle-exclamation",
+          pending: shiftStatus.text ? "fa-regular fa-clock" : "fa-solid fa-clipboard"
+        };
+        return {
+          key: shiftStatus.key,
+          text: shiftStatus.text,
+          deltaLabel: shiftStatus.deltaLabel || "",
+          icon: iconByKey[shiftStatus.key] || "fa-regular fa-clock"
+        };
+      };
+      const getShiftAttendanceStatus = (data, sid, rawPunchIns, nowMinutesOverride = null) => {
+        if (data.isOff) return { key: "off", text: "OFF", deltaLabel: "" };
+        const shifts = Array.isArray(data.shifts) ? data.shifts : [];
+        if (!shifts.length || !shifts.includes(sid)) return { key: "pending", text: "", deltaLabel: "" };
+        const times = ensureShiftTimes(data.shiftTimes || {});
+        const rule = SHIFT_RULES[sid] || {};
+        const startText = String(times[sid]?.start || rule?.min || "");
+        const endText = String(times[sid]?.end || rule?.max || "");
+        const plannedMin = toMinutes(startText);
+        const endMin = toMinutes(endText);
+        if (!Number.isFinite(plannedMin)) return { key: "pending", text: "Chưa có giờ vào", deltaLabel: "" };
+        const nowMin = Number.isFinite(nowMinutesOverride) ? nowMinutesOverride : getNowMinutesHCM();
+        const actualMin = getActualMinutesForShift(data, sid, rawPunchIns, nowMin);
+        if (actualMin === null) {
+          const isToday = selectedDate === getTodayIsoHCM();
+          const isPastDate = selectedDate < getTodayIsoHCM();
+          const nextShiftStart = getNextShiftStartMin(data, sid);
+          const enteredNextShift = Number.isFinite(nextShiftStart) && Number.isFinite(nowMin) && nowMin >= (nextShiftStart - 5);
+          const passedShiftEnd = Number.isFinite(endMin) && Number.isFinite(nowMin) && nowMin > endMin;
+
+          // Ca quá khứ mà không check-in => OFF ngay.
+          if (isPastDate) {
+            return { key: "off", text: "OFF", deltaLabel: "" };
+          }
+          // Sang ca kế tiếp hoặc có check-in ở ca kế tiếp => ca hiện tại OFF.
+          if (isToday && enteredNextShift) {
+            return { key: "off", text: "OFF", deltaLabel: "" };
+          }
+          if (isToday && hasPunchInLaterShift(data, sid, rawPunchIns)) {
+            return { key: "off", text: "OFF", deltaLabel: "" };
+          }
+          // Quá giờ kết thúc ca mà chưa check-in => OFF (áp dụng cho cả sáng/chiều).
+          if (isToday && passedShiftEnd) {
+            return { key: "off", text: "OFF", deltaLabel: "" };
+          }
+          if (isToday && nowMin !== null && nowMin < plannedMin) {
+            return { key: "pending", text: "Chuẩn bị", deltaLabel: "" };
+          }
+          return { key: "verylate", text: "Chưa checkin", deltaLabel: "" };
+        }
+        const delta = actualMin - plannedMin;
+        const absDelta = Math.abs(delta);
+        if (delta < -5) return { key: "early", text: "Đi sớm", deltaLabel: `${absDelta}'` };
+        if (delta < 5) return { key: "ontime", text: "Đúng giờ", deltaLabel: "" };
+        if (delta === 5) return { key: "late", text: "Đi muộn", deltaLabel: `${absDelta}'` };
+        return { key: "verylate", text: "Đi trễ", deltaLabel: `${absDelta}'` };
+      };
+      const summaryEmployees = employees
+        .filter((e) => summaryVisibleIds[e.id] !== false)
+        .sort((a, b) => {
+          const aRow = scheduleData[selectedDate]?.[a.id] || {};
+          const bRow = scheduleData[selectedDate]?.[b.id] || {};
+          const aPunch = punchInTimesMap[a.id] || punchInMap[a.id];
+          const bPunch = punchInTimesMap[b.id] || punchInMap[b.id];
+          // Sắp xếp luôn theo trạng thái realtime mặc định, không phụ thuộc ca đang bấm xem
+          const aStatus = getAttendanceStatus(aRow, aPunch, nowMinuteTick, "");
+          const bStatus = getAttendanceStatus(bRow, bPunch, nowMinuteTick, "");
+          const aHasShift = Array.isArray(aRow.shifts) && aRow.shifts.length > 0;
+          const bHasShift = Array.isArray(bRow.shifts) && bRow.shifts.length > 0;
+          const aIsOff = aRow.isOff === true;
+          const bIsOff = bRow.isOff === true;
+
+          const rank = (statusKey, hasShift, isOff) => {
+            if (statusKey === "early") return 0;                      // Đi sớm
+            if (statusKey === "ontime") return 1;                     // Đúng giờ
+            if (statusKey === "late" || statusKey === "verylate") return 2; // Muộn/trễ
+            if (hasShift) return 3;                                   // Có ca nhưng chưa vào/chuẩn bị
+            if (isOff) return 4;                                      // OFF
+            return 5;                                                 // Chưa đăng ký
+          };
+          const ra = rank(aStatus?.key, aHasShift, aIsOff);
+          const rb = rank(bStatus?.key, bHasShift, bIsOff);
+          if (ra !== rb) return ra - rb;
+          return String(a.name || "").localeCompare(String(b.name || ""), "vi");
+        });
+
+      const saveScheduleNow = async () => {
+        if (!db) {
+          showNotify("Firebase chưa sẵn sàng.");
+          return;
+        }
+        if (!activeUser) {
+          showNotify("Chưa chọn nhân viên.");
+          return;
+        }
+        const data = {
+          isOff: !!currentDaySchedule.isOff,
+          shifts: Array.isArray(currentDaySchedule.shifts) ? currentDaySchedule.shifts : [],
+          shiftTimes: ensureShiftTimes(currentDaySchedule.shiftTimes || {}),
+          offReason: String(currentDaySchedule.offReason || "").trim()
+        };
+        const err = validateDaySchedule(data);
+        if (err) {
+          if (data.isOff && !data.offReason) setOffReasonInvalid(true);
+          showNotify(err);
+          return;
+        }
+        setOffReasonInvalid(false);
+        const payload = {
+          day: selectedDate,
+          staffId: activeUser,
+          isOff: data.isOff,
+          shifts: data.shifts,
+          shiftTimes: data.shiftTimes,
+          offReason: data.isOff ? data.offReason : "",
+          updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
+        };
+        try {
+          await db.collection(SCHEDULE_COLLECTION).doc(`${selectedDate}__${activeUser}`).set(payload, { merge: true });
+          showNotify(`Đã lưu lịch của ${getEmployeeLabel(activeUser)}!`);
+          setSetupOpen(false);
+        } catch (e) {
+          console.error("Save schedule error:", e);
+          showNotify("Lưu lịch thất bại.");
+        }
+      };
+
+      if (!session?.staffId) {
+        return (
+          <div className="login-screen">
+            <div className="login-card">
+              <div className="login-top">
+                <div className="login-title"><i className="fa-solid fa-user-lock" style={{ color: "#fbbf24", marginRight: 8 }} />Đăng nhập lịch làm việc</div>
+                <button className="icon-btn" onClick={() => location.href = "/?screen=star"} title="Về star"><i className="fa-solid fa-chart-column" /></button>
+              </div>
+              <div className="login-body">
+                <div className="login-hint">Nhập tài khoản mật khẩu!</div>
+                <input className="login-field" value={loginId} onChange={(e) => setLoginId(e.target.value)} placeholder="Nhập tài khoản..." />
+                <input
+                  className="login-field"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  type="password"
+                  placeholder="Mật khẩu"
+                  onKeyDown={(e) => { if (e.key === "Enter") handleLogin(); }}
+                />
+                {loginError ? <div className="err">{loginError}</div> : null}
+                {staffError ? <div className="err" style={{ borderColor: "rgba(245,158,11,.5)", color: "#fde68a", background: "rgba(245,158,11,.1)" }}>{staffError}</div> : null}
+                <button className="solid-btn" onClick={handleLogin} disabled={loginBusy || staffLoading}>
+                  <i className="fa-solid fa-right-to-bracket" /> {loginBusy ? "Đang đăng nhập..." : "Đăng nhập"}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="shell">
+          {!summaryFullScreen ? (
+            <header className="topbar">
+              <div className="brand-left">
+                <div className="brand-logo" />
+                  <div style={{ minWidth: 0, lineHeight: 1.1 }}>
+                    <div className="brand-name">TRUNG HẬU KIM DUNG</div>
+                    <div className="brand-slogan">Lịch làm việc • {getCurrentMonthLabel()}</div>
+                  </div>
+                </div>
+              <div className="head-right">
+                {canSwitchUser ? (
+                  <div className="staff-box" title="Chọn nhân viên để mở/sửa lịch">
+                    <i className="fa-solid fa-user" style={{ color: "#fbbf24", fontSize: 12 }} />
+                    <select className="staff-select" value={activeUser} onChange={(e) => setActiveUser(e.target.value)}>
+                      {employees.map((emp) => (
+                        <option key={emp.id} value={emp.id}>{emp.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="staff-pill" title="Tài khoản hiện tại">{getEmployeeLabel(activeUser || session?.staffId || "")}</div>
+                )}
+                <button className="icon-btn staff-link" onClick={() => location.href = "/?screen=star"} title="Về STAR">
+                  <i className="fa-solid fa-arrow-left" />
+                </button>
+              </div>
+            </header>
+          ) : null}
+
+          {!summaryFullScreen ? (
+            <div className="toolbar">
+              <div className="seg-row">
+                <div className="seg">
+                  <button className={`seg-btn ${viewMode === "personal" ? "active" : ""}`} onClick={() => setViewMode("personal")}><i className="fa-solid fa-user" /> Cá nhân</button>
+                  <button className={`seg-btn ${viewMode === "summary" ? "active" : ""}`} onClick={() => setViewMode("summary")}><i className="fa-solid fa-table-list" /> Tổng hợp</button>
+                  <button
+                    className={`seg-btn ${viewMode === "off" ? "active" : ""}`}
+                    onClick={() => {
+                      setViewMode((v) => v === "off" ? "personal" : "off");
+                      setOffCalendarOpen(false);
+                    }}
+                  ><i className="fa-solid fa-bed" /> OFF</button>
+                </div>
+              </div>
+              <div className="toolbar-meta" />
+            </div>
+          ) : null}
+
+          {viewMode === "personal" ? (
+            <div className="content" style={{ gridTemplateColumns: "1fr" }}>
+              <section className="card">
+                <div className="card-head">
+                  <i className="fa-solid fa-calendar-week" style={{ color: "#fbbf24" }} /> Lịch tuần • {getEmployeeLabel(activeUser)}
+                  <div className="week-inline-nav">
+                    <button className="week-inline-btn" type="button" title="Tuần này" onClick={() => setSelectedDate(getTodayIsoHCM())}><i className="fa-solid fa-rotate-left" /> Tuần này</button>
+                    <button className="week-inline-btn" type="button" title="Tuần sau" onClick={() => {
+                      const d = new Date(`${selectedDate}T00:00:00`);
+                      d.setDate(d.getDate() + 7);
+                      setSelectedDate(toIsoLocal(d));
+                    }}><i className="fa-solid fa-chevron-right" /> Tuần sau</button>
+                  </div>
+                </div>
+                <div className="card-body">
+                  <div className="week-list">
+                    {weekDays.map((d) => {
+                      const data = scheduleData[d.iso]?.[activeUser] || { shifts: [], isOff: false, start: "--:--", end: "--:--" };
+                      const orderedShifts = getOrderedShiftIds(data.shifts);
+                      const note = data.isOff
+                        ? "OFF"
+                        : orderedShifts.length
+                          ? `${orderedShifts.map((s) => getShiftLabel(s)).join(" • ")} • ${getAllShiftTimeText(data, false)}`
+                          : "Chưa đăng ký";
+                      return (
+                        <button
+                          key={d.iso}
+                          className={`week-row ${selectedDate === d.iso ? "active" : ""}`}
+                          disabled={d.iso < todayIso}
+                          onClick={() => { setSelectedDate(d.iso); setSetupOpen(true); }}
+                        >
+                          <div className="week-row-top">
+                            <span>{d.label}</span>
+                            {data.isOff ? (
+                              <span className="tag off"><i className="fa-solid fa-bed" /> OFF</span>
+                            ) : data.shifts.length ? (
+                              <span className="tag on"><i className="fa-solid fa-briefcase" /> Đi làm</span>
+                            ) : (
+                              <span style={{ color: "rgba(255,255,255,.45)", fontSize: 11 }}>-</span>
+                            )}
+                          </div>
+                          <div className="week-row-note">{note}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </section>
+            </div>
+          ) : viewMode === "off" ? (
+            <div className="content" style={{ gridTemplateColumns: "1fr" }} onClick={() => setOffCalendarOpen(false)}>
+              <section className="card" onClick={(e) => e.stopPropagation()}>
+                <div className="card-head">
+                  <i className="fa-solid fa-bed" style={{ color: "#fbbf24" }} /> CHỌN NGÀY OFF • {getEmployeeLabel(activeUser)} - {new Date(`${selectedDate.slice(0, 7)}-01T00:00:00`).toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" })}
+                </div>
+                <div className="card-body">
+                  <div className="off-cal-wrap">
+                    {offCalendarOpen ? (
+                      <>
+                        <div className="off-cal-head">
+                          <button className="week-inline-btn off-month-label-btn" type="button" onClick={() => setSelectedDate(getTodayIsoHCM())}>
+                            Tháng này
+                          </button>
+                          <button className="week-inline-btn off-next-month-btn" type="button" onClick={() => setSelectedDate(shiftMonthIso(selectedDate, 1))}>
+                            Tháng sau <i className="fa-solid fa-chevron-right" />
+                          </button>
+                        </div>
+                        <div className="off-cal-weekdays">
+                          {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((w) => <span key={`wk-${w}`}>{w}</span>)}
+                        </div>
+                        <div className="off-cal-grid">
+                          {offCalendarCells.map((cell, idx) => {
+                            if (!cell) return <div key={`off-empty-${idx}`} className="off-cal-empty" />;
+                            const levelCls = cell.offCount >= 3 ? "lv3" : cell.offCount === 2 ? "lv2" : cell.offCount === 1 ? "lv1" : "";
+                            return (
+                              <button
+                                key={cell.iso}
+                                type="button"
+                                className={`off-day-btn ${levelCls} ${selectedDate === cell.iso ? "selected" : ""}`}
+                                disabled={cell.iso < todayIso}
+                                onClick={() => { setSelectedDate(cell.iso); setSetupOpen(true); }}
+                                title={`${formatDateVN(cell.iso)} • OFF: ${cell.offCount}`}
+                              >
+                                <span>{String(cell.day).padStart(2, "0")}</span>
+                                <small>{cell.offCount > 0 ? `OFF ${cell.offCount}` : "-"}</small>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="table-wrap" style={{ maxHeight: "34dvh" }}>
+                        <table className="off-list-table">
+                          <thead>
+                            <tr>
+                              <th>Nhân viên</th>
+                              <th>Ngày nghỉ</th>
+                              <th>Lý do</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {offRows.map((r) => (
+                              <tr
+                                key={`${r.dayIso}-${r.staffId}`}
+                                className={r.dayIso < todayIso ? "off-row-past" : ""}
+                              >
+                                <td className="off-name-cell" style={{ color: "#fbbf24", fontWeight: 800 }}>{r.name}</td>
+                                <td className="off-day-cell">{formatDateVN(r.dayIso)}</td>
+                                <td className="off-reason-cell">
+                                  <button
+                                    type="button"
+                                    className="off-reason-btn"
+                                    onClick={() => {
+                                      setOffReasonPreview({
+                                        name: r.name,
+                                        dayIso: r.dayIso,
+                                        reason: r.reason || "-"
+                                      });
+                                    }}
+                                    title={r.reason || "-"}
+                                  >
+                                    {r.reason || "-"}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                            {offRows.length === 0 ? (
+                              <tr>
+                                <td colSpan="3" style={{ textAlign: "center", color: "rgba(255,255,255,.6)" }}>Chưa có đăng ký OFF trong tháng</td>
+                              </tr>
+                            ) : null}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </section>
+            </div>
+          ) : (
+            <section className={`card employee-list-card ${summaryFullScreen ? "summary-fullscreen-card" : ""}`} style={{ flex: 1, minHeight: 0 }}>
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th className="summary-th-toggle" onClick={() => setSummaryFullScreen((v) => !v)}>Nhân viên</th>
+                      <th className="summary-th-toggle" onClick={() => setSummaryFullScreen((v) => !v)}>Ca làm</th>
+                      <th className="summary-th-toggle" onClick={() => setSummaryFullScreen((v) => !v)}>Giờ làm</th>
+                      <th className="summary-th-toggle" onClick={() => setSummaryFullScreen((v) => !v)}>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(() => {
+                      return summaryEmployees.map((emp) => {
+                        const data = scheduleData[selectedDate]?.[emp.id] || { shifts: [], isOff: false };
+                        const punchIns = punchInTimesMap[emp.id] || punchInMap[emp.id];
+                        const preferredSid = summaryShiftViewByEmp[emp.id];
+                        const status = getAttendanceStatus(data, punchIns, nowMinuteTick, preferredSid);
+                        return (
+                          <tr key={emp.id}>
+                            <td className="summary-staff-cell">
+                              <button
+                                type="button"
+                                className="staff-name-btn"
+                                disabled={!canEditSummaryFilter}
+                                onClick={() => {
+                                  if (!canEditSummaryFilter) return;
+                                  setSummaryFilterOpen(true);
+                                }}
+                              >
+                                {emp.name}
+                              </button>
+                            </td>
+                            <td className="summary-shift-cell">
+                              {data.isOff ? "-" : data.shifts.length > 0 ? (
+                                <div className="shift-icon-wrap">
+                                  {getOrderedShiftIds(data.shifts).map((sid) => {
+                                    const activeSid = summaryShiftViewByEmp[emp.id] || getRealtimeShiftId(data, nowMinuteTick);
+                                    const shiftStatus = getShiftAttendanceStatus(data, sid, punchIns, nowMinuteTick);
+                                    return (
+                                      <button
+                                        key={`${emp.id}-icon-${sid}`}
+                                        type="button"
+                                        className={`shift-icon-chip shift-icon-chip-btn status-${shiftStatus.key} ${activeSid === sid ? "active" : ""}`}
+                                        title={`${getShiftLabel(sid)} • ${shiftStatus.text}${shiftStatus.deltaLabel ? ` ${shiftStatus.deltaLabel}` : ""}`}
+                                        onClick={() => setSummaryShiftViewByEmp((prev) => ({ ...prev, [emp.id]: sid }))}
+                                      >
+                                        <i className={getShiftIcon(sid)} />
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              ) : (
+                                <span title="Chưa đăng ký" style={{ color: "rgba(255,255,255,.35)" }}>
+                                  <i className="fa-solid fa-clipboard" />
+                                </span>
+                              )}
+                            </td>
+                            <td className="summary-time-cell" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", color: "rgba(255,255,255,.75)" }}>
+                              {data.isOff ? "-" : data.shifts.length > 0 ? (
+                                <div className="time-chip-wrap">
+                                  {(() => {
+                                    const orderedShifts = getOrderedShiftIds(data.shifts);
+                                    const preferredSid = summaryShiftViewByEmp[emp.id];
+                                    const realtimeSid = getRealtimeShiftId(data, nowMinuteTick);
+                                    const sid = orderedShifts.includes(preferredSid) ? preferredSid : (realtimeSid || orderedShifts[0]);
+                                    return (
+                                      <span
+                                        className="time-chip"
+                                        title={`${getShiftLabel(sid)} • ${getShiftTimeText(data, sid)}`}
+                                      >
+                                        <span className="time-chip-text">{getShiftTimeText(data, sid)}</span>
+                                      </span>
+                                    );
+                                  })()}
+                                </div>
+                              ) : "-"}
+                            </td>
+                            <td>
+                              <span className={`tag ${status.key}`}>
+                                {status.icon ? <><i className={status.icon} /> </> : null}
+                                <span>{status.text}</span>
+                                {status.deltaLabel ? <span style={{ marginLeft: 4, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>{status.deltaLabel}</span> : null}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      });
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
+          {viewMode === "summary" ? (
+            <>
+              <button className="calendar-fab" type="button" title="Mở lịch để xem">
+                <i className="fa-solid fa-calendar-days" />
+              </button>
+              <input
+                className="calendar-fab-hit"
+                type="date"
+                value={selectedDate}
+                min={todayIso}
+                onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
+              />
+            </>
+          ) : null}
+          {viewMode === "off" ? (
+            <button
+              className="off-open-cal-fab"
+              type="button"
+              title={offCalendarOpen ? "Đóng lịch OFF" : "Mở lịch OFF"}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOffCalendarOpen((v) => !v);
+              }}
+            >
+              <i className={offCalendarOpen ? "fa-solid fa-xmark" : "fa-solid fa-calendar-days"} />
+            </button>
+          ) : null}
+
+          {notification ? <div className="toast">{notification}</div> : null}
+          {offReasonPreview ? (
+            <div className="modal-overlay" onClick={() => setOffReasonPreview(null)}>
+              <div className="modal-card calendar-modal-card" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-head" style={{ justifyContent: "space-between", paddingRight: 0 }}>
+                  <span><i className="fa-solid fa-note-sticky" style={{ color: "#fbbf24", marginRight: 8 }} />Lý do nghỉ • {offReasonPreview.name}</span>
+                  <button className="icon-btn" onClick={() => setOffReasonPreview(null)} title="Đóng"><i className="fa-solid fa-xmark" /></button>
+                </div>
+                <div className="setup-placeholder" style={{ textAlign: "left", whiteSpace: "pre-wrap", lineHeight: 1.5 }}>
+                  <div style={{ marginBottom: 8, color: "rgba(255,255,255,.6)", fontSize: 11, fontWeight: 800 }}>{formatDateVN(offReasonPreview.dayIso)}</div>
+                  <div style={{ color: "#fff" }}>{offReasonPreview.reason || "-"}</div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+          {summaryFilterOpen ? (
+            <div className="modal-overlay" onClick={() => setSummaryFilterOpen(false)}>
+              <div className="modal-card calendar-modal-card" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-head" style={{ justifyContent: "space-between", paddingRight: 0 }}>
+                  <span><i className="fa-solid fa-users-viewfinder" style={{ color: "#fbbf24", marginRight: 8 }} />Tùy chọn hiển thị nhân viên</span>
+                  <button className="icon-btn" onClick={() => setSummaryFilterOpen(false)} title="Đóng"><i className="fa-solid fa-xmark" /></button>
+                </div>
+                <div className="summary-filter-list">
+                  {employees.map((e) => (
+                    <div key={`filter-${e.id}`} className="summary-filter-item" style={{ display: "grid", gridTemplateColumns: "auto 1fr auto auto", alignItems: "center", gap: 8 }}>
+                      <label style={{ display: "inline-flex", alignItems: "center", gap: 6, fontWeight: 800 }}>
+                        <input
+                          type="checkbox"
+                          checked={summaryVisibleIds[e.id] !== false}
+                          onChange={(ev) => {
+                            const checked = !!ev.target.checked;
+                            setSummaryVisibleIds((prev) => ({ ...prev, [e.id]: checked }));
+                          }}
+                        />
+                        <span>Hiện</span>
+                      </label>
+                      <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{e.name}</span>
+                      <label style={{ display: "inline-flex", alignItems: "center", gap: 4, fontWeight: 800 }}>
+                        <input
+                          type="radio"
+                          name={`role-${e.id}`}
+                          checked={(summaryRoles[e.id] || (e.isManager ? "manager" : "staff")) === "staff"}
+                          onChange={() => setSummaryRoles((prev) => ({ ...prev, [e.id]: "staff" }))}
+                        />
+                        <span>Nhân viên</span>
+                      </label>
+                      <label style={{ display: "inline-flex", alignItems: "center", gap: 4, fontWeight: 800 }}>
+                        <input
+                          type="radio"
+                          name={`role-${e.id}`}
+                          checked={(summaryRoles[e.id] || (e.isManager ? "manager" : "staff")) === "manager"}
+                          onChange={() => setSummaryRoles((prev) => ({ ...prev, [e.id]: "manager" }))}
+                        />
+                        <span>Quản lý</span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                <div className="summary-filter-actions">
+                  <button className="week-inline-btn" type="button" onClick={() => {
+                    const next = {};
+                    employees.forEach((e) => { next[e.id] = true; });
+                    setSummaryVisibleIds(next);
+                  }}>Hiện tất cả</button>
+                  <button className="week-inline-btn" type="button" onClick={() => {
+                    const next = {};
+                    employees.forEach((e) => { next[e.id] = false; });
+                    setSummaryVisibleIds(next);
+                  }}>Ẩn tất cả</button>
+                  <button className="week-inline-btn" type="button" onClick={() => setSummaryFilterOpen(false)}>Xong</button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {setupOpen ? (
+            <div className="modal-overlay" onClick={() => setSetupOpen(false)}>
+              <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-head">
+                  <span><i className="fa-solid fa-sliders" style={{ color: "#fbbf24", marginRight: 8 }} />Thiết lập • {new Date(`${selectedDate}T00:00:00`).toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit" })}</span>
+                  <button className="icon-btn" onClick={() => setSetupOpen(false)} title="Đóng"><i className="fa-solid fa-xmark" /></button>
+                </div>
+
+                <div className="action-stack">
+                  <div className="shift-grid">
+                    {SHIFTS.map((shift) => {
+                      const isActive = currentDaySchedule.shifts.includes(shift.id);
+                      const isEditing = activeShiftId === shift.id;
+                      return (
+                        <button
+                          key={shift.id}
+                          className={`shift-btn ${isActive ? "on" : ""}`}
+                          disabled={currentDaySchedule.isOff}
+                          onClick={() => toggleShift(shift.id)}
+                          style={isEditing ? { boxShadow: "0 0 0 2px rgba(251,191,36,.35) inset" } : undefined}
+                        >
+                          <i className={shift.icon} />
+                          <span>{shift.label}</span>
+                              <small>{getShiftTimeText(currentDaySchedule, shift.id)}</small>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="time-row">
+                    <div className="time-select-row">
+                      <div className="time-select-box">
+                        <label>Giờ vào</label>
+                        <select
+                          disabled={currentDaySchedule.isOff || !activeShiftId}
+                          value={(activeShiftId ? (currentDaySchedule.shiftTimes?.[activeShiftId]?.start || "--:--") : "--:--")}
+                          onChange={(e) => handleShiftTimeChange(e.target.value || "--:--")}
+                        >
+                          {(activeShiftId ? getStartOptionsForShift(activeShiftId) : []).map((t) => (
+                            <option key={`start-${t}`} value={t}>{t}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="time-select-box">
+                        <label>Giờ về</label>
+                        <select
+                          disabled={currentDaySchedule.isOff || !activeShiftId}
+                          value={(activeShiftId ? (currentDaySchedule.shiftTimes?.[activeShiftId]?.end || SHIFT_RULES[activeShiftId]?.max || "--:--") : "--:--")}
+                          onChange={(e) => handleShiftEndChange(e.target.value || "--:--")}
+                        >
+                          {(activeShiftId ? getEndOptionsForShift(activeShiftId, currentDaySchedule.shiftTimes?.[activeShiftId]?.start || SHIFT_RULES[activeShiftId]?.min) : []).map((t) => (
+                            <option key={`end-${t}`} value={t}>{t}</option>
+                          ))}
+                        </select>
+                      </div>
+                    <button type="button" className="full-day-btn" onClick={applyFullDayPreset}>Cả ngày</button>
+                  </div>
+                  </div>
+                  <button
+                    className={`ghost-btn ${currentDaySchedule.isOff ? "off" : ""}`}
+                    onClick={() => {
+                      const nextOff = !currentDaySchedule.isOff;
+                      setOffReasonInvalid(false);
+                      handleUpdateSchedule({
+                        isOff: nextOff,
+                        shifts: [],
+                        shiftTimes: buildEmptyShiftTimes(),
+                        offReason: nextOff ? String(currentDaySchedule.offReason || "") : ""
+                      });
+                      setActiveShiftId("");
+                    }}
+                  >
+                    <i className={currentDaySchedule.isOff ? "fa-solid fa-circle-check" : "fa-solid fa-circle-xmark"} />
+                    {currentDaySchedule.isOff ? "Đang OFF (nghỉ)" : "Báo nghỉ hôm nay"}
+                  </button>
+                  {currentDaySchedule.isOff ? (
+                    <>
+                      <textarea
+                        className={`off-reason-box ${offReasonInvalid && !String(currentDaySchedule.offReason || "").trim() ? "invalid" : ""}`}
+                        placeholder="Nhập lý do nghỉ..."
+                        value={currentDaySchedule.offReason || ""}
+                        onChange={(e) => {
+                          const nextReason = e.target.value;
+                          if (String(nextReason || "").trim()) setOffReasonInvalid(false);
+                          handleUpdateSchedule({ offReason: nextReason, isOff: true });
+                        }}
+                      />
+                    </>
+                  ) : null}
+                  <button className="solid-btn" onClick={saveScheduleNow}>
+                    <i className="fa-solid fa-floppy-disk" /> Lưu lịch ngay
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+<script src="./shared-bottom-nav.js?v20260424_213649"></script>
+</body>
+</html>
