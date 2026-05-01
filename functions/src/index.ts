@@ -31,6 +31,11 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json({ limit: "1mb" }));
+app.use((req, _res, next) => {
+  if (req.url === "/api") req.url = "/";
+  if (req.url.startsWith("/api/")) req.url = req.url.slice(4);
+  next();
+});
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "no-referrer");
