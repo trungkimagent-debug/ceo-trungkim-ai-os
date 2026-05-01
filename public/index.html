@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
+window.__TK_APP_VERSION__ = 'v20260501_2132_request_card_staff_top';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -11438,6 +11438,36 @@ window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
       color: #7c2d12;
     }
 
+    .sales-accessory-card-staff {
+      grid-column: 1 / -1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      max-width: 100%;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,247,237,0.98), rgba(254,243,199,0.94));
+      border: 1px solid rgba(245,158,11,0.24);
+      color: #7c2d12;
+      font-size: clamp(10px, 2.7vw, 12px);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: .01em;
+      box-shadow: 0 8px 18px rgba(245,158,11,0.10);
+    }
+
+    .sales-accessory-card-staff span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sales-accessory-pending-card.processing-compact .sales-accessory-card-staff {
+      margin-bottom: 1px;
+    }
+
     .sales-accessory-ticket-code-row {
       display: flex;
       align-items: center;
@@ -17090,6 +17120,43 @@ window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
       });
     }
 
+    function getSalesAccessoryRequestCreatorLabel(request = {}) {
+      const item = request && typeof request === 'object' ? request : {};
+      const actor = state.currentActor && typeof state.currentActor === 'object' ? state.currentActor : {};
+      const name = [
+        item.createdByName,
+        item.staffName,
+        item.employeeName,
+        item.salespersonName,
+        item.sellerName,
+        item.cashierName,
+        item.warehouseRequestedByName,
+      ].map((value) => String(value || '').trim()).find(Boolean);
+      if (name) return name;
+      if (!canCurrentActorSeeAllSalesAccessoryRequests() && isSalesAccessoryRequestOwnedByCurrentActor(item)) {
+        const actorName = String(actor.name || actor.displayName || actor.fullName || '').trim();
+        if (actorName) return actorName;
+      }
+      const code = [
+        item.createdByStaffCode,
+        item.staffCode,
+        item.employeeCode,
+        item.salespersonCode,
+        item.sellerCode,
+        item.cashierCode,
+        item.createdBy,
+        item.warehouseRequestedBy,
+      ].map((value) => String(value || '').trim()).find(Boolean);
+      return code ? `NV ${code}` : '';
+    }
+
+    function buildSalesAccessoryRequestCreatorMarkup(item = {}) {
+      const label = getSalesAccessoryRequestCreatorLabel(item);
+      return label
+        ? `<div class="sales-accessory-card-staff"><i class="fa-solid fa-user-tag"></i><span>NV tạo: ${escapeHtml(label)}</span></div>`
+        : '';
+    }
+
     function isPurchaseReceiptDraft(item = {}) {
       return String(item?.status || '').trim().toLowerCase() === 'draft' || item?.stockApplied === false;
     }
@@ -20037,8 +20104,10 @@ window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
             : `<button type="button" class="btn sales-accessory-waiting-pickup-btn is-waiting" aria-disabled="true" tabindex="-1"><i class="fa-solid fa-clock"></i><span>CHỜ KHO XÁC NHẬN</span></button>`)
         : '';
       const amountMarkup = `<strong class="sales-accessory-ticket-amount">${money(item.totalAmount || 0)}</strong>`;
+      const creatorMarkup = buildSalesAccessoryRequestCreatorMarkup(item);
       return `
         <div class="stock-request-card sales-accessory-pending-card ${toneClass}${activeClass}${isWaitingLaneCard ? ' waiting-inline-head' : ''}${isProcessingLaneCard ? ' processing-compact' : ''}">
+          ${creatorMarkup}
           <div class="ticket-head">
             <div class="ticket-main">
               <div class="ticket-icon sales-accessory-pending-thumb">${previewImageUrl
@@ -20089,6 +20158,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
         String(item.saleMode || '').trim(),
         String(item.status || '').trim(),
         String(item.customerName || '').trim(),
+        getSalesAccessoryRequestCreatorLabel(item),
         String(item.updatedAt || '').trim(),
         String(item.warehouseRequestedAt || '').trim(),
         String(item.warehouseConfirmedAt || '').trim(),
@@ -21020,6 +21090,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
         : (item.warehouseRequestedAt ? `Gửi kho ${escapeHtml(formatDateTimeVN(item.warehouseRequestedAt))}` : 'Đang chờ kho xác nhận');
       const subtitleText = `${timeLabel} • ${quantityText}`;
       const amountMarkup = `<strong class="sales-accessory-ticket-amount">${money(item.totalAmount || 0)}</strong>`;
+      const creatorMarkup = buildSalesAccessoryRequestCreatorMarkup(item);
       const bottomAction = status === 'waiting_warehouse'
         ? `<button type="button" class="btn sales-accessory-waiting-pickup-btn stock-accessory-waiting-confirm-btn" data-request-confirm="${requestId}"><i class="fa-solid fa-circle-check"></i><span>Kho xác nhận xong</span></button>`
         : status === 'warehouse_confirmed'
@@ -21027,6 +21098,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
           : `<span class="badge ${status === 'completed' ? 'ok' : 'warn'}">${escapeHtml(getSalesAccessoryStatusLabel(status))}</span>`;
       return `
         <div class="stock-request-card sales-accessory-pending-card waiting-inline-head stock-accessory-waiting-card">
+          ${creatorMarkup}
           <div class="ticket-head">
             <div class="ticket-main">
               <div class="ticket-icon sales-accessory-pending-thumb">${previewImageUrl
@@ -21050,6 +21122,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
         String(item.id || item.requestId || '').trim(),
         String(item.requestCode || '').trim(),
         String(item.status || '').trim(),
+        getSalesAccessoryRequestCreatorLabel(item),
         String(item.updatedAt || '').trim(),
         String(item.warehouseRequestedAt || '').trim(),
         String(item.warehouseConfirmedAt || '').trim(),

@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2126_sales_request_owner_scope",
-  "updatedAt": "2026-05-01T14:26:00.000Z",
+  "version": "v20260501_2132_request_card_staff_top",
+  "updatedAt": "2026-05-01T14:32:00.000Z",
   "changedModules": [
+    "request-card-staff-name-top",
     "sales-accessory-request-owner-scope",
     "stock-accessory-request-live-cool-watch",
     "landscape-drawer-backdrop-clear-content",
@@ -494,5 +495,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Nhân viên bán chỉ nhìn thấy phiếu yêu cầu do chính mình tạo; quản lý/Chủ tịch vẫn xem tổng"
+  "label": "Hiển thị tên nhân viên tạo phiếu ở phía trên card yêu cầu phụ kiện"
 }

@@ -151,3 +151,11 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Summaries/count chips are recomputed after filtering so staff does not see totals from other employees.
 - Preserve: checkout payload, warehouse confirm, stock request queue, and realtime timer behavior unchanged.
 - Verification marker/version: `v20260501_2126_sales_request_owner_scope`.
+
+## 2026-05-01 — Creator name at top of request cards
+
+- Trigger: Chủ tịch yêu cầu “Hiển thị tên nhân viên lên card nên phải phía trên”.
+- Added `getSalesAccessoryRequestCreatorLabel()` and `buildSalesAccessoryRequestCreatorMarkup()` in `public/index.html`.
+- Sales pending cards and stock waiting request cards now render `NV tạo: <tên>` as the first/top row of the card.
+- Card signatures include creator label so realtime DOM patch updates name changes without rebuilding unrelated UI.
+- Verification marker/version: `v20260501_2132_request_card_staff_top`.
