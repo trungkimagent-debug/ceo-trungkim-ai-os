@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1237_customer_debt_ultra_dense';
+window.__TK_APP_VERSION__ = 'v20260501_1349_customer_debt_detail_popup_fix';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5163,6 +5163,184 @@ window.__TK_APP_VERSION__ = 'v20260501_1237_customer_debt_ultra_dense';
       .customer-settlement-value { font-size: 12px; }
       .customer-settlement-money { font-size: 12px; }
       #customerDebtDetailModal .customer-debt-detail-card { width: 100%; max-width: 100%; border-radius: 18px; }
+    }
+
+
+
+    /* Nợ KH detail popup hotfix: remove huge blank pay area */
+    #customerDebtDetailModal.open {
+      padding: 10px;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-card {
+      width: min(100%, 520px);
+      max-width: min(100%, 520px);
+      max-height: calc(100vh - 34px);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      border-radius: 22px;
+      overflow-y: auto;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-head {
+      margin: 0;
+      gap: 8px;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-copy strong {
+      font-size: 18px;
+      line-height: 1.15;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-copy span {
+      font-size: 11px;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-summary .supplier-stat-card {
+      min-height: 76px;
+      padding: 11px;
+      border-radius: 13px;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-summary .supplier-stat-card:last-child {
+      grid-column: 1 / -1;
+      min-height: 66px;
+    }
+
+    #customerDebtDetailModal .supplier-table-head-detail {
+      display: none;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-tags {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-row {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 88px;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 13px;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-row .supplier-table-cell:nth-child(3),
+    #customerDebtDetailModal .customer-debt-detail-row .supplier-table-cell:nth-child(5) {
+      display: none;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-panel {
+      position: static !important;
+      bottom: auto !important;
+      min-height: 0 !important;
+      padding: 12px;
+      gap: 9px;
+      border-radius: 14px;
+      border-top: 1px solid #e5e7eb;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-head strong {
+      padding: 0;
+      background: transparent;
+      color: #111827;
+      font-size: 16px;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-head span {
+      display: none;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-panel .form-grid {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-panel label {
+      display: grid !important;
+      gap: 5px;
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-panel input,
+    #customerDebtDetailModal .customer-debt-pay-panel textarea {
+      display: block !important;
+      min-height: 0;
+      height: 42px;
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      color: #111827;
+      font-size: 13px;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-panel textarea {
+      height: 48px;
+      min-height: 48px;
+      max-height: 72px;
+      resize: none;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-actions {
+      display: grid;
+      grid-template-columns: .8fr .8fr 1.1fr;
+      gap: 8px;
+    }
+
+    #customerDebtDetailModal .customer-debt-pay-actions .btn {
+      min-height: 42px;
+      border-radius: 12px;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 640px) {
+      #customerDebtDetailModal.open { padding: 7px; }
+      #customerDebtDetailModal .customer-debt-detail-card {
+        width: calc(100vw - 22px);
+        max-width: calc(100vw - 22px);
+        max-height: calc(100vh - 28px);
+        padding: 12px;
+        border-radius: 20px;
+      }
+      #customerDebtDetailModal .customer-debt-detail-summary .supplier-stat-card {
+        min-height: 66px;
+        padding: 9px;
+      }
+      #customerDebtDetailModal .customer-debt-detail-row {
+        grid-template-columns: minmax(0, 1fr) 86px;
+        padding: 9px;
+      }
+      #customerDebtDetailModal .customer-debt-detail-row .supplier-table-cell:nth-child(2) {
+        display: none;
+      }
+      #customerDebtDetailModal .customer-debt-pay-panel {
+        padding: 10px;
+      }
+      #customerDebtDetailModal .customer-debt-pay-panel input,
+      #customerDebtDetailModal .customer-debt-pay-panel textarea,
+      #customerDebtDetailModal .customer-debt-pay-actions .btn {
+        height: 40px;
+        min-height: 40px;
+      }
     }
 
     .supplier-debt-open,
