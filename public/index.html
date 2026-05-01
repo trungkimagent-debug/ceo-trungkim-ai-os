@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
+window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -16446,6 +16446,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
     const API_SNAPSHOT_PERSIST_MAX_AGE_MS = 15 * 60 * 1000;
     const API_SNAPSHOT_IDB_NAME = 'tk-os-hot-cache';
     const API_SNAPSHOT_IDB_STORE = 'snapshots';
+    const PERF_SAMPLE_STORAGE_KEY = 'tk_perf_samples_v1';
+    const PERF_SAMPLE_LIMIT = 80;
     const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
@@ -16575,6 +16577,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
       customerDebtActiveId: '',
       customerDebtPaying: false,
       customerDebtReminding: false,
+      renderSignatures: {},
+      apiPayloadSignatures: {},
+      perfSamples: [],
       supplierReturnRecent: [],
       supplierReturnSourceReceipts: [],
       supplierReturnSourceQuery: '',
@@ -25206,6 +25211,58 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
       }
     }
 
+    function makeFastSignature(payload = null) {
+      if (payload === null || payload === undefined) return '0:0';
+      let text = '';
+      try {
+        text = JSON.stringify(payload);
+      } catch (_) {
+        text = String(payload || '');
+      }
+      let hash = 0;
+      for (let index = 0; index < text.length; index += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(index);
+        hash |= 0;
+      }
+      return `${text.length}:${hash}`;
+    }
+
+    function rememberPerfSample(sample = {}) {
+      try {
+        const entry = {
+          at: Date.now(),
+          screen: state.activeScreen || 'home',
+          ...sample,
+        };
+        state.perfSamples = [...(state.perfSamples || []), entry].slice(-PERF_SAMPLE_LIMIT);
+        if (Number(entry.ms || 0) >= 700 || entry.kind === 'api') {
+          scheduleIdle(() => {
+            try { localStorage.setItem(PERF_SAMPLE_STORAGE_KEY, JSON.stringify(state.perfSamples)); } catch (_) {}
+          }, 1200);
+        }
+      } catch (_) {}
+    }
+
+    function markPerfStart() {
+      try { return performance.now(); } catch (_) { return Date.now(); }
+    }
+
+    function markPerfEnd(kind = 'task', name = '', startedAt = 0, extra = {}) {
+      const now = markPerfStart();
+      const ms = Math.max(0, Math.round(now - Number(startedAt || now)));
+      rememberPerfSample({ kind, name, ms, ...extra });
+      return ms;
+    }
+
+    function shouldSkipRender(key = '', payload = null) {
+      const normalizedKey = String(key || '').trim();
+      if (!normalizedKey) return false;
+      const signature = makeFastSignature(payload);
+      if (state.renderSignatures?.[normalizedKey] === signature) return true;
+      state.renderSignatures[normalizedKey] = signature;
+      return false;
+    }
+
     function scheduleIdle(callback, timeout = 800) {
       if (typeof callback !== 'function') return;
       if ('requestIdleCallback' in window) {
@@ -25218,6 +25275,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
     function renderProgressiveList(container, items = [], buildHtml, options = {}) {
       if (!container || typeof buildHtml !== 'function') return;
       const list = Array.isArray(items) ? items : [];
+      const renderKey = String(options.renderKey || '').trim();
+      if (renderKey && shouldSkipRender(renderKey, { headHtml: options.headHtml || '', items: list })) return;
+      const perfStart = markPerfStart();
       const token = Symbol('progressive-render');
       progressiveRenderTokens.set(container, token);
       const headHtml = String(options.headHtml || '');
@@ -25226,10 +25286,12 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
       const chunkSize = Math.max(8, Number(options.chunkSize || 40) || 40);
       if (!list.length) {
         container.innerHTML = headHtml + emptyHtml;
+        markPerfEnd('render', renderKey || 'progressive-empty', perfStart, { count: 0 });
         return;
       }
       if (list.length <= firstCount) {
         container.innerHTML = headHtml + list.map(buildHtml).join('');
+        markPerfEnd('render', renderKey || 'progressive-small', perfStart, { count: list.length });
         return;
       }
       let index = Math.min(firstCount, list.length);
@@ -25244,6 +25306,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
         if (index < list.length) {
           container.insertAdjacentHTML('beforeend', `<div class="empty" data-progressive-render-note>Đang dựng tiếp ${Number(list.length - index).toLocaleString('vi-VN')} dòng ở nền...</div>`);
           scheduleIdle(appendChunk, 700);
+        } else {
+          markPerfEnd('render', renderKey || 'progressive-list', perfStart, { count: list.length });
         }
       };
       scheduleIdle(appendChunk, 500);
@@ -25319,6 +25383,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
       const sessionToken = (state.sessionToken || '').trim();
       const key = (state.internalKey || '').trim();
       if (!sessionToken && !key) throw new Error('Thiếu đăng nhập nội bộ');
+      const startedAt = markPerfStart();
       const response = await fetch(API_BASE + path, {
         method: options.method || 'GET',
         cache: options.cache || 'no-store',
@@ -25351,8 +25416,14 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
       if (data && typeof data === 'object' && data.actor) applyInternalActor(data.actor);
       const method = String(options.method || 'GET').trim().toUpperCase();
       if (method === 'GET' && options.cacheSnapshot !== false && Number(options.cacheTtlMs || 0) > 0) {
-        writeApiSnapshot(path, data);
+        const signature = makeFastSignature(data);
+        const previousSignature = String(state.apiPayloadSignatures[path] || '').trim();
+        if (previousSignature !== signature) {
+          state.apiPayloadSignatures[path] = signature;
+          writeApiSnapshot(path, data);
+        }
       }
+      markPerfEnd('api', path, startedAt, { method, status: response.status });
       return data;
     }
 
@@ -25773,6 +25844,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
         return;
       }
       renderProgressiveList(supplierDebtListEl, filtered, buildSupplierDebtItemHtml, {
+        renderKey: 'supplierDebtList',
         firstCount: 36,
         chunkSize: 32,
       });
@@ -26756,6 +26828,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
         return;
       }
       renderProgressiveList(customerDebtListEl, displayItems, buildCustomerDebtItemHtml, {
+        renderKey: 'customerDebtList',
         headHtml: selectedHead,
         firstCount: 42,
         chunkSize: 36,
@@ -27860,6 +27933,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
       `;
       };
       renderProgressiveList(stockImeiListEl, list, buildStockImeiHtml, {
+        renderKey: 'stockImeiList',
         emptyHtml: '<div class="empty">Không có máy nào khớp tìm kiếm.</div>',
         firstCount: 42,
         chunkSize: 36,
@@ -27906,6 +27980,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
       `;
       };
       renderProgressiveList(stockAccessoryListEl, list, buildStockAccessoryHtml, {
+        renderKey: 'stockAccessoryList',
         emptyHtml: `<div class="empty">${state.stockAccessoryLowOnly ? 'Không có lô phụ kiện sắp hết nào khớp bộ lọc.' : 'Không có phụ kiện nào khớp tìm kiếm.'}</div>`,
         firstCount: 42,
         chunkSize: 36,

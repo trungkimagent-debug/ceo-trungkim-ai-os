@@ -9,7 +9,7 @@ Last reviewed: 2026-05-01.
 - `public/home-rank.js` Home Rank Firestore refresh loop.
 - `public/version.json` version/update metadata.
 
-## Current behavior after v20260501_1936_full_perf_foundation
+## Current behavior after v20260501_1936_perf_delta_monitor
 
 - Duplicate background version polling was reduced: `window.__TK_RT_ROLLOUT__.enabled = false`; visible topbar update check remains active every 60s via `APP_UPDATE_CHECK_MS`.
 - Legacy service-worker/cache cleanup is delayed to idle time in `realtime-runtime.js` instead of competing with first paint.
@@ -27,6 +27,14 @@ Last reviewed: 2026-05-01.
 - Applied progressive rendering to large debt/stock lists: supplier debts, customer debts, stock IMEI, stock accessories.
 - Kept POST/mutation paths unchanged; business writes still refresh affected data normally.
 
+
+## Added in v20260501_1936_perf_delta_monitor
+
+- Added lightweight performance samples for API/render durations, stored locally only when useful for diagnosing slow paths.
+- Added fast payload signatures to skip redundant snapshot writes when the API response did not change.
+- Added render signatures to skip rebuilding large lists when inputs are unchanged.
+- Progressive list render now records slow render samples so future optimization can target the real bottleneck.
+
 ## Safe edit points
 
 - Increase/decrease `APP_UPDATE_CHECK_MS`, `AUTO_REFRESH_MS`, or API snapshot TTLs.
@@ -42,6 +50,6 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains 85 files.
-- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `renderProgressiveList`, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`.
+- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `shouldSkipRender`, `renderProgressiveList`, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`.
 - `/home-rank.js` contains `HOME_RANK_CACHE_KEY`, visible-screen guard, and `AUTO_REFRESH_MS = 60_000`.
 - `/realtime-runtime.js` contains `scheduleIdleCleanupLegacyBrowserCache()`.

@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1936_full_perf_foundation",
-  "updatedAt": "2026-05-01T12:36:00.000Z",
+  "version": "v20260501_1936_perf_delta_monitor",
+  "updatedAt": "2026-05-01T12:36:32.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -448,7 +448,11 @@
     "progressive-virtual-list",
     "stock-virtual-render",
     "debt-virtual-render",
-    "large-list-jank-guard"
+    "large-list-jank-guard",
+    "performance-monitor-lite",
+    "render-delta-signature-skip",
+    "api-delta-snapshot-write-skip",
+    "slow-api-render-samples"
   ],
-  "label": "Nền tối ưu toàn hệ thống: IndexedDB cache, worker nền, virtual render danh sách lớn"
+  "label": "Tối ưu tiếp: đo điểm chậm, bỏ render/ghi cache khi dữ liệu không đổi"
 }
