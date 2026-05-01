@@ -9,7 +9,7 @@ Last reviewed: 2026-05-01.
 - `public/home-rank.js` Home Rank Firestore refresh loop.
 - `public/version.json` version/update metadata.
 
-## Current behavior after v20260501_2010_smart_module_warmup
+## Current behavior after v20260501_2022_local_web_vitals_cooldown
 
 - Duplicate background version polling was reduced: `window.__TK_RT_ROLLOUT__.enabled = false`; visible topbar update check remains active every 60s via `APP_UPDATE_CHECK_MS`.
 - Legacy service-worker/cache cleanup is delayed to idle time in `realtime-runtime.js` instead of competing with first paint.
@@ -75,6 +75,13 @@ Last reviewed: 2026-05-01.
 - Added battery/data-saver-aware idle warmup for the Star module: it only preloads when the page is visible, not in battery saver mode, not on `saveData`, and not on 2G/slow-2G.
 - Visibility/focus/screen-open now opportunistically schedules this warmup without blocking first paint or active touch work.
 
+## Added in v20260501_2022_local_web_vitals_cooldown
+
+- Added local-only Web Vitals style observers using `PerformanceObserver` for FCP, LCP, CLS, long tasks, navigation timing, and BFCache resume samples.
+- Samples remain local in `tk_perf_samples_v1`; nothing is sent externally. They include app version and active screen so future optimization can target real bottlenecks.
+- Added adaptive performance cooldown: if recent local samples show repeated long tasks/slow renders/slow API, the app toggles `html.tk-performance-cooldown`, increases hot input debounce, and reduces progressive list chunk sizes.
+- Added `pageshow` BFCache sample handling so fast browser/PWA resume behavior is tracked without extra network work.
+
 ## Safe edit points
 
 - Increase/decrease `APP_UPDATE_CHECK_MS`, `AUTO_REFRESH_MS`, or API snapshot TTLs.
@@ -90,6 +97,6 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains 85 files.
-- `/1` contains current `window.__TK_APP_VERSION__`, `rel="modulepreload"` for Home Rank, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `warmDynamicModule`, `scheduleDynamicModuleWarmup`, `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
+- `/1` contains current `window.__TK_APP_VERSION__`, `rel="modulepreload"` for Home Rank, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `PERF_COOLDOWN_LONGTASK_MS`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `warmDynamicModule`, `scheduleDynamicModuleWarmup`, `initLocalPerformanceObservers`, `PerformanceObserver`, `tk-performance-cooldown`, `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
 - `/home-rank.js` contains `HOME_RANK_CACHE_KEY`, visible-screen guard, and `AUTO_REFRESH_MS = 60_000`.
 - `/realtime-runtime.js` contains `scheduleIdleCleanupLegacyBrowserCache()`.

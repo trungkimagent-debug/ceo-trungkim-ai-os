@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
+window.__TK_APP_VERSION__ = 'v20260501_2022_local_web_vitals_cooldown';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -65,7 +65,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
   </script>
   <script src="/realtime-runtime.js?v20260428_200400"></script>
   <script src="/realtime-bootstrap.js?v20260428_200400"></script>
-  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2010_smart_module_warmup" fetchpriority="high" />
+  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2022_local_web_vitals_cooldown" fetchpriority="high" />
   <title>TRUNG HẬU KIM DUNG</title>
   <meta name="description" content="Di Động Trung Hậu Kim Dung." />
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
@@ -16495,6 +16495,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
     const API_SNAPSHOT_IDB_STORE = 'snapshots';
     const PERF_SAMPLE_STORAGE_KEY = 'tk_perf_samples_v1';
     const PERF_SAMPLE_LIMIT = 80;
+    const PERF_COOLDOWN_WINDOW_MS = 2 * 60 * 1000;
+    const PERF_COOLDOWN_LONGTASK_MS = 180;
+    const PERF_COOLDOWN_SLOW_TASK_COUNT = 3;
     const BATTERY_SAVER_MEMORY_GB = 4;
     const UI_INPUT_DEBOUNCE_MS = 90;
     const UI_INPUT_DEBOUNCE_BATTERY_MS = 160;
@@ -16630,6 +16633,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
       renderSignatures: {},
       apiPayloadSignatures: {},
       perfSamples: [],
+      perfObserverStarted: false,
+      performanceCooldown: false,
+      cumulativeLayoutShift: 0,
       batterySaver: false,
       lastVisibleAtMs: Date.now(),
       lastLayoutSyncAtMs: 0,
@@ -19538,6 +19544,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
 
     function getUiInputDelay(delayMs = UI_INPUT_DEBOUNCE_MS) {
       const requested = Math.max(0, Number(delayMs || UI_INPUT_DEBOUNCE_MS) || UI_INPUT_DEBOUNCE_MS);
+      if (state.performanceCooldown) return Math.max(requested, 220);
       return state.batterySaver ? Math.max(requested, UI_INPUT_DEBOUNCE_BATTERY_MS) : requested;
     }
 
@@ -25318,6 +25325,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
     window.visualViewport?.addEventListener('resize', () => scheduleHomeLayoutSync(140), { passive: true });
     syncBatterySaverState();
     syncHomeLayoutVars();
+    initLocalPerformanceObservers();
     scheduleDynamicModuleWarmup();
 
     function getApiSnapshotKey(path = '') {
@@ -25414,20 +25422,87 @@ window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
       return `${text.length}:${hash}`;
     }
 
+    function syncPerformanceCooldown() {
+      try {
+        const nowMs = Date.now();
+        const recent = (state.perfSamples || []).filter((entry) => (nowMs - Number(entry?.at || 0)) <= PERF_COOLDOWN_WINDOW_MS);
+        const slowCount = recent.filter((entry) => {
+          const kind = String(entry?.kind || '').trim();
+          const ms = Number(entry?.ms || 0);
+          return (kind === 'longtask' && ms >= PERF_COOLDOWN_LONGTASK_MS)
+            || (kind === 'render' && ms >= 900)
+            || (kind === 'api' && ms >= 1500);
+        }).length;
+        state.performanceCooldown = slowCount >= PERF_COOLDOWN_SLOW_TASK_COUNT;
+        document.documentElement.classList.toggle('tk-performance-cooldown', Boolean(state.performanceCooldown));
+      } catch (_) {}
+    }
+
     function rememberPerfSample(sample = {}) {
       try {
         const entry = {
           at: Date.now(),
           screen: state.activeScreen || 'home',
+          version: getCurrentAppVersion(),
           ...sample,
         };
         state.perfSamples = [...(state.perfSamples || []), entry].slice(-PERF_SAMPLE_LIMIT);
-        if (Number(entry.ms || 0) >= 700 || entry.kind === 'api') {
+        syncPerformanceCooldown();
+        if (Number(entry.ms || 0) >= 450 || ['api', 'web-vital', 'longtask', 'navigation', 'bfcache'].includes(String(entry.kind || ''))) {
           scheduleIdle(() => {
             try { localStorage.setItem(PERF_SAMPLE_STORAGE_KEY, JSON.stringify(state.perfSamples)); } catch (_) {}
           }, 1200);
         }
       } catch (_) {}
+    }
+
+    function observePerformanceEntryType(type = '', callback) {
+      if (!('PerformanceObserver' in window) || typeof callback !== 'function') return;
+      try {
+        const supported = PerformanceObserver.supportedEntryTypes || [];
+        if (Array.isArray(supported) && supported.length && !supported.includes(type)) return;
+        const observer = new PerformanceObserver((list) => {
+          try { list.getEntries().forEach(callback); } catch (_) {}
+        });
+        observer.observe({ type, buffered: true });
+      } catch (_) {}
+    }
+
+    function initLocalPerformanceObservers() {
+      if (state.perfObserverStarted) return;
+      state.perfObserverStarted = true;
+      scheduleIdle(() => {
+        observePerformanceEntryType('paint', (entry) => {
+          if (entry.name !== 'first-contentful-paint') return;
+          rememberPerfSample({ kind: 'web-vital', name: 'fcp', ms: Math.round(entry.startTime || 0) });
+        });
+        observePerformanceEntryType('largest-contentful-paint', (entry) => {
+          rememberPerfSample({ kind: 'web-vital', name: 'lcp', ms: Math.round(entry.startTime || 0) });
+        });
+        observePerformanceEntryType('layout-shift', (entry) => {
+          if (entry.hadRecentInput) return;
+          state.cumulativeLayoutShift = Number((state.cumulativeLayoutShift + Number(entry.value || 0)).toFixed(4));
+          if (state.cumulativeLayoutShift >= 0.08) {
+            rememberPerfSample({ kind: 'web-vital', name: 'cls', ms: Math.round(state.cumulativeLayoutShift * 1000), value: state.cumulativeLayoutShift });
+          }
+        });
+        observePerformanceEntryType('longtask', (entry) => {
+          const duration = Math.round(entry.duration || 0);
+          if (duration >= 80) rememberPerfSample({ kind: 'longtask', name: 'main-thread', ms: duration });
+        });
+        try {
+          const nav = performance.getEntriesByType?.('navigation')?.[0];
+          if (nav) {
+            rememberPerfSample({
+              kind: 'navigation',
+              name: nav.type || 'navigate',
+              ms: Math.round(nav.domContentLoadedEventEnd || nav.responseEnd || 0),
+              loadMs: Math.round(nav.loadEventEnd || 0),
+              transferSize: Math.round(nav.transferSize || 0),
+            });
+          }
+        } catch (_) {}
+      }, 1800);
     }
 
     function markPerfStart() {
@@ -25478,8 +25553,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
       const emptyHtml = String(options.emptyHtml || '<div class="empty">Chưa có dữ liệu.</div>');
       const requestedFirstCount = Math.max(12, Number(options.firstCount || 48) || 48);
       const requestedChunkSize = Math.max(8, Number(options.chunkSize || 40) || 40);
-      const firstCount = state.batterySaver ? Math.min(requestedFirstCount, 24) : requestedFirstCount;
-      const chunkSize = state.batterySaver ? Math.min(requestedChunkSize, 18) : requestedChunkSize;
+      const shouldCoolRender = state.batterySaver || state.performanceCooldown;
+      const firstCount = shouldCoolRender ? Math.min(requestedFirstCount, 24) : requestedFirstCount;
+      const chunkSize = shouldCoolRender ? Math.min(requestedChunkSize, 18) : requestedChunkSize;
       if (!list.length) {
         container.innerHTML = headHtml + emptyHtml;
         markPerfEnd('render', renderKey || 'progressive-empty', perfStart, { count: 0 });
@@ -28882,6 +28958,10 @@ window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
     window.addEventListener('tk:soft-runtime-ready', () => ensureGlobalAppUpdateWatch());
     window.addEventListener('focus', () => checkAppUpdateForAllUsers({ immediate: true }));
     window.addEventListener('online', () => checkAppUpdateForAllUsers({ immediate: true }));
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) rememberPerfSample({ kind: 'bfcache', name: 'pageshow', ms: 0 });
+      syncPerformanceCooldown();
+    });
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         checkAppUpdateForAllUsers({ immediate: true });
