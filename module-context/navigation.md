@@ -32,3 +32,10 @@ Last reviewed: 2026-05-01.
 - `public/` must remain 85 files before deploy.
 - `/1` contains `topbarLogoBtn`, `landscapeNavBackdrop`, `<nav class="nav">`, all required `data-screen` buttons, and the version marker.
 - `home-rank.js`, `star-native.js`, `internal-access.js` must remain JS MIME.
+
+## 2026-05-01 — Landscape/PC backdrop safety fix
+
+- Issue: later global `.landscape-nav-backdrop { z-index: 74; backdrop-filter: blur(...) }` overrode the earlier landscape drawer layering (`app` z-index 46 / `nav` z-index 50), so when `body.drawer-open` was active on tablet landscape or PC the backdrop sat above `.app` and blurred/dimmed real content.
+- Fix boundary: `public/index.html` CSS only; no tab DOM, screen switch, permission, or business logic changes.
+- Safe rule: in `@media (min-width: 1024px), (orientation: landscape)`, keep `.landscape-nav-backdrop` under `.app` (`z-index:44`) and remove backdrop blur/background so content remains readable; keep drawer nav above app (`z-index:50`).
+- Verify: landscape/PC can open the logo drawer without the main app being covered by a dim/blur layer; portrait drawer behavior is unchanged.

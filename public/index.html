@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2114_get_request_coalescing';
+window.__TK_APP_VERSION__ = 'v20260501_2115_landscape_drawer_backdrop_fix';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -7343,6 +7343,22 @@ window.__TK_APP_VERSION__ = 'v20260501_2114_get_request_coalescing';
         transform: translateX(min(338px, 31vw));
         width: calc(100% - min(338px, 31vw));
         box-shadow: 0 26px 70px rgba(0,0,0,0.34);
+      }
+
+      body.landscape-drawer-mode .landscape-nav-backdrop {
+        z-index: 44;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      body.landscape-drawer-mode.drawer-open .app {
+        position: relative;
+        z-index: 46;
+      }
+
+      body.landscape-drawer-mode.drawer-open .nav {
+        z-index: 50;
       }
     }
 

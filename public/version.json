@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2114_get_request_coalescing",
-  "updatedAt": "2026-05-01T14:14:00.000Z",
+  "version": "v20260501_2115_landscape_drawer_backdrop_fix",
+  "updatedAt": "2026-05-01T13:42:00.000Z",
   "changedModules": [
+    "landscape-drawer-backdrop-clear-content",
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
     "sales-sync-debt-ui",
@@ -491,5 +492,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Boot mát hơn: bộ quét camera chỉ tải khi thật sự bấm quét, màn hình chính hiện nhanh hơn"
+  "label": "Sửa lớp phủ mờ che nội dung trên tablet ngang và PC khi mở menu logo"
 }
