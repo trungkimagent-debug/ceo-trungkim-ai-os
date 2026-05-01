@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_2102_systemwide_instant_hydration",
-  "updatedAt": "2026-05-01T14:02:00.000Z",
+  "version": "v20260501_2114_get_request_coalescing",
+  "updatedAt": "2026-05-01T14:14:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -486,7 +486,10 @@
     "systemwide-tab-snapshot-hydration",
     "instant-home-sales-print-hydration",
     "nonblocking-launch-screen-refresh",
-    "print-jobs-hot-cache"
+    "print-jobs-hot-cache",
+    "coalesced-get-api-requests",
+    "duplicate-refresh-collapse",
+    "cooler-network-burst-control"
   ],
   "label": "Boot mát hơn: bộ quét camera chỉ tải khi thật sự bấm quét, màn hình chính hiện nhanh hơn"
 }

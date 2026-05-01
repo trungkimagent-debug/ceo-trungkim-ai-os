@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2102_systemwide_instant_hydration';
+window.__TK_APP_VERSION__ = 'v20260501_2114_get_request_coalescing';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -65,7 +65,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2102_systemwide_instant_hydration';
   </script>
   <script src="/realtime-runtime.js?v20260428_200400"></script>
   <script src="/realtime-bootstrap.js?v20260428_200400"></script>
-  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2102_systemwide_instant_hydration" fetchpriority="high" />
+  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2114_get_request_coalescing" fetchpriority="high" />
   <title>TRUNG HẬU KIM DUNG</title>
   <meta name="description" content="Di Động Trung Hậu Kim Dung." />
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
@@ -16529,6 +16529,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2102_systemwide_instant_hydration';
     const API_SNAPSHOT_PERSIST_MAX_AGE_MS = 15 * 60 * 1000;
     const API_SNAPSHOT_IDB_NAME = 'tk-os-hot-cache';
     const API_SNAPSHOT_IDB_STORE = 'snapshots';
+    const apiGetInFlight = new Map();
     const PERF_SAMPLE_STORAGE_KEY = 'tk_perf_samples_v1';
     const PERF_SAMPLE_LIMIT = 80;
     const PERF_COOLDOWN_WINDOW_MS = 2 * 60 * 1000;
@@ -25834,48 +25835,63 @@ window.__TK_APP_VERSION__ = 'v20260501_2102_systemwide_instant_hydration';
       const sessionToken = (state.sessionToken || '').trim();
       const key = (state.internalKey || '').trim();
       if (!sessionToken && !key) throw new Error('Thiếu đăng nhập nội bộ');
-      const startedAt = markPerfStart();
-      const response = await fetch(API_BASE + path, {
-        method: options.method || 'GET',
-        cache: options.cache || 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(sessionToken ? { 'x-pos-session-token': sessionToken } : {}),
-          ...(!sessionToken && key ? { 'x-internal-admin-key': key } : {}),
-        },
-        body: options.body ? JSON.stringify(options.body) : undefined,
-      });
-      const text = await response.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = text; }
-      if (!response.ok) {
-        const error = new Error(typeof data === 'string' ? data : (data.error || `HTTP ${response.status}`));
-        error.status = response.status;
-        if (response.status === 401 && data && typeof data === 'object' && (data.forceRelogin || data.forceClear)) {
-          await forceBrowserBackToFreshLogin(data);
-        }
-        if (response.status === 423) {
-          state.systemLockActive = true;
-          clearSavedInternalSession({ preserveLoginId: true });
-          hideBootSplash();
-          unlockOverlay.style.display = 'flex';
-          setMsg(unlockMsg, 'Hệ thống đang khóa. Chỉ Chủ tịch mới mở lại bằng kênh riêng.', 'error');
-          ensureSystemUnlockWatch();
-        }
-        throw error;
-      }
-      if (data && typeof data === 'object' && data.actor) applyInternalActor(data.actor);
       const method = String(options.method || 'GET').trim().toUpperCase();
-      if (method === 'GET' && options.cacheSnapshot !== false && Number(options.cacheTtlMs || 0) > 0) {
-        const signature = makeFastSignature(data);
-        const previousSignature = String(state.apiPayloadSignatures[path] || '').trim();
-        if (previousSignature !== signature) {
-          state.apiPayloadSignatures[path] = signature;
-          writeApiSnapshot(path, data);
-        }
+      const canShareGet = method === 'GET' && !options.body && options.dedupe !== false;
+      const requestKey = canShareGet ? `${sessionToken ? `s:${sessionToken.slice(-12)}` : 'k'}:${path}` : '';
+      if (requestKey && apiGetInFlight.has(requestKey)) {
+        return apiGetInFlight.get(requestKey);
       }
-      markPerfEnd('api', path, startedAt, { method, status: response.status });
-      return data;
+      const requestPromise = (async () => {
+        const startedAt = markPerfStart();
+        const response = await fetch(API_BASE + path, {
+          method,
+          cache: options.cache || 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(sessionToken ? { 'x-pos-session-token': sessionToken } : {}),
+            ...(!sessionToken && key ? { 'x-internal-admin-key': key } : {}),
+          },
+          body: options.body ? JSON.stringify(options.body) : undefined,
+        });
+        const text = await response.text();
+        let data;
+        try { data = JSON.parse(text); } catch { data = text; }
+        if (!response.ok) {
+          const error = new Error(typeof data === 'string' ? data : (data.error || `HTTP ${response.status}`));
+          error.status = response.status;
+          if (response.status === 401 && data && typeof data === 'object' && (data.forceRelogin || data.forceClear)) {
+            await forceBrowserBackToFreshLogin(data);
+          }
+          if (response.status === 423) {
+            state.systemLockActive = true;
+            clearSavedInternalSession({ preserveLoginId: true });
+            hideBootSplash();
+            unlockOverlay.style.display = 'flex';
+            setMsg(unlockMsg, 'Hệ thống đang khóa. Chỉ Chủ tịch mới mở lại bằng kênh riêng.', 'error');
+            ensureSystemUnlockWatch();
+          }
+          throw error;
+        }
+        if (data && typeof data === 'object' && data.actor) applyInternalActor(data.actor);
+        if (method === 'GET' && options.cacheSnapshot !== false && Number(options.cacheTtlMs || 0) > 0) {
+          const signature = makeFastSignature(data);
+          const previousSignature = String(state.apiPayloadSignatures[path] || '').trim();
+          if (previousSignature !== signature) {
+            state.apiPayloadSignatures[path] = signature;
+            writeApiSnapshot(path, data);
+          }
+        }
+        markPerfEnd('api', path, startedAt, { method, status: response.status });
+        return data;
+      })();
+      if (requestKey) {
+        apiGetInFlight.set(requestKey, requestPromise);
+        requestPromise.then(
+          () => { if (apiGetInFlight.get(requestKey) === requestPromise) apiGetInFlight.delete(requestKey); },
+          () => { if (apiGetInFlight.get(requestKey) === requestPromise) apiGetInFlight.delete(requestKey); },
+        );
+      }
+      return requestPromise;
     }
 
     function getScreenLabel(screen) {
