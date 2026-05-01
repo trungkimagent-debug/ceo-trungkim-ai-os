@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2158_gift_popup_no_vertical_scroll",
-  "updatedAt": "2026-05-01T14:58:00.000Z",
+  "version": "v20260501_2204_popup_pin_screen_full_viewport",
+  "updatedAt": "2026-05-01T15:04:00.000Z",
   "changedModules": [
+    "popup-pin-screen-full-viewport",
     "gift-popup-no-vertical-scroll",
     "gift-catalog-dedupe-in-stock",
     "sales-gift-popup-fullscreen",
@@ -500,5 +501,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Popup quà tặng/phụ kiện co responsive full màn, không cuộn dọc; chỉ lướt ngang danh sách trang"
+  "label": "Khi popup quà/phụ kiện mở, ghim màn Bán vào viewport để xoá khoảng trống đen phía trên shell app"
 }

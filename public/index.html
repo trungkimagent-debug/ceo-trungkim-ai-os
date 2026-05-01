@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2158_gift_popup_no_vertical_scroll';
+window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -13686,6 +13686,35 @@ window.__TK_APP_VERSION__ = 'v20260501_2158_gift_popup_no_vertical_scroll';
         white-space: normal;
         line-height: 1.15;
       }
+    }
+
+    /* Pin the whole Sales screen to viewport while the gift/accessory popup is open.
+       Some mobile shells make fixed children relative to the screen panel; pinning the
+       parent removes the black top gap from the hidden app shell. */
+    body.sales-accessory-popup-shell-hidden #screen-sales {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      overflow: hidden !important;
+      z-index: 179 !important;
+      background: #050505 !important;
+      transform: none !important;
+      contain: none !important;
+    }
+
+    body.sales-accessory-popup-shell-hidden #salesAccessoryPopup {
+      position: fixed !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      transform: none !important;
     }
 
     /* Sales gift/accessory popup: fit 3x3 page into the viewport; no vertical frame scroll. */

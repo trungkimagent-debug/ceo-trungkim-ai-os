@@ -201,3 +201,13 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Product page uses `repeat(3, minmax(0, 1fr))`; cards/media/name/footer use clamp-based sizing so 9 products + footer fit within viewport without vertical scrolling.
 - On short screens (`max-height: 720px`), the decorative header row hides to preserve the search/list/footer inside one screen.
 - Verification marker/version: `v20260501_2158_gift_popup_no_vertical_scroll`.
+
+## 2026-05-01 — Pin Sales screen while popup is open
+
+- Trigger: Chủ tịch gửi ảnh cho thấy popup `Tặng miễn phí` vẫn còn khoảng trống đen lớn phía trên, nghĩa là shell/screen parent vẫn giữ offset cũ dù popup đã `inset: 0`.
+- Added CSS under the popup override:
+  - `body.sales-accessory-popup-shell-hidden #screen-sales` becomes fixed, `inset: 0`, `100vw x 100dvh`, no padding/margin, no transform/contain, `overflow: hidden`.
+  - `body.sales-accessory-popup-shell-hidden #salesAccessoryPopup` is fixed to all four viewport edges.
+- Purpose: remove parent screen/topbar offset so the popup content starts at the viewport top instead of below the hidden app shell.
+- Preserve: popup grid, horizontal paging, no vertical scroll rule, cart/request behavior.
+- Verification marker/version: `v20260501_2204_popup_pin_screen_full_viewport`.
