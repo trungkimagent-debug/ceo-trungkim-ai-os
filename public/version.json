@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1927_static_snapshot_runtime",
-  "updatedAt": "2026-05-01T12:27:02.000Z",
+  "version": "v20260501_1936_full_perf_foundation",
+  "updatedAt": "2026-05-01T12:36:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -442,7 +442,13 @@
     "tab-scroll-jank-fix",
     "persistent-static-snapshot-render",
     "api-snapshot-local-persist",
-    "api-snapshot-storage-prune"
+    "api-snapshot-storage-prune",
+    "indexeddb-hot-cache",
+    "worker-perf-foundation",
+    "progressive-virtual-list",
+    "stock-virtual-render",
+    "debt-virtual-render",
+    "large-list-jank-guard"
   ],
-  "label": "Hiển thị phần cố định và dữ liệu snapshot ngay, kéo dữ liệu mới nền nhẹ máy"
+  "label": "Nền tối ưu toàn hệ thống: IndexedDB cache, worker nền, virtual render danh sách lớn"
 }

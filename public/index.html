@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
+window.__TK_APP_VERSION__ = 'v20260501_1936_full_perf_foundation';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -16444,6 +16444,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
     const API_SNAPSHOT_PREFIX = 'tk_api_snapshot_v1:';
     const API_SNAPSHOT_DEFAULT_MAX_AGE_MS = 5 * 60 * 1000;
     const API_SNAPSHOT_PERSIST_MAX_AGE_MS = 15 * 60 * 1000;
+    const API_SNAPSHOT_IDB_NAME = 'tk-os-hot-cache';
+    const API_SNAPSHOT_IDB_STORE = 'snapshots';
     const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
@@ -25130,6 +25132,123 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
       return `${API_SNAPSHOT_PREFIX}${String(path || '').trim()}`;
     }
 
+    let apiSnapshotIdbPromise = null;
+    let perfWorker = null;
+    const progressiveRenderTokens = new WeakMap();
+
+    function getApiSnapshotIdb() {
+      if (!('indexedDB' in window)) return Promise.resolve(null);
+      if (apiSnapshotIdbPromise) return apiSnapshotIdbPromise;
+      apiSnapshotIdbPromise = new Promise((resolve) => {
+        try {
+          const request = indexedDB.open(API_SNAPSHOT_IDB_NAME, 1);
+          request.onupgradeneeded = () => {
+            try {
+              const dbi = request.result;
+              if (!dbi.objectStoreNames.contains(API_SNAPSHOT_IDB_STORE)) dbi.createObjectStore(API_SNAPSHOT_IDB_STORE);
+            } catch (_) {}
+          };
+          request.onsuccess = () => resolve(request.result || null);
+          request.onerror = () => resolve(null);
+          request.onblocked = () => resolve(null);
+        } catch (_) {
+          resolve(null);
+        }
+      });
+      return apiSnapshotIdbPromise;
+    }
+
+    async function readApiSnapshotFromIdb(path = '', maxAgeMs = API_SNAPSHOT_DEFAULT_MAX_AGE_MS) {
+      const key = getApiSnapshotKey(path);
+      if (!key || key === API_SNAPSHOT_PREFIX) return null;
+      const dbi = await getApiSnapshotIdb();
+      if (!dbi) return null;
+      return new Promise((resolve) => {
+        try {
+          const tx = dbi.transaction(API_SNAPSHOT_IDB_STORE, 'readonly');
+          const request = tx.objectStore(API_SNAPSHOT_IDB_STORE).get(key);
+          request.onsuccess = () => {
+            const payload = request.result || null;
+            const savedAt = Number(payload?.savedAt || 0);
+            const ttl = Math.max(1000, Number(maxAgeMs || API_SNAPSHOT_DEFAULT_MAX_AGE_MS) || API_SNAPSHOT_DEFAULT_MAX_AGE_MS);
+            if (!savedAt || (Date.now() - savedAt) > ttl) return resolve(null);
+            resolve(payload?.data && typeof payload.data === 'object' ? payload.data : null);
+          };
+          request.onerror = () => resolve(null);
+        } catch (_) {
+          resolve(null);
+        }
+      });
+    }
+
+    async function writeApiSnapshotToIdb(path = '', data = null) {
+      if (!data || typeof data !== 'object') return;
+      const key = getApiSnapshotKey(path);
+      if (!key || key === API_SNAPSHOT_PREFIX) return;
+      const dbi = await getApiSnapshotIdb();
+      if (!dbi) return;
+      try {
+        const tx = dbi.transaction(API_SNAPSHOT_IDB_STORE, 'readwrite');
+        tx.objectStore(API_SNAPSHOT_IDB_STORE).put({ savedAt: Date.now(), data }, key);
+      } catch (_) {}
+    }
+
+    function ensurePerfWorker() {
+      if (perfWorker) return perfWorker;
+      if (!('Worker' in window) || !('Blob' in window) || !('URL' in window)) return null;
+      try {
+        const source = `self.onmessage=function(e){var d=e.data||{};try{if(d.type==='signature'){var value=JSON.stringify(d.payload||null);var hash=0;for(var i=0;i<value.length;i++){hash=((hash<<5)-hash)+value.charCodeAt(i);hash|=0;}self.postMessage({id:d.id,ok:true,result:String(value.length)+':' + String(hash)});return;}self.postMessage({id:d.id,ok:false});}catch(err){self.postMessage({id:d.id,ok:false,error:String(err&&err.message||err)})}}`;
+        const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
+        perfWorker = new Worker(url);
+        return perfWorker;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function scheduleIdle(callback, timeout = 800) {
+      if (typeof callback !== 'function') return;
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => callback(), { timeout: Math.max(120, Number(timeout || 0) || 800) });
+        return;
+      }
+      window.setTimeout(callback, Math.max(0, Math.min(250, Number(timeout || 0) || 0)));
+    }
+
+    function renderProgressiveList(container, items = [], buildHtml, options = {}) {
+      if (!container || typeof buildHtml !== 'function') return;
+      const list = Array.isArray(items) ? items : [];
+      const token = Symbol('progressive-render');
+      progressiveRenderTokens.set(container, token);
+      const headHtml = String(options.headHtml || '');
+      const emptyHtml = String(options.emptyHtml || '<div class="empty">Chưa có dữ liệu.</div>');
+      const firstCount = Math.max(12, Number(options.firstCount || 48) || 48);
+      const chunkSize = Math.max(8, Number(options.chunkSize || 40) || 40);
+      if (!list.length) {
+        container.innerHTML = headHtml + emptyHtml;
+        return;
+      }
+      if (list.length <= firstCount) {
+        container.innerHTML = headHtml + list.map(buildHtml).join('');
+        return;
+      }
+      let index = Math.min(firstCount, list.length);
+      container.innerHTML = headHtml + list.slice(0, index).map(buildHtml).join('') + `<div class="empty" data-progressive-render-note>Đang dựng tiếp ${Number(list.length - index).toLocaleString('vi-VN')} dòng ở nền...</div>`;
+      const appendChunk = () => {
+        if (progressiveRenderTokens.get(container) !== token) return;
+        const note = container.querySelector('[data-progressive-render-note]');
+        if (note) note.remove();
+        const nextIndex = Math.min(index + chunkSize, list.length);
+        container.insertAdjacentHTML('beforeend', list.slice(index, nextIndex).map(buildHtml).join(''));
+        index = nextIndex;
+        if (index < list.length) {
+          container.insertAdjacentHTML('beforeend', `<div class="empty" data-progressive-render-note>Đang dựng tiếp ${Number(list.length - index).toLocaleString('vi-VN')} dòng ở nền...</div>`);
+          scheduleIdle(appendChunk, 700);
+        }
+      };
+      scheduleIdle(appendChunk, 500);
+    }
+
     function readApiSnapshot(path = '', maxAgeMs = API_SNAPSHOT_DEFAULT_MAX_AGE_MS) {
       const key = getApiSnapshotKey(path);
       if (!key || key === API_SNAPSHOT_PREFIX) return null;
@@ -25174,6 +25293,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
       try {
         const payload = JSON.stringify({ savedAt: Date.now(), data });
         sessionStorage.setItem(key, payload);
+        writeApiSnapshotToIdb(path, data).catch(() => {});
         try { localStorage.setItem(key, payload); } catch (_) {
           pruneApiSnapshotStorage();
           try { localStorage.setItem(key, payload); } catch (_) {}
@@ -25184,8 +25304,14 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
     function renderApiSnapshot(path = '', renderFn, maxAgeMs = API_SNAPSHOT_DEFAULT_MAX_AGE_MS) {
       if (typeof renderFn !== 'function') return null;
       const cached = readApiSnapshot(path, maxAgeMs);
-      if (!cached) return null;
-      try { renderFn(cached, { fromSnapshot: true }); } catch (_) {}
+      if (cached) {
+        try { renderFn(cached, { fromSnapshot: true, source: 'hot-cache' }); } catch (_) {}
+        return cached;
+      }
+      readApiSnapshotFromIdb(path, maxAgeMs).then((idbCached) => {
+        if (!idbCached) return;
+        try { renderFn(idbCached, { fromSnapshot: true, source: 'indexeddb' }); } catch (_) {}
+      }).catch(() => {});
       return cached;
     }
 
@@ -25646,7 +25772,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
         supplierDebtListEl.innerHTML = `<div class="empty">${query ? 'Không thấy NCC khớp bộ lọc.' : 'Chưa có NCC nào đang nợ.'}</div>`;
         return;
       }
-      supplierDebtListEl.innerHTML = filtered.map(buildSupplierDebtItemHtml).join('');
+      renderProgressiveList(supplierDebtListEl, filtered, buildSupplierDebtItemHtml, {
+        firstCount: 36,
+        chunkSize: 32,
+      });
     }
 
     function buildSupplierDebtActivityHtml(item = {}) {
@@ -26626,7 +26755,11 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
         renderCustomerDebtActivities(items);
         return;
       }
-      customerDebtListEl.innerHTML = selectedHead + displayItems.map(buildCustomerDebtItemHtml).join('');
+      renderProgressiveList(customerDebtListEl, displayItems, buildCustomerDebtItemHtml, {
+        headHtml: selectedHead,
+        firstCount: 42,
+        chunkSize: 36,
+      });
       renderCustomerDebtActivities(items);
     }
 
@@ -27698,7 +27831,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
         stockImeiListEl.innerHTML = '<div class="empty">Không có máy nào khớp tìm kiếm.</div>';
         return;
       }
-      stockImeiListEl.innerHTML = list.map((item) => {
+      const buildStockImeiHtml = (item) => {
         const receiptCode = item.purchaseReceiptCode || item.purchaseReceiptId || '';
         const importedAt = item.importedAt ? formatDateTimeVN(item.importedAt) : '';
         return `
@@ -27725,7 +27858,12 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
           </div>
         </div>
       `;
-      }).join('');
+      };
+      renderProgressiveList(stockImeiListEl, list, buildStockImeiHtml, {
+        emptyHtml: '<div class="empty">Không có máy nào khớp tìm kiếm.</div>',
+        firstCount: 42,
+        chunkSize: 36,
+      });
     }
 
     function renderStockAccessories(items) {
@@ -27735,7 +27873,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
         stockAccessoryListEl.innerHTML = `<div class="empty">${state.stockAccessoryLowOnly ? 'Không có lô phụ kiện sắp hết nào khớp bộ lọc.' : 'Không có phụ kiện nào khớp tìm kiếm.'}</div>`;
         return;
       }
-      stockAccessoryListEl.innerHTML = list.map((item) => {
+      const buildStockAccessoryHtml = (item) => {
         const receiptCode = item.purchaseReceiptCode || item.purchaseReceiptId || '';
         const importedAt = item.importedAt ? formatDateTimeVN(item.importedAt) : '';
         const remainingQty = Math.max(0, Number(item.remainingQty || 0) || 0);
@@ -27766,7 +27904,12 @@ window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
           </div>
         </div>
       `;
-      }).join('');
+      };
+      renderProgressiveList(stockAccessoryListEl, list, buildStockAccessoryHtml, {
+        emptyHtml: `<div class="empty">${state.stockAccessoryLowOnly ? 'Không có lô phụ kiện sắp hết nào khớp bộ lọc.' : 'Không có phụ kiện nào khớp tìm kiếm.'}</div>`,
+        firstCount: 42,
+        chunkSize: 36,
+      });
     }
 
     function renderCart() {

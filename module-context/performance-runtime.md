@@ -9,7 +9,7 @@ Last reviewed: 2026-05-01.
 - `public/home-rank.js` Home Rank Firestore refresh loop.
 - `public/version.json` version/update metadata.
 
-## Current behavior after v20260501_1927_static_snapshot_runtime
+## Current behavior after v20260501_1936_full_perf_foundation
 
 - Duplicate background version polling was reduced: `window.__TK_RT_ROLLOUT__.enabled = false`; visible topbar update check remains active every 60s via `APP_UPDATE_CHECK_MS`.
 - Legacy service-worker/cache cleanup is delayed to idle time in `realtime-runtime.js` instead of competing with first paint.
@@ -17,6 +17,15 @@ Last reviewed: 2026-05-01.
 - `renderApiSnapshot()` shows cached data immediately before network refresh for Dashboard, Recent Purchases, Stock summary/search, Supplier debt, Customer debt, Supplier returns. This is the preferred “static shell + stale-while-revalidate” path: fixed layout first, old data instantly, fresh data in background.
 - Home Rank renders a session snapshot immediately, refreshes only when the page/screen is visible, and polls every 60s instead of 30s.
 - Tab switching uses instant `scrollTo({behavior:'auto'})` only when needed instead of smooth scrolling every tab open.
+
+
+## Added in v20260501_1936_full_perf_foundation
+
+- Added IndexedDB hot cache (`tk-os-hot-cache`) behind the existing API snapshot path. Read-only GET snapshots now hydrate from memory/session/localStorage immediately and can fall back to IndexedDB for larger durable snapshots.
+- Added a small Web Worker foundation for off-main-thread performance tasks/signatures, ready for heavier filtering/sorting phases without blocking touch/scroll.
+- Added `renderProgressiveList()` to progressively/virtually render large lists in chunks during idle time instead of blocking the frame with one huge `innerHTML`.
+- Applied progressive rendering to large debt/stock lists: supplier debts, customer debts, stock IMEI, stock accessories.
+- Kept POST/mutation paths unchanged; business writes still refresh affected data normally.
 
 ## Safe edit points
 
@@ -33,6 +42,6 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains 85 files.
-- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_PERSIST_MAX_AGE_MS`, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`.
+- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `renderProgressiveList`, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`.
 - `/home-rank.js` contains `HOME_RANK_CACHE_KEY`, visible-screen guard, and `AUTO_REFRESH_MS = 60_000`.
 - `/realtime-runtime.js` contains `scheduleIdleCleanupLegacyBrowserCache()`.
