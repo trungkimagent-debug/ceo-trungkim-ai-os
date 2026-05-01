@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1702_customer_debt_luxury_runtime';
+window.__TK_APP_VERSION__ = 'v20260501_1707_customer_debt_luxury_contrast';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5596,6 +5596,37 @@ window.__TK_APP_VERSION__ = 'v20260501_1702_customer_debt_luxury_runtime';
     #customerDebtDetailModal .customer-settlement-detail-stat span,
     #customerDebtDetailModal .customer-settlement-pay-fields label {
       color: rgba(255,247,223,.62);
+    }
+
+    #customerDebtDetailModal .customer-settlement-label {
+      color: rgba(255, 247, 223, 0.78);
+    }
+
+    #customerDebtDetailModal .customer-settlement-value,
+    #customerDebtDetailModal .customer-settlement-note,
+    #customerDebtDetailModal .customer-settlement-status,
+    #customerDebtDetailModal .customer-settlement-date {
+      color: rgba(255, 247, 223, 0.90);
+    }
+
+    #customerDebtDetailModal .customer-settlement-value.strong,
+    #customerDebtDetailModal .customer-settlement-money {
+      color: #fff7df;
+      text-shadow: 0 0 12px rgba(245, 198, 96, 0.10);
+    }
+
+    #customerDebtDetailModal .customer-settlement-money.green {
+      color: #6ff1d1;
+      text-shadow: 0 0 14px rgba(83, 224, 189, 0.18);
+    }
+
+    #customerDebtDetailModal .customer-settlement-money.red {
+      color: #ff9c9c;
+    }
+
+    #customerDebtDetailModal .customer-settlement-date i,
+    #customerDebtDetailModal .customer-settlement-pay-head strong i {
+      color: #f5c660;
     }
 
     #customerDebtDetailModal .customer-settlement-detail-stat.due,

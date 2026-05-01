@@ -169,3 +169,9 @@ Last reviewed: 2026-05-01.
 - User liked the dark/gold splash/startup screen style and asked to apply it to Nợ KH.
 - Added a scoped CSS override for `#screen-customer.customer-settlement-screen` and `#customerDebtDetailModal` only: dark radial background, gold accent badge, glass cards, gold/green stat rails, dark modal/pay form styling.
 - Preserved all `customerDebt*` IDs, list/detail/pay/reminder markup and API logic; no keyboard reflow code added.
+
+## 2026-05-01 — Luxury dark contrast correction
+
+- Screenshot showed detail modal text like “Khoản phải thu” was too dark/low-contrast on the dark luxury background.
+- Added scoped contrast overrides for `#customerDebtDetailModal .customer-settlement-*` labels/values/money/date/status/note so all detail rows are readable while keeping the dark/gold style.
+- No DOM/logic/API changes; preserved pay amount/note IDs and avoided keyboard reflow.

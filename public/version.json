@@ -1,7 +1,9 @@
 {
-  "version": "v20260501_1702_customer_debt_luxury_runtime",
-  "updatedAt": "2026-05-01T17:02:00+0700",
+  "version": "v20260501_1707_customer_debt_luxury_contrast",
+  "updatedAt": "2026-05-01T17:07:00+0700",
   "changedModules": [
+    "customer-debt-dark-contrast-fix",
+    "customer-debt-luxury-modal-readable-text",
     "customer-debt-splash-style-application",
     "customer-debt-dark-glass-gold-ui",
     "customer-debt-luxury-runtime-theme",
