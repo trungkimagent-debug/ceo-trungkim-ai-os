@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1943_instant_paint_worldclass';
+window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -98,7 +98,6 @@ window.__TK_APP_VERSION__ = 'v20260501_1943_instant_paint_worldclass';
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" /></noscript>
-  <script src="/vendor/html5-qrcode.min.js" defer></script>
   <style>
     :root {
       --bg: #f3f4f6;
@@ -23797,25 +23796,41 @@ window.__TK_APP_VERSION__ = 'v20260501_1943_instant_paint_worldclass';
 
     function getPurchaseScannerFormats() {
       if (!window.Html5QrcodeSupportedFormats) return undefined;
+      const formats = window.Html5QrcodeSupportedFormats;
       return [
-        Html5QrcodeSupportedFormats.CODE_128,
-        Html5QrcodeSupportedFormats.CODE_39,
-        Html5QrcodeSupportedFormats.CODE_93,
-        Html5QrcodeSupportedFormats.CODABAR,
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.EAN_8,
-        Html5QrcodeSupportedFormats.UPC_A,
-        Html5QrcodeSupportedFormats.UPC_E,
-        Html5QrcodeSupportedFormats.QR_CODE,
-        Html5QrcodeSupportedFormats.DATA_MATRIX,
+        formats.CODE_128,
+        formats.CODE_39,
+        formats.CODE_93,
+        formats.CODABAR,
+        formats.EAN_13,
+        formats.EAN_8,
+        formats.UPC_A,
+        formats.UPC_E,
+        formats.QR_CODE,
+        formats.DATA_MATRIX,
       ].filter(Boolean);
     }
 
+    let purchaseScannerLibraryPromise = null;
+
     function ensurePurchaseScannerLibrary() {
-      if (!window.Html5Qrcode) {
-        throw new Error('Bộ quét mã chưa tải xong, mày thử lại giúp tao.');
+      if (window.Html5Qrcode) return Promise.resolve(window.Html5Qrcode);
+      if (!purchaseScannerLibraryPromise) {
+        purchaseScannerLibraryPromise = new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = '/vendor/html5-qrcode.min.js';
+          script.async = true;
+          script.onload = () => window.Html5Qrcode
+            ? resolve(window.Html5Qrcode)
+            : reject(new Error('Bộ quét mã chưa sẵn sàng, thử lại giúp tao.'));
+          script.onerror = () => reject(new Error('Không tải được bộ quét mã. Kiểm tra mạng rồi thử lại.'));
+          document.head.appendChild(script);
+        }).catch((error) => {
+          purchaseScannerLibraryPromise = null;
+          throw error;
+        });
       }
-      return window.Html5Qrcode;
+      return purchaseScannerLibraryPromise;
     }
 
     async function stopPurchaseScanner() {
@@ -23850,10 +23865,12 @@ window.__TK_APP_VERSION__ = 'v20260501_1943_instant_paint_worldclass';
           throw new Error('Máy này chưa mở được camera để quét mã.');
         }
 
-        const Html5Qrcode = ensurePurchaseScannerLibrary();
         await closePurchaseScanner();
 
         purchaseScannerModal.classList.add('open');
+        purchaseScannerStatus.textContent = 'Đang tải bộ quét mã...';
+        purchaseScannerReader.innerHTML = '<div class="purchase-scanner-reader__fallback-note">Đang tải bộ quét mã...</div>';
+        const Html5Qrcode = await ensurePurchaseScannerLibrary();
         purchaseScannerStatus.textContent = 'Đang mở camera...';
         purchaseScannerReader.innerHTML = '<div class="purchase-scanner-reader__fallback-note">Đang tải camera quét mã...</div>';
 
