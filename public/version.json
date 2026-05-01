@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2153_gift_catalog_dedupe_in_stock",
-  "updatedAt": "2026-05-01T14:53:00.000Z",
+  "version": "v20260501_2158_gift_popup_no_vertical_scroll",
+  "updatedAt": "2026-05-01T14:58:00.000Z",
   "changedModules": [
+    "gift-popup-no-vertical-scroll",
     "gift-catalog-dedupe-in-stock",
     "sales-gift-popup-fullscreen",
     "request-card-compact-staff-product-name",
@@ -499,5 +500,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Danh sách quà/phụ kiện chỉ hiển thị một card đại diện còn hàng cho mỗi sản phẩm, tránh trùng mã/lô"
+  "label": "Popup quà tặng/phụ kiện co responsive full màn, không cuộn dọc; chỉ lướt ngang danh sách trang"
 }

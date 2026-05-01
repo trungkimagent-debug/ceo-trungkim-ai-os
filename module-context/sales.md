@@ -192,3 +192,12 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
   - `dedupeSalesAccessoryCatalogDisplayItems()` keeps one representative card per product, preferring selected batch, higher remaining stock, then item with image.
 - This only changes popup display; cached catalog and warehouse request payload still use the selected representative batch id.
 - Verification marker/version: `v20260501_2153_gift_catalog_dedupe_in_stock`.
+
+## 2026-05-01 — Gift/accessory popup responsive no vertical scroll
+
+- Trigger: Chủ tịch gửi ảnh popup quà tặng và yêu cầu “Hiển thị responsive full màn để không cần cuộn dọc”.
+- Added CSS override in `public/index.html` for `.sales-accessory-popup` only.
+- Popup sheet stays `100dvh`, outer frame/content `overflow: hidden`; only `#salesAccessoryPopupGrid` keeps horizontal paging.
+- Product page uses `repeat(3, minmax(0, 1fr))`; cards/media/name/footer use clamp-based sizing so 9 products + footer fit within viewport without vertical scrolling.
+- On short screens (`max-height: 720px`), the decorative header row hides to preserve the search/list/footer inside one screen.
+- Verification marker/version: `v20260501_2158_gift_popup_no_vertical_scroll`.
