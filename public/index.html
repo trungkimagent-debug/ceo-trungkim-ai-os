@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
+window.__TK_APP_VERSION__ = 'v20260501_1158_customer_debt_ncc_1to1';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -4835,6 +4835,134 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
       .customer-debt-pay-row,
       .customer-debt-pay-actions {
         grid-template-columns: 1fr;
+      }
+    }
+
+    /* Nợ KH • 1:1 parity with Nợ NCC shell */
+    #screen-customer .panel {
+      position: relative;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid #dbe7f4;
+      background: linear-gradient(180deg, #ffffff, #f6f9fc);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+    }
+
+    #screen-customer .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0f62fe, #33a1fd 58%, #a6e1fa);
+    }
+
+    #screen-customer .section-title {
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    #screen-customer .section-title > div {
+      display: grid;
+      gap: 3px;
+    }
+
+    #screen-customer .section-title h3 {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #16324f;
+      letter-spacing: 0;
+    }
+
+    #screen-customer .section-title h3 i,
+    #screen-customer .supplier-overview-copy strong i,
+    #customerDebtDetailModal .supplier-pay-head strong i {
+      color: #0f62fe;
+    }
+
+    #screen-customer .section-title p,
+    #screen-customer .supplier-overview-copy span,
+    #screen-customer .supplier-stat-card span,
+    #screen-customer .supplier-debt-sub,
+    #screen-customer .supplier-activity-sub {
+      color: #6b7a90;
+    }
+
+    #screen-customer .badge,
+    #screen-customer .section-title .badge {
+      border: 1px solid #cfe0fb;
+      background: #eef5ff;
+      color: #0f62fe;
+      box-shadow: none;
+    }
+
+    #screen-customer .search-box {
+      border-color: #d7e3f1;
+      background: #ffffff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+
+    #screen-customer .search-box i { color: #7c8da6; }
+
+    #screen-customer .search-box input,
+    #customerDebtDetailModal input,
+    #customerDebtDetailModal textarea {
+      color: #17324d;
+      background: #ffffff;
+      border-color: #d7e3f1;
+    }
+
+    #screen-customer .search-box input::placeholder,
+    #customerDebtDetailModal input::placeholder,
+    #customerDebtDetailModal textarea::placeholder {
+      color: #9aa9bd;
+    }
+
+    #customerDebtDetailModal.open {
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-card.supplier-detail-modal-card {
+      width: min(100%, 560px);
+      max-width: min(100%, 560px);
+      height: auto;
+      max-height: min(90vh, 920px);
+      margin: 0;
+      border-radius: 22px;
+      padding: 18px;
+      border: 1px solid #dbe7f4;
+      background: linear-gradient(180deg, #ffffff, #f6f9fc);
+      box-shadow: 0 28px 70px rgba(15, 23, 42, 0.16);
+      color: #17324d;
+      overflow-y: auto;
+      animation: none;
+    }
+
+    #customerDebtDetailModal .customer-debt-detail-tags {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 640px) {
+      #screen-customer .panel { padding: 12px; }
+      #screen-customer .section-title { margin-bottom: 10px; }
+      #customerDebtDetailModal .customer-debt-detail-card.supplier-detail-modal-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 18px;
+      }
+      #customerDebtDetailModal .btn-row-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px;
+      }
+      #customerDebtDetailModal .btn-row-3 .btn {
+        min-height: 44px;
+        padding: 0 8px;
+        font-size: 12px;
       }
     }
 
@@ -13156,56 +13284,98 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
     </section>
 
     <section id="screen-customer" class="screen">
-      <div class="panel customer-debt-shell tk-customer-chairman-v1">
-        <div class="section-title customer-debt-head">
-          <div class="customer-debt-head-copy">
-            <h3>Công nợ khách</h3>
-            <p id="customerDebtCaption">Danh sách khách đang còn nợ lấy realtime từ đơn bán trả thiếu.</p>
+      <div class="supplier-screen customer-debt-screen-1to1">
+        <div class="panel">
+          <div class="section-title">
+            <div>
+              <h3><i class="fa-solid fa-wallet"></i> Nợ KH</h3>
+              <p>Realtime</p>
+            </div>
+            <span id="customerDebtStatusBadge" class="badge ok">Sync</span>
           </div>
-          <div class="customer-debt-head-actions">
-            <button id="customerDebtRefreshBtn" type="button" class="toolbar-btn customer-debt-refresh-btn"><i class="fa-solid fa-rotate"></i><span>Cập nhật</span></button>
-            <span id="customerDebtStatusBadge" class="badge ok">Sẵn sàng</span>
+
+          <div class="supplier-overview-card">
+            <div class="supplier-overview-top">
+              <div class="supplier-overview-copy">
+                <strong><i class="fa-solid fa-layer-group"></i> Công nợ khách</strong>
+                <span id="customerDebtCaption">Đang nạp tổng quan...</span>
+              </div>
+              <div class="supplier-overview-total">
+                <strong id="customerDebtTotal">0đ</strong>
+                <span>Đang mở</span>
+              </div>
+            </div>
+
+            <div class="supplier-summary-grid">
+              <div class="supplier-stat-card">
+                <small><i class="fa-solid fa-users"></i>Khách</small>
+                <strong id="customerDebtCount">0</strong>
+                <span>Đang nợ</span>
+              </div>
+              <div class="supplier-stat-card">
+                <small><i class="fa-solid fa-file-invoice"></i>Hồ sơ</small>
+                <strong id="customerDebtListMetaTop">0</strong>
+                <span>Chưa thu</span>
+              </div>
+              <div class="supplier-stat-card">
+                <small><i class="fa-solid fa-circle-check"></i>Đã thu</small>
+                <strong id="customerDebtPaid">0đ</strong>
+                <span>Đã ghi nhận</span>
+              </div>
+              <div class="supplier-stat-card">
+                <small><i class="fa-solid fa-clock"></i>Quá hẹn</small>
+                <strong id="customerDebtOverdue">0</strong>
+                <span>Cần nhắc</span>
+              </div>
+            </div>
+
+            <div class="supplier-inline-actions">
+              <button id="customerDebtRefreshBtn" class="btn btn-secondary" type="button"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
+            </div>
           </div>
         </div>
 
-        <div class="customer-debt-summary-grid">
-          <div class="supplier-stat-card customer-debt-stat-card">
-            <small>Cần thu</small>
-            <strong id="customerDebtTotal">0đ</strong>
-            <span id="customerDebtListMetaTop">0 hồ sơ công nợ mở</span>
+        <div class="panel">
+          <div class="section-title">
+            <div>
+              <h3><i class="fa-solid fa-chart-line"></i> Top nợ</h3>
+              <p>Tìm nhanh</p>
+            </div>
+            <span class="badge">Top</span>
           </div>
-          <div class="supplier-stat-card customer-debt-stat-card">
-            <small>Khách nợ</small>
-            <strong id="customerDebtCount">0</strong>
-            <span>Đang có công nợ chưa tất toán</span>
-          </div>
-          <div class="supplier-stat-card customer-debt-stat-card warn">
-            <small>Quá hẹn</small>
-            <strong id="customerDebtOverdue">0</strong>
-            <span id="customerDebtPaid">Đã thu 0đ</span>
-          </div>
-        </div>
-
-        <div class="customer-debt-toolbar">
-          <label class="search-box customer-debt-search">
+          <div class="search-box search-box-action supplier-search-inline">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input id="customerDebtSearch" type="search" placeholder="Tìm khách, SĐT, mã đơn..." autocomplete="off" />
-          </label>
-          <div class="customer-debt-filters">
-            <button type="button" class="customer-debt-filter active" data-customer-debt-filter="unpaid">Cần thu</button>
-            <button type="button" class="customer-debt-filter" data-customer-debt-filter="overdue">Quá hẹn</button>
-            <button type="button" class="customer-debt-filter" data-customer-debt-filter="paid">Đã thu</button>
-            <button type="button" class="customer-debt-filter" data-customer-debt-filter="all">Tất cả</button>
+            <input id="customerDebtSearch" type="search" placeholder="Tìm khách, SĐT, mã đơn" autocomplete="off" />
+          </div>
+          <div class="supplier-table-head supplier-table-head-debt">
+            <span>Khách</span>
+            <span>Đơn</span>
+            <span>Cập nhật</span>
+            <span>Nợ</span>
+            <span></span>
+          </div>
+          <div id="customerDebtList" class="supplier-debt-list customer-debt-list">
+            <div class="empty">Đang tải dữ liệu nợ khách...</div>
           </div>
         </div>
 
-        <div class="customer-debt-list-head">
-          <strong id="customerDebtListTitle">Nợ cần thu</strong>
-          <span id="customerDebtListMeta">0 khách • 0đ</span>
-        </div>
-
-        <div id="customerDebtList" class="customer-debt-list">
-          <div class="empty">Đang tải công nợ khách...</div>
+        <div class="panel">
+          <div class="section-title">
+            <div>
+              <h3><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</h3>
+              <p>Gần đây</p>
+            </div>
+            <span class="badge">Log</span>
+          </div>
+          <div class="supplier-table-head supplier-table-head-activity">
+            <span>Khách</span>
+            <span>Nội dung</span>
+            <span>Trạng thái</span>
+            <span>Số tiền</span>
+          </div>
+          <div id="customerDebtRecent" class="supplier-activity-list customer-debt-recent">
+            <div class="empty">Đang tải lịch sử nợ khách...</div>
+          </div>
         </div>
 
         <div id="customerScreenMsg" class="msg"></div>
@@ -13230,55 +13400,62 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
     </div>
 
     <div id="customerDebtDetailModal" class="modal-overlay centered">
-      <div class="modal-card small customer-debt-detail-card">
-        <div class="modal-head compact customer-debt-detail-head">
-          <button id="customerDebtDetailCloseBtn" type="button" class="btn btn-secondary icon-btn"><i class="fa-solid fa-chevron-left"></i></button>
-          <div class="customer-debt-detail-copy">
-            <strong id="customerDebtDetailTitle">Công nợ khách</strong>
-            <span id="customerDebtDetailSubtitle">Chọn 1 hồ sơ để xem chi tiết.</span>
+      <div class="modal-card supplier-detail-modal-card customer-debt-detail-card">
+        <div class="modal-head compact supplier-detail-head customer-debt-detail-head">
+          <button id="customerDebtDetailCloseBtn" class="toolbar-btn" type="button" title="Đóng"><i class="fa-solid fa-arrow-left"></i></button>
+          <div class="supplier-detail-head-copy customer-debt-detail-copy">
+            <strong id="customerDebtDetailTitle">Chi tiết khách</strong>
+            <span id="customerDebtDetailSubtitle">Đang tải dữ liệu...</span>
           </div>
         </div>
 
-        <div class="customer-debt-detail-summary">
-          <div class="supplier-stat-card customer-debt-stat-card">
-            <small>Còn nợ</small>
+        <div class="supplier-detail-summary customer-debt-detail-summary">
+          <div class="supplier-stat-card">
+            <small><i class="fa-solid fa-wallet"></i>Còn nợ</small>
             <strong id="customerDebtDetailAmount">0đ</strong>
             <span id="customerDebtDetailStatus">Chưa chọn hồ sơ</span>
           </div>
-          <div class="supplier-stat-card customer-debt-stat-card">
-            <small>Đã thu</small>
+          <div class="supplier-stat-card">
+            <small><i class="fa-solid fa-circle-check"></i>Đã thu</small>
             <strong id="customerDebtDetailPaid">0đ</strong>
             <span id="customerDebtDetailCreatedAt">--</span>
           </div>
-          <div class="supplier-stat-card customer-debt-stat-card">
-            <small>Hẹn thanh toán</small>
+          <div class="supplier-stat-card">
+            <small><i class="fa-solid fa-calendar-days"></i>Hẹn trả</small>
             <strong id="customerDebtDetailDueDate">--</strong>
             <span id="customerDebtDetailAge">--</span>
           </div>
         </div>
 
-        <div id="customerDebtDetailTags" class="customer-debt-detail-tags"></div>
-        <div id="customerDebtDetailNote" class="customer-debt-detail-note">Chưa có ghi chú.</div>
+        <div class="supplier-table-head supplier-table-head-detail">
+          <span>Đơn</span>
+          <span>Ghi chú</span>
+          <span>Trạng thái</span>
+          <span>Số tiền</span>
+          <span>Thao tác</span>
+        </div>
+        <div id="customerDebtDetailTags" class="supplier-detail-list customer-debt-detail-tags">
+          <div class="empty">Chọn khách để xem chi tiết công nợ...</div>
+        </div>
+        <div id="customerDebtDetailNote" class="customer-debt-detail-note" hidden>Chưa có ghi chú.</div>
 
-        <div class="customer-debt-pay-panel">
-          <div class="customer-debt-pay-head">
-            <strong>Thu tiền từng khách</strong>
+        <div class="supplier-pay-panel customer-debt-pay-panel">
+          <div class="supplier-pay-head customer-debt-pay-head">
+            <strong><i class="fa-solid fa-credit-card"></i> Thu tiền</strong>
             <span id="customerDebtDetailPayHint">Nhập số tiền thực thu rồi bấm xác nhận.</span>
           </div>
-          <div class="customer-debt-pay-row">
-            <label class="compact-label">
-              <span>Số tiền thu</span>
-              <input id="customerDebtPayAmount" type="text" inputmode="numeric" placeholder="0" />
+          <div class="form-grid">
+            <label>Số tiền
+              <input id="customerDebtPayAmount" class="money-input" type="text" inputmode="numeric" autocomplete="off" data-money-input="true" data-money-input-lazy="true" placeholder="Nhập số tiền" />
             </label>
-            <button id="customerDebtPayFillBtn" type="button" class="btn btn-secondary"><i class="fa-solid fa-wand-magic-sparkles"></i> Thu đủ</button>
+            <label>Ghi chú
+              <textarea id="customerDebtPayNote" placeholder="Ví dụ: chuyển khoản / thu tiền mặt / hẹn phần còn lại"></textarea>
+            </label>
           </div>
-          <label class="compact-label">
-            <span>Ghi chú</span>
-            <textarea id="customerDebtPayNote" placeholder="Ghi chú thu nợ nếu cần"></textarea>
-          </label>
-          <div class="customer-debt-pay-actions">
-            <button id="customerDebtRemindBtn" type="button" class="btn btn-secondary"><i class="fa-regular fa-bell"></i> Nhắc nợ</button>
-            <button id="customerDebtPaySubmitBtn" type="button" class="btn btn-primary"><i class="fa-solid fa-money-bill-wave"></i> Xác nhận thu</button>
+          <div class="btn-row btn-row-3 customer-debt-pay-actions">
+            <button id="customerDebtPayFillBtn" class="btn btn-secondary" type="button"><i class="fa-solid fa-wand-magic-sparkles"></i> Điền</button>
+            <button id="customerDebtRemindBtn" class="btn btn-secondary" type="button"><i class="fa-regular fa-bell"></i> Nhắc</button>
+            <button id="customerDebtPaySubmitBtn" class="btn btn-primary" type="button"><i class="fa-solid fa-money-bill-wave"></i> Thu nợ</button>
           </div>
           <div id="customerDebtDetailMsg" class="msg"></div>
         </div>
@@ -14561,6 +14738,7 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
     const customerDebtListTitleEl = document.getElementById('customerDebtListTitle');
     const customerDebtListMetaEl = document.getElementById('customerDebtListMeta');
     const customerDebtListEl = document.getElementById('customerDebtList');
+    const customerDebtRecentEl = document.getElementById('customerDebtRecent');
     const customerScreenMsg = document.getElementById('customerScreenMsg');
     const customerDebtDetailModal = document.getElementById('customerDebtDetailModal');
     const customerDebtDetailCloseBtn = document.getElementById('customerDebtDetailCloseBtn');
@@ -23239,30 +23417,68 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
     }
 
     function buildCustomerDebtItemHtml(item = {}) {
-      const tags = [];
-      if (item.orderCode) tags.push(`<span class="customer-debt-tag info">${escapeHtml(item.orderCode)}</span>`);
-      if (item.dueDate) tags.push(`<span class="customer-debt-tag ${item.isOverdue ? 'warn' : 'ok'}">${escapeHtml(formatCustomerDebtDateShort(item.dueDate))}</span>`);
-      if (item.debtNames.length) tags.push(`<span class="customer-debt-tag">${escapeHtml(item.debtNames.slice(0, 2).join(' • '))}</span>`);
-      const statusText = item.status === 'paid' ? 'Đã thu' : (item.isOverdue ? `QH ${item.overdueDays} ngày` : 'Cần thu');
+      const customerName = escapeHtml(item.customerName || 'Khách hàng');
+      const customerPhone = escapeHtml(item.customerPhone || 'KH');
+      const orderCode = escapeHtml(item.orderCode || item.id || '--');
+      const updatedAt = formatCustomerDebtDateTime(item.updatedAt || item.createdAt || item.dueDate || '');
+      const debtPreview = item.debtNames?.length ? escapeHtml(item.debtNames.slice(0, 3).join(' • ')) : escapeHtml(item.note || 'Theo dõi realtime');
+      const statusText = item.status === 'paid' ? 'Đã thu' : (item.isOverdue ? `Quá hẹn ${item.overdueDays} ngày` : 'Nợ mở');
       return `
-        <button type="button" class="customer-debt-item" data-customer-debt-id="${escapeHtml(item.id)}">
-          <div class="customer-debt-item-avatar">${escapeHtml(getCustomerDebtInitials(item.customerName))}</div>
-          <div class="customer-debt-item-main">
-            <div class="customer-debt-item-top">
-              <div class="customer-debt-item-name">${escapeHtml(item.customerName)}</div>
-            </div>
-            <div class="customer-debt-item-sub">
-              <span>${escapeHtml(item.orderCode || '--')}</span>
-              <span>${escapeHtml(statusText)}</span>
-            </div>
-            <div class="customer-debt-item-tags">${tags.slice(0, 2).join('')}</div>
+        <button class="supplier-debt-item supplier-table-row supplier-table-row-debt customer-debt-item" data-customer-debt-id="${escapeHtml(item.id)}" type="button">
+          <div class="supplier-table-cell supplier-table-main" data-label="Khách">
+            <div class="supplier-debt-name customer-debt-item-name">${customerName}</div>
+            <div class="supplier-debt-sub customer-debt-item-sub">${customerPhone}</div>
           </div>
-          <div class="customer-debt-item-side">
-            <div class="customer-debt-item-amount ${item.status === 'paid' ? 'paid' : ''}">${escapeHtml(money(item.amount))}</div>
-            <div class="customer-debt-item-age">${escapeHtml(getCustomerDebtAgeLabel(item))}</div>
+          <div class="supplier-table-cell" data-label="Đơn">
+            <div class="supplier-table-value">${orderCode}</div>
+            <div class="supplier-table-sub">${debtPreview}</div>
           </div>
+          <div class="supplier-table-cell" data-label="Cập nhật">
+            <div class="supplier-table-value">${updatedAt ? escapeHtml(updatedAt) : '--'}</div>
+            <div class="supplier-table-sub">${escapeHtml(statusText)}</div>
+          </div>
+          <div class="supplier-table-cell supplier-table-money" data-label="Nợ">${money(item.amount || 0)}</div>
+          <div class="supplier-table-cell supplier-table-arrow" data-label="Mở"><i class="fa-solid fa-chevron-right"></i></div>
         </button>
       `;
+    }
+
+    function buildCustomerDebtActivityHtml(item = {}) {
+      const status = item.status === 'paid' ? 'paid' : 'unpaid';
+      const activityAt = formatCustomerDebtDateTime(item.paidAt || item.updatedAt || item.createdAt || '');
+      const statusClass = status === 'paid' ? 'ok' : 'warn';
+      const statusLabel = status === 'paid' ? 'Đã thu' : (item.isOverdue ? 'Quá hẹn' : 'Nợ mở');
+      const orderLabel = item.orderCode ? `Đơn ${escapeHtml(item.orderCode)}` : escapeHtml(item.id || 'Khoản nợ');
+      const note = escapeHtml(item.note || (status === 'paid' ? 'Đã ghi nhận thu.' : 'Phát sinh từ đơn bán trả thiếu.'));
+      return `
+        <div class="supplier-activity-item supplier-table-row supplier-table-row-activity customer-debt-activity-item">
+          <div class="supplier-table-cell supplier-table-main" data-label="Khách">
+            <div class="supplier-activity-name">${escapeHtml(item.customerName || 'Khách hàng')}</div>
+            <div class="supplier-activity-sub">${activityAt ? escapeHtml(activityAt) : 'Realtime'}</div>
+          </div>
+          <div class="supplier-table-cell" data-label="Nội dung">
+            <div class="supplier-table-value">${orderLabel}</div>
+            <div class="supplier-table-sub">${note}</div>
+          </div>
+          <div class="supplier-table-cell" data-label="Trạng thái">
+            <span class="supplier-table-status ${statusClass}"><i class="fa-solid ${status === 'paid' ? 'fa-circle-check' : 'fa-hourglass-half'}"></i>${statusLabel}</span>
+          </div>
+          <div class="supplier-table-cell supplier-table-money" data-label="Số tiền">${money(item.amount || 0)}</div>
+        </div>
+      `;
+    }
+
+    function renderCustomerDebtActivities(items = state.customerDebtItems || []) {
+      if (!customerDebtRecentEl) return;
+      const recent = (Array.isArray(items) ? items : [])
+        .slice()
+        .sort((a, b) => getCustomerDebtTimeMs(b.paidAt || b.updatedAt || b.createdAt || b.dueDate) - getCustomerDebtTimeMs(a.paidAt || a.updatedAt || a.createdAt || a.dueDate))
+        .slice(0, 10);
+      if (!recent.length) {
+        customerDebtRecentEl.innerHTML = '<div class="empty">Chưa có lịch sử nợ khách.</div>';
+        return;
+      }
+      customerDebtRecentEl.innerHTML = recent.map(buildCustomerDebtActivityHtml).join('');
     }
 
     function getFilteredCustomerDebtItems(items = state.customerDebtItems || []) {
@@ -23289,16 +23505,18 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
       const unpaidCount = Math.max(0, Number(summary.count || 0) || 0) || (state.customerDebtItems || []).filter((item) => item.status !== 'paid').length;
       const overdueCount = Math.max(0, Number(summary.overdueCount || 0) || 0);
       if (customerDebtTotalEl) customerDebtTotalEl.textContent = money(totalUnpaid);
-      if (customerDebtCountEl) customerDebtCountEl.textContent = String(unpaidCount);
-      if (customerDebtOverdueEl) customerDebtOverdueEl.textContent = String(overdueCount);
-      if (customerDebtPaidEl) customerDebtPaidEl.textContent = `Đã thu ${money(totalPaid)}`;
-      if (customerDebtListMetaTopEl) customerDebtListMetaTopEl.textContent = `${allCount} hồ sơ • cập nhật ${fetchedAt ? formatCustomerDebtDateTime(fetchedAt) : 'vừa xong'}`;
-      if (customerDebtCaptionEl) customerDebtCaptionEl.textContent = totalUnpaid > 0
-        ? `Đang có ${unpaidCount} khách còn nợ, cần thu ${money(totalUnpaid)}.`
-        : 'Hiện chưa còn công nợ khách mở nào.';
+      if (customerDebtCountEl) customerDebtCountEl.textContent = unpaidCount.toLocaleString('vi-VN');
+      if (customerDebtOverdueEl) customerDebtOverdueEl.textContent = overdueCount.toLocaleString('vi-VN');
+      if (customerDebtPaidEl) customerDebtPaidEl.textContent = money(totalPaid);
+      if (customerDebtListMetaTopEl) customerDebtListMetaTopEl.textContent = allCount.toLocaleString('vi-VN');
+      if (customerDebtCaptionEl) {
+        customerDebtCaptionEl.textContent = totalUnpaid > 0
+          ? `${unpaidCount.toLocaleString('vi-VN')} khách • ${money(totalUnpaid)}`
+          : 'Chưa có nợ mở';
+      }
       if (customerDebtStatusBadgeEl) {
-        customerDebtStatusBadgeEl.textContent = totalUnpaid > 0 ? 'Có dữ liệu' : 'Trống';
-        customerDebtStatusBadgeEl.className = totalUnpaid > 0 ? 'badge ok' : 'badge';
+        customerDebtStatusBadgeEl.textContent = totalUnpaid > 0 ? 'Nợ mở' : 'Sạch';
+        customerDebtStatusBadgeEl.className = `badge ${totalUnpaid > 0 ? '' : 'ok'}`.trim();
       }
     }
 
@@ -23313,10 +23531,12 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
       customerDebtFilterBtns.forEach((button) => button.classList.toggle('active', button.dataset.customerDebtFilter === filter));
       if (!customerDebtListEl) return;
       if (!filtered.length) {
-        customerDebtListEl.innerHTML = `<div class="empty">${state.customerDebtQuery ? 'Không thấy khách phù hợp bộ lọc hiện tại.' : 'Chưa có hồ sơ công nợ nào ở mục này.'}</div>`;
+        customerDebtListEl.innerHTML = `<div class="empty">${state.customerDebtQuery ? 'Không thấy khách khớp bộ lọc.' : 'Chưa có khách nào đang nợ.'}</div>`;
+        renderCustomerDebtActivities(items);
         return;
       }
       customerDebtListEl.innerHTML = filtered.map(buildCustomerDebtItemHtml).join('');
+      renderCustomerDebtActivities(items);
     }
 
     function getActiveCustomerDebtItem() {
@@ -23331,6 +23551,33 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
       setMsg(customerDebtDetailMsg, '', '');
     }
 
+    function buildCustomerDebtDetailRowHtml(item = {}) {
+      const isUnpaid = item.status !== 'paid' && Number(item.amount || 0) > 0;
+      const actionAt = formatCustomerDebtDateTime(item.paidAt || item.updatedAt || item.createdAt || '');
+      const title = item.orderCode ? `Đơn ${escapeHtml(item.orderCode)}` : escapeHtml(item.id || 'Khoản nợ');
+      const note = escapeHtml(item.note || (isUnpaid ? 'Từ đơn bán trả thiếu.' : 'Đã ghi nhận thu.'));
+      const statusLabel = isUnpaid ? (item.isOverdue ? 'Quá hẹn' : 'Nợ mở') : 'Đã thu';
+      const statusIcon = isUnpaid ? 'fa-hourglass-half' : 'fa-circle-check';
+      const actionButton = isUnpaid ? `<button class="supplier-mini-btn primary" type="button" data-customer-fill-current="true"><i class="fa-solid fa-money-bill-wave"></i>Thu nợ</button>` : '<span class="supplier-table-sub">--</span>';
+      return `
+        <div class="supplier-detail-item supplier-table-row supplier-table-row-detail customer-debt-detail-row selected">
+          <div class="supplier-table-cell supplier-table-main" data-label="Đơn">
+            <div class="supplier-detail-item-name">${title}</div>
+            <div class="supplier-detail-item-sub">${actionAt ? escapeHtml(actionAt) : 'Realtime'}</div>
+          </div>
+          <div class="supplier-table-cell" data-label="Ghi chú">
+            <div class="supplier-table-value">${isUnpaid ? 'Khoản phải thu' : 'Đã ghi nhận'}</div>
+            <div class="supplier-table-sub">${note}</div>
+          </div>
+          <div class="supplier-table-cell" data-label="Trạng thái">
+            <span class="supplier-table-status ${isUnpaid ? 'warn' : 'ok'}"><i class="fa-solid ${statusIcon}"></i>${statusLabel}</span>
+          </div>
+          <div class="supplier-table-cell supplier-table-money" data-label="Số tiền">${money(item.amount || 0)}</div>
+          <div class="supplier-table-cell supplier-table-actions" data-label="Thao tác">${actionButton}</div>
+        </div>
+      `;
+    }
+
     function renderCustomerDebtDetail() {
       const item = getActiveCustomerDebtItem();
       if (!item) {
@@ -23338,22 +23585,14 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
         return;
       }
       if (customerDebtDetailTitleEl) customerDebtDetailTitleEl.textContent = item.customerName;
-      if (customerDebtDetailSubtitleEl) customerDebtDetailSubtitleEl.textContent = [item.orderCode, item.customerPhone].filter(Boolean).join(' • ') || 'Chưa có số điện thoại';
+      if (customerDebtDetailSubtitleEl) customerDebtDetailSubtitleEl.textContent = [item.orderCode, item.customerPhone, item.debtNames?.join(' • ')].filter(Boolean).join(' • ') || 'Chưa có số điện thoại';
       if (customerDebtDetailAmountEl) customerDebtDetailAmountEl.textContent = money(item.amount);
       if (customerDebtDetailPaidEl) customerDebtDetailPaidEl.textContent = money(item.paidAmount);
       if (customerDebtDetailDueDateEl) customerDebtDetailDueDateEl.textContent = item.dueDate ? formatCustomerDebtDateOnly(item.dueDate) : '--';
       if (customerDebtDetailAgeEl) customerDebtDetailAgeEl.textContent = getCustomerDebtAgeLabel(item);
       if (customerDebtDetailStatusEl) customerDebtDetailStatusEl.textContent = getCustomerDebtStatusLabel(item);
       if (customerDebtDetailCreatedAtEl) customerDebtDetailCreatedAtEl.textContent = item.createdAt ? `Tạo ${formatCustomerDebtDateTime(item.createdAt)}` : 'Chưa rõ thời gian';
-      if (customerDebtDetailTagsEl) {
-        const tags = [];
-        if (item.status === 'paid') tags.push('<span class="customer-debt-tag ok"><i class="fa-solid fa-circle-check"></i>Đã tất toán</span>');
-        else tags.push(`<span class="customer-debt-tag ${item.isOverdue ? 'warn' : 'info'}"><i class="fa-solid fa-wallet"></i>${escapeHtml(money(item.amount))}</span>`);
-        if (item.debtNames.length) tags.push(`<span class="customer-debt-tag"><i class="fa-solid fa-layer-group"></i>${escapeHtml(item.debtNames.join(' • '))}</span>`);
-        if (item.paymentMethodLabel) tags.push(`<span class="customer-debt-tag"><i class="fa-solid fa-credit-card"></i>${escapeHtml(item.paymentMethodLabel)}</span>`);
-        if (Number(item.reminderCount || 0) > 0) tags.push(`<span class="customer-debt-tag"><i class="fa-regular fa-bell"></i>Nhắc ${escapeHtml(String(item.reminderCount))} lần</span>`);
-        customerDebtDetailTagsEl.innerHTML = tags.join('');
-      }
+      if (customerDebtDetailTagsEl) customerDebtDetailTagsEl.innerHTML = buildCustomerDebtDetailRowHtml(item);
       if (customerDebtDetailNoteEl) customerDebtDetailNoteEl.textContent = String(item.note || '').trim() || 'Không có ghi chú thêm cho khoản nợ này.';
       if (customerDebtDetailPayHintEl) customerDebtDetailPayHintEl.textContent = item.status === 'paid'
         ? 'Khoản này đã thu xong, anh chỉ cần xem lịch sử.'
@@ -25695,6 +25934,16 @@ window.__TK_APP_VERSION__ = 'v20260501_0505_customer_chairman_suite';
     customerDebtDetailCloseBtn?.addEventListener('click', closeCustomerDebtDetail);
     customerDebtDetailModal?.addEventListener('click', (event) => {
       if (event.target === customerDebtDetailModal) closeCustomerDebtDetail();
+    });
+
+    customerDebtDetailTagsEl?.addEventListener('click', (event) => {
+      const trigger = event.target instanceof Element ? event.target.closest('[data-customer-fill-current]') : null;
+      if (!trigger) return;
+      const item = getActiveCustomerDebtItem();
+      if (!item || item.status === 'paid') return;
+      setMoneyInputValue(customerDebtPayAmountInput, item.amount, { blankWhenZero: false });
+      focusInput(customerDebtPayAmountInput);
+      setMsg(customerDebtDetailMsg, '', '');
     });
 
     customerDebtPayFillBtn?.addEventListener('click', () => {

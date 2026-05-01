@@ -1,7 +1,10 @@
 {
-  "version": "v20260501_0505_customer_chairman_suite",
-  "updatedAt": "2026-05-01T05:05:00+0700",
+  "version": "v20260501_1158_customer_debt_ncc_1to1",
+  "updatedAt": "2026-05-01T11:58:46+0700",
   "changedModules": [
+    "customer-debt-screen-ncc-1to1-detail",
+    "customer-debt-screen-ncc-1to1-list",
+    "customer-debt-screen-ncc-1to1-shell",
     "tablet-airport-chime-asset-swap",
     "tablet-airport-chime-before-tts",
     "tablet-airport-announcement-cadence",

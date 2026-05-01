@@ -72,3 +72,14 @@ Last reviewed: 2026-05-01.
 - `/home-rank.js`, `/star-native.js`, `/internal-access.js` return JS MIME.
 - Diff is scoped to `public/index.html`, `public/version.json`, and context docs only.
 - No Firebase config/auth copied from `trungkimstar`.
+
+## 2026-05-01 — Nợ KH 1:1 with Nợ NCC
+
+- Current visual target: mirror Supplier/Nợ NCC layout, not old `.tk-customer-chairman-v1` compact card shell.
+- `#screen-customer` now uses `.supplier-screen customer-debt-screen-1to1` and supplier table/card classes:
+  - `.supplier-overview-card`, `.supplier-summary-grid`, `.supplier-debt-list`, `.supplier-table-head-*`, `.supplier-activity-list`.
+- Customer detail modal now mirrors NCC detail modal:
+  - `.supplier-detail-modal-card`, `.supplier-detail-summary`, `.supplier-detail-list`, `.supplier-pay-panel`.
+- Keep customer DOM IDs unchanged (`customerDebt*`) because JS/payment/reminder APIs depend on them.
+- Extra CSS scoped to `#screen-customer` and `#customerDebtDetailModal` sits near the existing customer CSS block and is only for parity with supplier styles.
+- If refining again, compare against Supplier/Nợ NCC sections first, then only adjust customer-specific copy/data mapping.
