@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1919_purchase_sync_debt_ui';
+window.__TK_APP_VERSION__ = 'v20260501_1938_sales_gift_popup_luxury';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -9077,7 +9077,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1919_purchase_sync_debt_ui';
       min-height: 0;
       height: 100%;
       max-height: 100%;
-      grid-template-rows: auto auto minmax(0, 1fr);
+      grid-template-rows: auto auto auto minmax(0, 1fr);
       gap: 6px;
       align-content: stretch;
       padding-bottom: 2px;
@@ -12945,6 +12945,528 @@ window.__TK_APP_VERSION__ = 'v20260501_1919_purchase_sync_debt_ui';
       }
     }
 
+
+    /* Bán • sync visual language with Nợ KH dark/gold dashboard */
+    #screen-sales.sales-debt-sync-screen {
+      --sales-sync-gold: #f5c660;
+      --sales-sync-gold-2: #d69a2d;
+      --sales-sync-text: #fff7df;
+      --sales-sync-muted: rgba(255, 247, 223, 0.58);
+      --sales-sync-border: rgba(245, 198, 96, 0.20);
+      --sales-sync-panel: rgba(13, 13, 13, 0.74);
+      position: relative;
+      overflow: auto;
+      padding: 0 9px 92px;
+      background:
+        radial-gradient(circle at 16% -8%, rgba(245, 198, 96, 0.18), transparent 31%),
+        radial-gradient(circle at 92% 6%, rgba(255, 231, 170, 0.10), transparent 34%),
+        linear-gradient(180deg, #090909 0%, #11100e 42%, #050505 100%);
+      color: var(--sales-sync-text);
+      border-radius: 0;
+    }
+
+    #screen-sales.sales-debt-sync-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.022) 0 1px, transparent 1px 72px);
+      opacity: .62;
+    }
+
+    #screen-sales.sales-debt-sync-screen.active.menu-only {
+      padding: 0 9px 0;
+      overflow: hidden;
+    }
+
+    #screen-sales.sales-debt-sync-screen .sales-pos-shell,
+    #screen-sales.sales-debt-sync-screen .sales-accessory-flow-bar,
+    #screen-sales.sales-debt-sync-screen .sales-accessory-pending-panel {
+      position: relative;
+      z-index: 1;
+    }
+
+    #screen-sales .sales-debt-summary-bar {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      padding: 8px 0 5px;
+    }
+
+    #screen-sales .sales-debt-summary-bar > div {
+      position: relative;
+      min-height: 58px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      padding: 9px 10px 9px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(245, 198, 96, 0.18);
+      background:
+        linear-gradient(120deg, rgba(255,255,255,.05), rgba(255,255,255,0) 42%),
+        linear-gradient(180deg, rgba(20,19,17,.84), rgba(9,9,9,.86));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.065), 0 10px 24px rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+
+    #screen-sales .sales-debt-summary-bar > div::before {
+      content: '';
+      position: absolute;
+      top: 11px;
+      bottom: 11px;
+      left: 0;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #fbe7a8, #d89422);
+      box-shadow: 0 0 12px rgba(245,198,96,.24);
+    }
+
+    #screen-sales .sales-debt-summary-bar span {
+      color: rgba(255, 247, 223, 0.50);
+      font-size: 8.6px;
+      font-weight: 850;
+      letter-spacing: .085em;
+      text-transform: uppercase;
+    }
+
+    #screen-sales .sales-debt-summary-bar strong {
+      color: var(--sales-sync-text);
+      font-family: var(--font-num);
+      font-size: clamp(15px, 4.15vw, 18px);
+      line-height: 1.05;
+      letter-spacing: -.035em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #screen-sales .sales-debt-top-controls {
+      position: relative;
+      z-index: 12;
+      padding: 4px 0 9px;
+      background: transparent;
+    }
+
+    #screen-sales .sales-request-toolbar-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 7px;
+    }
+
+    #screen-sales .sales-request-search-box {
+      min-height: 42px;
+      border-radius: 16px;
+      border: 1px solid rgba(245, 198, 96, 0.18);
+      background: rgba(8, 8, 8, 0.56);
+      color: rgba(255, 231, 170, 0.82);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.052), 0 9px 22px rgba(0,0,0,.25);
+    }
+
+    #screen-sales .sales-request-search-box input,
+    #screen-sales .sales-request-filter select {
+      color: var(--sales-sync-text);
+      -webkit-text-fill-color: var(--sales-sync-text);
+      font-weight: 700;
+    }
+
+    #screen-sales .sales-request-search-box input::placeholder {
+      color: rgba(255, 247, 223, 0.42);
+    }
+
+    #screen-sales .sales-request-filter {
+      border-left-color: rgba(245, 198, 96, 0.16);
+    }
+
+    #screen-sales .sales-request-filter span {
+      color: rgba(255, 247, 223, 0.45);
+    }
+
+    #screen-sales .sales-menu-grid {
+      gap: 8px;
+    }
+
+    #screen-sales .sales-menu-card {
+      border-color: rgba(245, 198, 96, 0.20);
+      background:
+        radial-gradient(circle at 24% 0%, rgba(245,198,96,.14), transparent 40%),
+        linear-gradient(180deg, rgba(22,21,18,.82), rgba(8,8,8,.88));
+      color: var(--sales-sync-text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 26px rgba(0,0,0,.30);
+    }
+
+    #screen-sales .sales-menu-card i {
+      background: linear-gradient(135deg, rgba(249,215,126,.22), rgba(214,154,45,.12));
+      color: var(--sales-sync-gold);
+      border: 1px solid rgba(245,198,96,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 18px rgba(0,0,0,.22);
+    }
+
+    #screen-sales .sales-menu-card span {
+      color: var(--sales-sync-text);
+    }
+
+    #screen-sales .sales-menu-card small,
+    #screen-sales .section-title p,
+    #screen-sales .empty,
+    #screen-sales .ticket-sub {
+      color: var(--sales-sync-muted);
+    }
+
+    #screen-sales .panel,
+    #screen-sales .sales-pos-hero,
+    #screen-sales .sales-accessory-pending-card,
+    #screen-sales .result-card,
+    #screen-sales .mini-card,
+    #screen-sales .line-item,
+    #screen-sales .summary-box,
+    #screen-sales .kpi {
+      border-color: rgba(245, 198, 96, 0.17);
+      background:
+        linear-gradient(120deg, rgba(255,255,255,.045), rgba(255,255,255,0) 42%),
+        linear-gradient(180deg, rgba(18,17,15,.76), rgba(8,8,8,.80));
+      color: var(--sales-sync-text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 12px 26px rgba(0,0,0,.26);
+    }
+
+    #screen-sales .section-title h3,
+    #screen-sales .sales-pos-hero strong,
+    #screen-sales .ticket-title,
+    #screen-sales .result-title,
+    #screen-sales .kpi strong,
+    #screen-sales .mini-card strong {
+      color: var(--sales-sync-text);
+    }
+
+    #screen-sales .pill,
+    #screen-sales .tag,
+    #screen-sales .badge,
+    #screen-sales .sales-pos-kicker {
+      border-color: rgba(245,198,96,.18);
+      background: rgba(245,198,96,.10);
+      color: var(--sales-sync-gold);
+    }
+
+    #screen-sales .search-box,
+    #screen-sales input,
+    #screen-sales select,
+    #screen-sales textarea {
+      border-color: rgba(245, 198, 96, 0.18);
+      background: rgba(8, 8, 8, 0.58);
+      color: var(--sales-sync-text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    #screen-sales input::placeholder,
+    #screen-sales textarea::placeholder {
+      color: rgba(255,247,223,.38);
+    }
+
+    #screen-sales .btn-primary {
+      background: linear-gradient(135deg, #f9d77e 0%, #d69a2d 54%, #8f5614 100%);
+      color: #15100a;
+      border-color: rgba(255, 229, 157, 0.62);
+      box-shadow: 0 12px 24px rgba(218,156,48,.18), inset 0 1px 0 rgba(255,255,255,.34);
+    }
+
+    #screen-sales .btn-secondary,
+    #screen-sales .toolbar-btn,
+    #screen-sales .icon-btn {
+      border-color: rgba(245, 198, 96, 0.18);
+      background: linear-gradient(180deg, rgba(24,23,21,.76), rgba(10,10,10,.76));
+      color: var(--sales-sync-gold);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 8px 18px rgba(0,0,0,.24);
+    }
+
+    #screen-sales .sales-accessory-flow-bar,
+    #screen-sales .sales-accessory-flow-items,
+    #screen-sales .sales-accessory-flow-status-panel,
+    #screen-sales .sales-accessory-flow-chip {
+      border-color: rgba(245, 198, 96, 0.18);
+      background:
+        radial-gradient(circle at 16% 0%, rgba(245,198,96,.15), transparent 36%),
+        linear-gradient(180deg, rgba(18,17,15,.80), rgba(8,8,8,.84));
+      color: var(--sales-sync-text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 12px 26px rgba(0,0,0,.24);
+    }
+
+    #screen-sales .sales-accessory-flow-copy strong,
+    #screen-sales .sales-accessory-flow-chip-copy strong,
+    #screen-sales .sales-accessory-flow-status-wait {
+      color: var(--sales-sync-text);
+    }
+
+    #screen-sales .sales-accessory-flow-copy span,
+    #screen-sales .sales-accessory-flow-chip-copy span,
+    #screen-sales .sales-accessory-flow-status-note {
+      color: var(--sales-sync-muted);
+    }
+
+    #screen-sales .sales-accessory-flow-status-wait,
+    #screen-sales .sales-accessory-flow-status-note {
+      border-color: rgba(245,198,96,.14);
+      background: rgba(8,8,8,.44);
+    }
+
+    #screen-sales .sales-accessory-flow-status-top strong {
+      color: var(--sales-sync-gold);
+    }
+
+    body.sales-accessory-popup-shell-hidden .sales-accessory-popup,
+    .sales-accessory-popup,
+    .sales-processing-popup,
+    .sales-processing-popup-sheet,
+    .sales-debt-info-popup,
+    .sales-debt-info-sheet {
+      background:
+        radial-gradient(circle at 16% -8%, rgba(245, 198, 96, 0.16), transparent 31%),
+        linear-gradient(180deg, #090909 0%, #11100e 48%, #050505 100%);
+      color: var(--sales-sync-text, #fff7df);
+    }
+
+    .sales-accessory-popup-sheet,
+    .sales-accessory-popup-editor-card,
+    .sales-processing-popup-summary,
+    .sales-processing-popup-card,
+    .sales-processing-popup-order-trigger,
+    .sales-processing-popup-order-sheet-card,
+    .sales-debt-info-summary,
+    .sales-debt-info-summary-item,
+    .sales-debt-info-field,
+    .sales-debt-info-entry {
+      border: 1px solid rgba(245, 198, 96, 0.18);
+      background: linear-gradient(180deg, rgba(18,17,15,.86), rgba(8,8,8,.90));
+      color: var(--sales-sync-text, #fff7df);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 12px 26px rgba(0,0,0,.25);
+    }
+
+    .sales-accessory-popup-title strong,
+    .sales-accessory-popup-code,
+    .sales-accessory-popup-name,
+    .sales-accessory-popup-summary strong,
+    .sales-accessory-popup-editor-head strong,
+    .sales-accessory-popup-editor-name,
+    .sales-processing-popup-title strong,
+    .sales-processing-popup-summary-label,
+    .sales-processing-popup-summary-value,
+    .sales-processing-popup-field,
+    .sales-processing-popup-debt-btn-copy strong,
+    .sales-debt-info-title strong,
+    .sales-debt-info-summary-item strong,
+    .sales-debt-info-entry label,
+    .sales-processing-popup-order-copy strong {
+      color: var(--sales-sync-text, #fff7df);
+    }
+
+    .sales-accessory-popup-summary span,
+    .sales-processing-popup-title span,
+    .sales-processing-popup-order-trigger-right,
+    .sales-processing-popup-order-trigger-right small,
+    .sales-processing-popup-split-label,
+    .sales-processing-popup-split-label b,
+    .sales-processing-popup-debt-btn-copy small,
+    .sales-debt-info-title span,
+    .sales-debt-info-summary-item span,
+    .sales-debt-info-entry label span,
+    .sales-processing-popup-order-copy span {
+      color: rgba(255,247,223,.56);
+    }
+
+    .sales-accessory-popup-media,
+    .sales-accessory-popup-editor-media,
+    .sales-accessory-popup-editor-chip,
+    .sales-accessory-popup-editor-qty,
+    .sales-processing-popup-split-input-shell,
+    .sales-processing-popup-state,
+    .sales-processing-popup-debt-btn,
+    .sales-debt-info-field input,
+    .sales-debt-info-entry input,
+    .sales-debt-info-entry select,
+    .sales-debt-info-entry-select-shell {
+      border-color: rgba(245, 198, 96, 0.18);
+      background: rgba(8,8,8,.58);
+      color: var(--sales-sync-text, #fff7df) !important;
+      -webkit-text-fill-color: var(--sales-sync-text, #fff7df) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .sales-accessory-popup-price,
+    .sales-processing-popup-summary-value.is-accent,
+    .sales-debt-info-preset,
+    .sales-debt-info-add-btn {
+      color: var(--sales-sync-gold, #f5c660);
+    }
+
+
+    /* Bán • gift/accessory popup luxury correction: remove white dock, fix contrast */
+    .sales-accessory-popup {
+      --sales-popup-gold: #f5c660;
+      --sales-popup-gold-2: #b87316;
+      --sales-popup-text: #fff7df;
+      --sales-popup-muted: rgba(255, 247, 223, 0.62);
+      --sales-popup-border: rgba(245, 198, 96, 0.20);
+    }
+
+    body.sales-accessory-popup-shell-hidden .sales-accessory-popup,
+    .sales-accessory-popup {
+      background:
+        radial-gradient(circle at 18% -12%, rgba(245,198,96,.16), transparent 34%),
+        radial-gradient(circle at 100% 0%, rgba(255,231,170,.10), transparent 32%),
+        linear-gradient(180deg, #080806 0%, #11100e 45%, #050505 100%) !important;
+    }
+
+    body.sales-accessory-popup-shell-hidden .sales-accessory-popup-sheet,
+    .sales-accessory-popup-sheet {
+      background:
+        linear-gradient(180deg, rgba(12,12,10,.95), rgba(5,5,5,.98)) !important;
+      color: var(--sales-popup-text) !important;
+    }
+
+    .sales-accessory-popup-search .search-box,
+    .sales-accessory-popup-search .btn-secondary {
+      min-height: 50px;
+      border-radius: 16px;
+      border: 1px solid var(--sales-popup-border) !important;
+      background: rgba(6,6,6,.74) !important;
+      color: var(--sales-popup-text) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 10px 24px rgba(0,0,0,.24) !important;
+    }
+
+    .sales-accessory-popup-search input,
+    .sales-accessory-popup-search input:focus {
+      color: var(--sales-popup-text) !important;
+      -webkit-text-fill-color: var(--sales-popup-text) !important;
+    }
+
+    .sales-accessory-popup-search input::placeholder {
+      color: rgba(255,247,223,.40) !important;
+    }
+
+    .sales-accessory-popup-code {
+      background: linear-gradient(180deg, rgba(245,198,96,.14), rgba(184,115,22,.10)) !important;
+      border-color: rgba(245,198,96,.24) !important;
+      color: var(--sales-popup-gold) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .sales-accessory-popup-close {
+      border-color: rgba(245,198,96,.22) !important;
+      background: rgba(8,8,8,.72) !important;
+      color: var(--sales-popup-text) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 10px 22px rgba(0,0,0,.22) !important;
+    }
+
+    .sales-accessory-popup-media {
+      border-color: rgba(245,198,96,.16) !important;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 8px 18px rgba(0,0,0,.30) !important;
+    }
+
+    .sales-accessory-popup-name {
+      color: var(--sales-popup-text) !important;
+      text-shadow: 0 1px 0 rgba(0,0,0,.26);
+    }
+
+    .sales-accessory-popup-price {
+      color: var(--sales-popup-gold) !important;
+    }
+
+    .sales-accessory-popup-footer {
+      margin: 0 -8px !important;
+      padding: 12px 10px calc(12px + var(--safe-bottom)) !important;
+      border-top: 1px solid rgba(245,198,96,.18) !important;
+      background:
+        linear-gradient(180deg, rgba(8,8,8,.78), rgba(4,4,4,.98)) !important;
+      box-shadow: 0 -18px 34px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.045) !important;
+    }
+
+    .sales-accessory-popup-summary {
+      min-height: 64px;
+      border-radius: 20px !important;
+      border: 1px solid rgba(245,198,96,.18) !important;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(245,198,96,.14), transparent 42%),
+        linear-gradient(180deg, rgba(24,22,18,.86), rgba(9,9,9,.92)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 26px rgba(0,0,0,.28) !important;
+    }
+
+    .sales-accessory-popup-summary strong {
+      color: var(--sales-popup-text) !important;
+      font-size: 13.5px;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+
+    .sales-accessory-popup-summary span {
+      color: var(--sales-popup-muted) !important;
+      line-height: 1.3;
+    }
+
+    .sales-accessory-popup-send {
+      min-height: 58px;
+      border: 0 !important;
+      background: linear-gradient(135deg, #ffe4a0 0%, #f0b437 44%, #9f5b08 100%) !important;
+      color: #171008 !important;
+      font-weight: 950;
+      box-shadow: 0 14px 30px rgba(184,115,22,.38), inset 0 1px 0 rgba(255,255,255,.42) !important;
+    }
+
+    .sales-accessory-popup-send:disabled {
+      opacity: .74;
+      filter: saturate(.86);
+      color: rgba(23,16,8,.76) !important;
+    }
+
+    .sales-accessory-popup.mode-gift .sales-accessory-popup-title strong::after {
+      content: ' · 0đ';
+      margin-left: 6px;
+      color: var(--sales-popup-gold);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    @media (max-width: 520px) {
+      .sales-accessory-popup-sheet {
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+      }
+
+      .sales-accessory-popup-footer {
+        grid-template-columns: minmax(0, .95fr) minmax(148px, 1fr);
+        gap: 9px !important;
+        margin-inline: -8px !important;
+        padding-inline: 10px !important;
+      }
+
+      .sales-accessory-popup-summary {
+        padding: 11px 12px !important;
+      }
+
+      .sales-accessory-popup-summary strong {
+        font-size: 12.5px;
+      }
+
+      .sales-accessory-popup-summary span {
+        font-size: 9.5px;
+      }
+
+      .sales-accessory-popup-send {
+        min-height: 56px;
+        padding-inline: 12px !important;
+        border-radius: 18px !important;
+        white-space: normal;
+        line-height: 1.15;
+      }
+    }
+
+    @media (max-width: 640px) {
+      #screen-sales.sales-debt-sync-screen { padding-inline: 8px; }
+      #screen-sales .sales-debt-summary-bar { gap: 8px; padding-top: 7px; }
+      #screen-sales .sales-debt-summary-bar > div { min-height: 54px; border-radius: 18px; padding: 8px 9px 8px 12px; }
+      #screen-sales .sales-request-search-box { min-height: 41px; }
+      #screen-sales .sales-menu-grid { gap: 7px; }
+    }
+
     .returns-screen {
       display: grid;
       gap: 14px;
@@ -14487,7 +15009,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1919_purchase_sync_debt_ui';
       </div>
     </section>
 
-    <section id="screen-sales" class="screen sales-screen menu-only">
+    <section id="screen-sales" class="screen sales-screen menu-only sales-debt-sync-screen">
       <input id="salesAccessoryCameraInput" type="file" accept="image/*" capture="environment" hidden />
       <div id="salesAccessoryFlowBar" class="sales-accessory-flow-bar" hidden>
         <div class="sales-accessory-flow-head">
@@ -14717,7 +15239,17 @@ window.__TK_APP_VERSION__ = 'v20260501_1919_purchase_sync_debt_ui';
         </div>
       </div>
       <div class="sales-pos-shell" hidden>
-        <div class="sales-request-toolbar">
+        <div class="sales-debt-summary-bar" aria-label="Tổng quan bán hàng">
+          <div>
+            <span>BÁN HÀNG</span>
+            <strong>POS</strong>
+          </div>
+          <div>
+            <span>LUỒNG KHO</span>
+            <strong>Realtime</strong>
+          </div>
+        </div>
+        <div class="sales-request-toolbar sales-debt-top-controls">
           <div class="sales-request-toolbar-row">
             <div class="search-box sales-request-search-box">
               <i class="fa-solid fa-magnifying-glass"></i>
@@ -18640,7 +19172,11 @@ window.__TK_APP_VERSION__ = 'v20260501_1919_purchase_sync_debt_ui';
       const visible = Boolean(state.salesAccessoryPopupOpen) && isSalesAccessoryModeActive();
       const pendingCreate = Boolean(state.salesAccessoryPopupPendingCreate);
       const copy = getSalesAccessoryModeCopy();
-      if (salesAccessoryPopupEl) salesAccessoryPopupEl.hidden = !visible;
+      if (salesAccessoryPopupEl) {
+        salesAccessoryPopupEl.hidden = !visible;
+        salesAccessoryPopupEl.classList.toggle('mode-gift', isSalesAccessoryGiftMode());
+        salesAccessoryPopupEl.classList.toggle('mode-accessory', !isSalesAccessoryGiftMode());
+      }
       syncSalesOverlayUi();
       if (salesAccessoryPopupCodeEl) salesAccessoryPopupCodeEl.textContent = state.salesAccessoryFlow?.requestCode || state.salesFlowTicketCode || 'HĐ';
       if (salesAccessoryPopupTitleEl) salesAccessoryPopupTitleEl.textContent = copy.popupTitle;

@@ -1,7 +1,10 @@
 {
-  "version": "v20260501_1919_purchase_sync_debt_ui",
-  "updatedAt": "2026-05-01T19:19:00+0700",
+  "version": "v20260501_1938_sales_gift_popup_luxury",
+  "updatedAt": "2026-05-01T11:38:00.000Z",
   "changedModules": [
+    "sales-top-kpi-controls",
+    "sales-dark-gold-menu",
+    "sales-sync-debt-ui",
     "purchase-dark-gold-list-modal",
     "purchase-top-kpi-controls",
     "purchase-sync-debt-ui",
@@ -430,5 +433,6 @@
     "stock-audio-announce-request-pickup",
     "stock-audio-5min-reminders",
     "index.html"
-  ]
+  ],
+  "label": "Sửa popup quà tặng Bán sang dark/gold, bỏ thanh đáy trắng"
 }
