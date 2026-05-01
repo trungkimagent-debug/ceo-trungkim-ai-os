@@ -37,6 +37,12 @@ Generated after production incident on 2026-05-01. Treat this as the baseline be
 | `customer` | Nợ | `#screen-customer` inside `index.html` |
 | `team` | NV | `#screen-team` inside `index.html` |
 
+## Fast scoped deploy rule
+
+- "Deploy phần đó thôi" means: change only the requested tab/module files and avoid touching unrelated code.
+- For Firebase Hosting, still deploy from the complete safe `public/` artifact so required modules are not deleted. The diff must be scoped even if Firebase releases the full site version.
+- Before deploying, inspect `git diff --stat` and confirm only intended files/sections changed.
+
 ## Safe edit rule
 
 When Chủ tịch requests a change in one tab/screen:
