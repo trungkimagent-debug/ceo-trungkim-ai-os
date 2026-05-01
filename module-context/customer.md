@@ -145,3 +145,9 @@ Last reviewed: 2026-05-01.
 - User corrected that phone screens are small and the Nợ KH detail popup must not feel desktop-sized.
 - Mobile CSS now makes `#customerDebtDetailModal` nearly full-width, trims card padding/gaps/radii, changes summary from 2+1 stacked cards to 3 compact columns, compresses detail rows, and puts amount + note fields on one row with 32px action buttons.
 - Scope remains CSS-only for Nợ KH detail/pay form plus version; no API/ID changes.
+
+## 2026-05-01 — Tap restore after keyboard reflow regression
+
+- User reported the pay controls could not be tapped after the keyboard-gap fix.
+- Reverted the `customer-keyboard-open` visualViewport focus reflow because changing/hiding modal sections during focus can cancel touch/focus on mobile browsers.
+- Restored the stable mobile-fit layout so amount/note fields are tappable; future keyboard handling must not mutate layout during the first focus event.
