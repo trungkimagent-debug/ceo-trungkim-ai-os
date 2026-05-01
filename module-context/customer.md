@@ -126,3 +126,10 @@ Last reviewed: 2026-05-01.
 - User clarified angrily: `1:1 ở tất cả mọi nơi` means list, detail modal, pay form, buttons, and spacing must all share the same reference visual language.
 - Replaced customer detail modal HTML/classes away from NCC/supplier style into `customer-settlement-detail-*` and `customer-settlement-pay-*`.
 - Detail modal now uses the same white/orange compact settlement language as the Nợ KH list.
+
+
+## 2026-05-01 — Zero supplier-style trace audit
+
+- Removed obsolete customer detail drawer CSS and old `customer-debt-detail-card` selectors.
+- Customer Nợ KH section and modal HTML now contain no `supplier-*`/NCC classes/text.
+- Customer debt activity renderer also uses `customer-settlement-*` classes, not supplier table classes.
