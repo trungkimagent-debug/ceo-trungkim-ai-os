@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1921_fast_cool_runtime",
-  "updatedAt": "2026-05-01T12:21:47.000Z",
+  "version": "v20260501_1927_static_snapshot_runtime",
+  "updatedAt": "2026-05-01T12:27:02.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -439,7 +439,10 @@
     "api-snapshot-instant-render",
     "home-rank-cache-visible-refresh",
     "idle-cache-cleanup",
-    "tab-scroll-jank-fix"
+    "tab-scroll-jank-fix",
+    "persistent-static-snapshot-render",
+    "api-snapshot-local-persist",
+    "api-snapshot-storage-prune"
   ],
-  "label": "Tối ưu nhẹ máy: dữ liệu hiện tức thời, giảm polling nền và giảm giật khi chuyển tab"
+  "label": "Hiển thị phần cố định và dữ liệu snapshot ngay, kéo dữ liệu mới nền nhẹ máy"
 }

@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1921_fast_cool_runtime';
+window.__TK_APP_VERSION__ = 'v20260501_1927_static_snapshot_runtime';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -16443,6 +16443,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1921_fast_cool_runtime';
     const APP_UPDATE_CHECK_MS = 60000;
     const API_SNAPSHOT_PREFIX = 'tk_api_snapshot_v1:';
     const API_SNAPSHOT_DEFAULT_MAX_AGE_MS = 5 * 60 * 1000;
+    const API_SNAPSHOT_PERSIST_MAX_AGE_MS = 15 * 60 * 1000;
     const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
@@ -25133,7 +25134,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1921_fast_cool_runtime';
       const key = getApiSnapshotKey(path);
       if (!key || key === API_SNAPSHOT_PREFIX) return null;
       try {
-        const raw = sessionStorage.getItem(key);
+        const raw = sessionStorage.getItem(key) || localStorage.getItem(key);
         if (!raw) return null;
         const payload = JSON.parse(raw);
         const savedAt = Number(payload?.savedAt || 0);
@@ -25145,12 +25146,38 @@ window.__TK_APP_VERSION__ = 'v20260501_1921_fast_cool_runtime';
       }
     }
 
+    function pruneApiSnapshotStorage() {
+      try {
+        const nowMs = Date.now();
+        const staleKeys = [];
+        for (let index = 0; index < localStorage.length; index += 1) {
+          const key = localStorage.key(index);
+          if (!key || !key.startsWith(API_SNAPSHOT_PREFIX)) continue;
+          try {
+            const payload = JSON.parse(localStorage.getItem(key) || '{}');
+            const savedAt = Number(payload?.savedAt || 0);
+            if (!savedAt || (nowMs - savedAt) > API_SNAPSHOT_PERSIST_MAX_AGE_MS) staleKeys.push(key);
+          } catch (_) {
+            staleKeys.push(key);
+          }
+        }
+        staleKeys.forEach((key) => {
+          try { localStorage.removeItem(key); } catch (_) {}
+        });
+      } catch (_) {}
+    }
+
     function writeApiSnapshot(path = '', data = null) {
       if (!data || typeof data !== 'object') return;
       const key = getApiSnapshotKey(path);
       if (!key || key === API_SNAPSHOT_PREFIX) return;
       try {
-        sessionStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), data }));
+        const payload = JSON.stringify({ savedAt: Date.now(), data });
+        sessionStorage.setItem(key, payload);
+        try { localStorage.setItem(key, payload); } catch (_) {
+          pruneApiSnapshotStorage();
+          try { localStorage.setItem(key, payload); } catch (_) {}
+        }
       } catch (_) {}
     }
 
