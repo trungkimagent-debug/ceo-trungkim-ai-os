@@ -83,3 +83,11 @@ Last reviewed: 2026-05-01.
 - Keep customer DOM IDs unchanged (`customerDebt*`) because JS/payment/reminder APIs depend on them.
 - Extra CSS scoped to `#screen-customer` and `#customerDebtDetailModal` sits near the existing customer CSS block and is only for parity with supplier styles.
 - If refining again, compare against Supplier/Nợ NCC sections first, then only adjust customer-specific copy/data mapping.
+
+
+## 2026-05-01 — Reference correction: TrungKimStar Quyết toán
+
+- User clarified screenshots: Nợ KH must match TrungKimStar `Quyết toán` style, not Nợ NCC.
+- Correct target: white header/content, 2x2 filters, search + download button, orange summary bar, white settlement cards with label/value rows.
+- Current classes: `customer-settlement-screen`, `customer-settlement-shell`, `customer-settlement-card`.
+- Keep Nợ KH APIs and `customerDebt*` IDs unchanged; visual-only mapping from debt fields into settlement-card rows.

@@ -1,7 +1,10 @@
 {
-  "version": "v20260501_1158_customer_debt_ncc_1to1",
-  "updatedAt": "2026-05-01T11:58:46+0700",
+  "version": "v20260501_1214_customer_debt_orange_settlement_1to1",
+  "updatedAt": "2026-05-01T12:14:47+0700",
   "changedModules": [
+    "customer-debt-reference-correction",
+    "customer-debt-cards-orange-settlement",
+    "customer-debt-screen-orange-settlement-1to1",
     "customer-debt-screen-ncc-1to1-detail",
     "customer-debt-screen-ncc-1to1-list",
     "customer-debt-screen-ncc-1to1-shell",

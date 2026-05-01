@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1158_customer_debt_ncc_1to1';
+window.__TK_APP_VERSION__ = 'v20260501_1214_customer_debt_orange_settlement_1to1';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -4838,86 +4838,277 @@ window.__TK_APP_VERSION__ = 'v20260501_1158_customer_debt_ncc_1to1';
       }
     }
 
-    /* Nợ KH • 1:1 parity with Nợ NCC shell */
-    #screen-customer .panel {
-      position: relative;
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid #dbe7f4;
-      background: linear-gradient(180deg, #ffffff, #f6f9fc);
-      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+    /* Nợ KH • 1:1 parity with TrungKimStar Quyết toán reference */
+    #screen-customer.customer-settlement-screen {
+      background: #f4f5f7;
+      color: #111827;
+    }
+
+    .customer-settlement-shell {
+      display: grid;
+      gap: 0;
+      min-height: calc(100vh - 148px);
+      background: #f4f5f7;
+      border-radius: 0;
       overflow: hidden;
     }
 
-    #screen-customer .panel::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 3px;
-      background: linear-gradient(90deg, #0f62fe, #33a1fd 58%, #a6e1fa);
-    }
-
-    #screen-customer .section-title {
+    .customer-settlement-titlebar {
+      display: flex;
       align-items: center;
-      margin-bottom: 12px;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 22px 14px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
     }
 
-    #screen-customer .section-title > div {
-      display: grid;
-      gap: 3px;
+    .customer-settlement-titlebar h3 {
+      margin: 0;
+      color: #111827;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
     }
 
-    #screen-customer .section-title h3 {
+    .customer-settlement-actions {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      color: #16324f;
-      letter-spacing: 0;
+      gap: 12px;
     }
 
-    #screen-customer .section-title h3 i,
-    #screen-customer .supplier-overview-copy strong i,
-    #customerDebtDetailModal .supplier-pay-head strong i {
-      color: #0f62fe;
-    }
-
-    #screen-customer .section-title p,
-    #screen-customer .supplier-overview-copy span,
-    #screen-customer .supplier-stat-card span,
-    #screen-customer .supplier-debt-sub,
-    #screen-customer .supplier-activity-sub {
-      color: #6b7a90;
-    }
-
-    #screen-customer .badge,
-    #screen-customer .section-title .badge {
-      border: 1px solid #cfe0fb;
-      background: #eef5ff;
-      color: #0f62fe;
-      box-shadow: none;
-    }
-
-    #screen-customer .search-box {
-      border-color: #d7e3f1;
+    .customer-settlement-icon-btn,
+    .customer-settlement-download {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
       background: #ffffff;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+      color: #0f172a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 7px rgba(15, 23, 42, 0.04);
     }
 
-    #screen-customer .search-box i { color: #7c8da6; }
+    .customer-settlement-icon-btn.primary {
+      background: #111827;
+      color: #ffffff;
+      border-color: #111827;
+    }
 
-    #screen-customer .search-box input,
-    #customerDebtDetailModal input,
-    #customerDebtDetailModal textarea {
-      color: #17324d;
+    .customer-settlement-filters {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 0 18px 14px;
       background: #ffffff;
-      border-color: #d7e3f1;
     }
 
-    #screen-customer .search-box input::placeholder,
-    #customerDebtDetailModal input::placeholder,
-    #customerDebtDetailModal textarea::placeholder {
-      color: #9aa9bd;
+    .customer-settlement-filters select {
+      width: 100%;
+      height: 56px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      color: #374151;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 0 18px;
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 3px rgba(15,23,42,0.04);
     }
+
+    .customer-settlement-search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 66px;
+      gap: 14px;
+      padding: 10px 18px 26px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .customer-settlement-search {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      padding: 0 16px;
+      color: #9ca3af;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    }
+
+    .customer-settlement-search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #111827;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .customer-settlement-search input::placeholder {
+      color: #a3aab5;
+      font-weight: 500;
+    }
+
+    .customer-settlement-download {
+      width: 66px;
+      height: 58px;
+      color: #111827;
+    }
+
+    .customer-settlement-summary-bar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      min-height: 96px;
+      padding: 18px;
+      background: linear-gradient(90deg, #ffa600 0%, #f59b00 46%, #e08300 100%);
+      color: #ffffff;
+      box-shadow: 0 12px 26px rgba(245, 158, 11, 0.18);
+    }
+
+    .customer-settlement-summary-bar > div {
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .customer-settlement-summary-bar > div:last-child {
+      text-align: right;
+    }
+
+    .customer-settlement-summary-bar span {
+      color: rgba(255,255,255,0.72);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .customer-settlement-summary-bar strong {
+      font-family: var(--font-num);
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .customer-settlement-list {
+      display: grid;
+      gap: 16px;
+      padding: 0 0 18px;
+      background: #f4f5f7;
+    }
+
+    .customer-settlement-list .empty {
+      margin: 18px;
+      min-height: 158px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 2px 9px rgba(15, 23, 42, 0.04);
+    }
+
+    .customer-settlement-card {
+      position: relative;
+      display: grid;
+      gap: 14px;
+      width: calc(100% - 36px);
+      margin: 0 18px;
+      padding: 22px 18px 18px;
+      border: 1px solid #e6e9ee;
+      border-radius: 16px;
+      background: #ffffff;
+      color: #111827;
+      text-align: left;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .customer-settlement-card:first-child {
+      margin-top: 0;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    .customer-settlement-check {
+      width: 22px;
+      height: 22px;
+      margin-left: 22px;
+      border-radius: 999px;
+      background: #5ed7bd;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      box-shadow: 0 4px 10px rgba(94, 215, 189, 0.26);
+    }
+
+    .customer-settlement-row {
+      display: grid;
+      grid-template-columns: minmax(86px, 0.8fr) minmax(0, 1.7fr) minmax(0, 1.1fr);
+      align-items: center;
+      gap: 10px;
+      min-height: 26px;
+    }
+
+    .customer-settlement-label {
+      color: #9ca3af;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .customer-settlement-value {
+      min-width: 0;
+      color: #374151;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.28;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .customer-settlement-value.strong {
+      color: #111827;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .customer-settlement-note {
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .customer-settlement-money {
+      color: #374151;
+      font-family: var(--font-num);
+      font-size: 16px;
+      font-weight: 800;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .customer-settlement-money.red { color: #d7787f; }
+    .customer-settlement-money.green { color: #62c5a6; }
+    .customer-settlement-date { color: #8b8f99; font-size: 13px; font-weight: 600; text-align: right; white-space: nowrap; }
+    .customer-settlement-date i { color: #d59b2f; margin-right: 5px; }
+    .customer-settlement-status { color: #6b7280; font-size: 13px; font-weight: 600; text-align: right; }
 
     #customerDebtDetailModal.open {
       align-items: center;
@@ -4925,45 +5116,38 @@ window.__TK_APP_VERSION__ = 'v20260501_1158_customer_debt_ncc_1to1';
       padding: 20px;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-card.supplier-detail-modal-card {
+    #customerDebtDetailModal .customer-debt-detail-card {
       width: min(100%, 560px);
       max-width: min(100%, 560px);
-      height: auto;
       max-height: min(90vh, 920px);
-      margin: 0;
-      border-radius: 22px;
-      padding: 18px;
-      border: 1px solid #dbe7f4;
-      background: linear-gradient(180deg, #ffffff, #f6f9fc);
-      box-shadow: 0 28px 70px rgba(15, 23, 42, 0.16);
-      color: #17324d;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 28px 70px rgba(15, 23, 42, 0.18);
       overflow-y: auto;
-      animation: none;
     }
 
-    #customerDebtDetailModal .customer-debt-detail-tags {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
+    #customerDebtDetailModal .supplier-stat-card strong,
+    #customerDebtDetailModal .supplier-table-money { color: #e08300; }
+    #customerDebtDetailModal .btn-primary { background: #111827; border-color: #111827; }
 
     @media (max-width: 640px) {
-      #screen-customer .panel { padding: 12px; }
-      #screen-customer .section-title { margin-bottom: 10px; }
-      #customerDebtDetailModal .customer-debt-detail-card.supplier-detail-modal-card {
-        width: 100%;
-        max-width: 100%;
-        border-radius: 18px;
-      }
-      #customerDebtDetailModal .btn-row-3 {
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        gap: 8px;
-      }
-      #customerDebtDetailModal .btn-row-3 .btn {
-        min-height: 44px;
-        padding: 0 8px;
-        font-size: 12px;
-      }
+      #screen-customer.customer-settlement-screen { margin-inline: -14px; }
+      .customer-settlement-shell { min-height: calc(100vh - 136px); }
+      .customer-settlement-titlebar { padding: 16px 22px 14px; }
+      .customer-settlement-titlebar h3 { font-size: 21px; }
+      .customer-settlement-icon-btn { width: 54px; height: 54px; }
+      .customer-settlement-filters { gap: 14px; padding: 0 18px 14px; }
+      .customer-settlement-filters select { height: 55px; font-size: 15px; }
+      .customer-settlement-search-row { grid-template-columns: minmax(0, 1fr) 66px; gap: 14px; padding: 10px 18px 26px; }
+      .customer-settlement-summary-bar { min-height: 96px; padding: 18px; }
+      .customer-settlement-card { width: calc(100% - 36px); margin-inline: 18px; padding: 22px 18px 18px; }
+      .customer-settlement-row { grid-template-columns: minmax(82px, 0.82fr) minmax(0, 1.42fr) minmax(104px, 1fr); }
+      .customer-settlement-label { font-size: 14px; }
+      .customer-settlement-value { font-size: 15px; }
+      .customer-settlement-money { font-size: 15px; }
+      #customerDebtDetailModal .customer-debt-detail-card { width: 100%; max-width: 100%; border-radius: 18px; }
     }
 
     .supplier-debt-open,
@@ -13283,101 +13467,69 @@ window.__TK_APP_VERSION__ = 'v20260501_1158_customer_debt_ncc_1to1';
       </div>
     </section>
 
-    <section id="screen-customer" class="screen">
-      <div class="supplier-screen customer-debt-screen-1to1">
-        <div class="panel">
-          <div class="section-title">
-            <div>
-              <h3><i class="fa-solid fa-wallet"></i> Nợ KH</h3>
-              <p>Realtime</p>
-            </div>
-            <span id="customerDebtStatusBadge" class="badge ok">Sync</span>
-          </div>
-
-          <div class="supplier-overview-card">
-            <div class="supplier-overview-top">
-              <div class="supplier-overview-copy">
-                <strong><i class="fa-solid fa-layer-group"></i> Công nợ khách</strong>
-                <span id="customerDebtCaption">Đang nạp tổng quan...</span>
-              </div>
-              <div class="supplier-overview-total">
-                <strong id="customerDebtTotal">0đ</strong>
-                <span>Đang mở</span>
-              </div>
-            </div>
-
-            <div class="supplier-summary-grid">
-              <div class="supplier-stat-card">
-                <small><i class="fa-solid fa-users"></i>Khách</small>
-                <strong id="customerDebtCount">0</strong>
-                <span>Đang nợ</span>
-              </div>
-              <div class="supplier-stat-card">
-                <small><i class="fa-solid fa-file-invoice"></i>Hồ sơ</small>
-                <strong id="customerDebtListMetaTop">0</strong>
-                <span>Chưa thu</span>
-              </div>
-              <div class="supplier-stat-card">
-                <small><i class="fa-solid fa-circle-check"></i>Đã thu</small>
-                <strong id="customerDebtPaid">0đ</strong>
-                <span>Đã ghi nhận</span>
-              </div>
-              <div class="supplier-stat-card">
-                <small><i class="fa-solid fa-clock"></i>Quá hẹn</small>
-                <strong id="customerDebtOverdue">0</strong>
-                <span>Cần nhắc</span>
-              </div>
-            </div>
-
-            <div class="supplier-inline-actions">
-              <button id="customerDebtRefreshBtn" class="btn btn-secondary" type="button"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
-            </div>
+    <section id="screen-customer" class="screen customer-settlement-screen">
+      <div class="customer-settlement-shell">
+        <div class="customer-settlement-titlebar">
+          <h3>Nợ KH</h3>
+          <div class="customer-settlement-actions">
+            <button class="customer-settlement-icon-btn" type="button" aria-label="Chế độ tối"><i class="fa-solid fa-moon"></i></button>
+            <button id="customerDebtRefreshBtn" class="customer-settlement-icon-btn primary" type="button" aria-label="Làm mới"><i class="fa-solid fa-briefcase"></i></button>
           </div>
         </div>
 
-        <div class="panel">
-          <div class="section-title">
-            <div>
-              <h3><i class="fa-solid fa-chart-line"></i> Top nợ</h3>
-              <p>Tìm nhanh</p>
-            </div>
-            <span class="badge">Top</span>
-          </div>
-          <div class="search-box search-box-action supplier-search-inline">
+        <div class="customer-settlement-filters">
+          <select aria-label="Tất cả công nợ">
+            <option>All</option>
+            <option>Cần thu</option>
+            <option>Đã thu</option>
+          </select>
+          <select aria-label="Nhân viên">
+            <option>KTV</option>
+            <option>Tất cả NV</option>
+          </select>
+          <select aria-label="Thời gian">
+            <option>Tháng này</option>
+            <option>Hôm nay</option>
+            <option>Tháng trước</option>
+          </select>
+          <select aria-label="Trạng thái">
+            <option>Tất cả</option>
+            <option>Quá hẹn</option>
+            <option>Nợ mở</option>
+          </select>
+        </div>
+
+        <div class="customer-settlement-search-row">
+          <label class="customer-settlement-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input id="customerDebtSearch" type="search" placeholder="Tìm khách, SĐT, mã đơn" autocomplete="off" />
+            <input id="customerDebtSearch" type="search" placeholder="Tìm tên, SĐT..." autocomplete="off" />
+          </label>
+          <button id="customerDebtExportBtn" class="customer-settlement-download" type="button" aria-label="Xuất dữ liệu"><i class="fa-solid fa-download"></i></button>
+        </div>
+
+        <div class="customer-settlement-summary-bar">
+          <div>
+            <span>ĐÃ THU</span>
+            <strong id="customerDebtPaid">0đ</strong>
           </div>
-          <div class="supplier-table-head supplier-table-head-debt">
-            <span>Khách</span>
-            <span>Đơn</span>
-            <span>Cập nhật</span>
-            <span>Nợ</span>
-            <span></span>
-          </div>
-          <div id="customerDebtList" class="supplier-debt-list customer-debt-list">
-            <div class="empty">Đang tải dữ liệu nợ khách...</div>
+          <div>
+            <span>CÒN NỢ</span>
+            <strong id="customerDebtTotal">0đ</strong>
           </div>
         </div>
 
-        <div class="panel">
-          <div class="section-title">
-            <div>
-              <h3><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</h3>
-              <p>Gần đây</p>
-            </div>
-            <span class="badge">Log</span>
-          </div>
-          <div class="supplier-table-head supplier-table-head-activity">
-            <span>Khách</span>
-            <span>Nội dung</span>
-            <span>Trạng thái</span>
-            <span>Số tiền</span>
-          </div>
-          <div id="customerDebtRecent" class="supplier-activity-list customer-debt-recent">
-            <div class="empty">Đang tải lịch sử nợ khách...</div>
-          </div>
+        <div class="customer-settlement-meta" hidden>
+          <span id="customerDebtStatusBadge" class="badge ok">Sync</span>
+          <span id="customerDebtCaption">Đang nạp tổng quan...</span>
+          <span id="customerDebtCount">0</span>
+          <span id="customerDebtListMetaTop">0</span>
+          <span id="customerDebtOverdue">0</span>
         </div>
 
+        <div id="customerDebtList" class="customer-settlement-list">
+          <div class="empty">Đang tải dữ liệu nợ khách...</div>
+        </div>
+        <div id="customerDebtRecent" class="customer-settlement-recent" hidden></div>
         <div id="customerScreenMsg" class="msg"></div>
       </div>
     </section>
@@ -23418,27 +23570,46 @@ window.__TK_APP_VERSION__ = 'v20260501_1158_customer_debt_ncc_1to1';
 
     function buildCustomerDebtItemHtml(item = {}) {
       const customerName = escapeHtml(item.customerName || 'Khách hàng');
-      const customerPhone = escapeHtml(item.customerPhone || 'KH');
+      const customerPhone = escapeHtml(item.customerPhone || '');
       const orderCode = escapeHtml(item.orderCode || item.id || '--');
       const updatedAt = formatCustomerDebtDateTime(item.updatedAt || item.createdAt || item.dueDate || '');
-      const debtPreview = item.debtNames?.length ? escapeHtml(item.debtNames.slice(0, 3).join(' • ')) : escapeHtml(item.note || 'Theo dõi realtime');
-      const statusText = item.status === 'paid' ? 'Đã thu' : (item.isOverdue ? `Quá hẹn ${item.overdueDays} ngày` : 'Nợ mở');
+      const debtPreview = item.debtNames?.length ? escapeHtml(item.debtNames.slice(0, 2).join(' • ')) : escapeHtml(item.note || orderCode);
+      const statusText = item.status === 'paid' ? 'Xong' : (item.isOverdue ? `Quá hẹn ${item.overdueDays} ngày` : 'Đang nợ');
+      const paidAmount = Math.max(0, Number(item.paidAmount || 0) || 0);
+      const originalAmount = Math.max(Number(item.originalAmount || 0) || 0, paidAmount + Math.max(0, Number(item.amount || 0) || 0));
       return `
-        <button class="supplier-debt-item supplier-table-row supplier-table-row-debt customer-debt-item" data-customer-debt-id="${escapeHtml(item.id)}" type="button">
-          <div class="supplier-table-cell supplier-table-main" data-label="Khách">
-            <div class="supplier-debt-name customer-debt-item-name">${customerName}</div>
-            <div class="supplier-debt-sub customer-debt-item-sub">${customerPhone}</div>
+        <button class="customer-settlement-card" data-customer-debt-id="${escapeHtml(item.id)}" type="button">
+          <span class="customer-settlement-check"><i class="fa-solid fa-check"></i></span>
+          <div class="customer-settlement-row">
+            <span class="customer-settlement-label">Thông tin</span>
+            <span class="customer-settlement-value strong">${customerName}</span>
+            <span class="customer-settlement-date"><i class="fa-solid fa-sack-dollar"></i>${updatedAt ? escapeHtml(updatedAt) : '--'}</span>
           </div>
-          <div class="supplier-table-cell" data-label="Đơn">
-            <div class="supplier-table-value">${orderCode}</div>
-            <div class="supplier-table-sub">${debtPreview}</div>
+          <div class="customer-settlement-row">
+            <span class="customer-settlement-label">Chi tiết</span>
+            <span class="customer-settlement-value">${debtPreview}</span>
+            <span class="customer-settlement-note">${customerPhone || orderCode}</span>
           </div>
-          <div class="supplier-table-cell" data-label="Cập nhật">
-            <div class="supplier-table-value">${updatedAt ? escapeHtml(updatedAt) : '--'}</div>
-            <div class="supplier-table-sub">${escapeHtml(statusText)}</div>
+          <div class="customer-settlement-row">
+            <span class="customer-settlement-label">Tổng</span>
+            <span></span>
+            <span class="customer-settlement-money">${money(originalAmount)}</span>
           </div>
-          <div class="supplier-table-cell supplier-table-money" data-label="Nợ">${money(item.amount || 0)}</div>
-          <div class="supplier-table-cell supplier-table-arrow" data-label="Mở"><i class="fa-solid fa-chevron-right"></i></div>
+          <div class="customer-settlement-row">
+            <span class="customer-settlement-label">Đã thu</span>
+            <span></span>
+            <span class="customer-settlement-money red">${money(paidAmount)}</span>
+          </div>
+          <div class="customer-settlement-row">
+            <span class="customer-settlement-label">Còn nợ</span>
+            <span></span>
+            <span class="customer-settlement-money green">${money(item.amount || 0)}</span>
+          </div>
+          <div class="customer-settlement-row">
+            <span class="customer-settlement-label">Duyệt</span>
+            <span></span>
+            <span class="customer-settlement-status">${escapeHtml(statusText)}</span>
+          </div>
         </button>
       `;
     }
