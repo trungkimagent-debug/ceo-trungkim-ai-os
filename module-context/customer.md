@@ -214,3 +214,9 @@ Last reviewed: 2026-05-01.
 - User showed screenshot after tapping a debt source: the view jumped straight into the normal list/search area, making it feel like the chart-first flow was lost.
 - Removed automatic scroll-to-list on source tap. When a source is selected, `#customerDebtChart` stays visible but becomes compact via `.source-selected`; list renders with a premium selected-source header and a `Bản đồ` button to return to overview.
 - Scope remains Nợ KH UI flow only; IDs/API/payment/detail logic unchanged.
+
+## 2026-05-01 — Source-scoped cards for tapped debt source
+
+- Screenshot showed selecting `FE Credit` still displayed a mixed card containing `NCH + FE Credit`, and the selected-source header total used the full customer/order debt instead of the source amount.
+- Added source-scoped display helpers so selected source views render each card using only matching `debtBreakdown` rows. Header totals now sum visible source amounts (`FE Credit` shows only FE Credit amounts, not NCH). Visual display changes only; card click still opens the original debt detail/payment ID.
+- If a specific source lacks split amount data, helper falls back safely to the item amount only when that is the only available row, preserving the no-fake-split rule.

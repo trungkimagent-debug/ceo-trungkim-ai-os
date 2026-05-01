@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1819_customer_debt_chart_list_flow';
+window.__TK_APP_VERSION__ = 'v20260501_1827_customer_debt_source_scoped_cards';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -25139,6 +25139,57 @@ window.__TK_APP_VERSION__ = 'v20260501_1819_customer_debt_chart_list_flow';
       `;
     }
 
+
+    function getCustomerDebtScopedBreakdownRows(item = {}, typeFilter = state.customerDebtTypeFilter || 'all') {
+      const filter = String(typeFilter || 'all').trim().toLowerCase();
+      const rows = (Array.isArray(item.debtBreakdown) && item.debtBreakdown.length ? item.debtBreakdown : buildCustomerDebtBreakdownEntries(item))
+        .filter((row) => row && row.label);
+      if (filter === 'all') return rows;
+      const scoped = rows.filter((row) => {
+        const code = String(row.code || '').trim().toLowerCase();
+        return filter === 'credit' ? isCustomerDebtCreditCode(code) : code === filter;
+      });
+      return scoped.length ? scoped : [];
+    }
+
+    function sumCustomerDebtRowAmount(rows = [], field = 'amount') {
+      let hasValue = false;
+      const total = rows.reduce((sum, row) => {
+        if (row && row[field] !== null && row[field] !== undefined) {
+          hasValue = true;
+          return sum + Math.max(0, Number(row[field] || 0) || 0);
+        }
+        return sum;
+      }, 0);
+      return hasValue ? total : null;
+    }
+
+    function getCustomerDebtScopedItem(item = {}, typeFilter = state.customerDebtTypeFilter || 'all') {
+      const filter = String(typeFilter || 'all').trim().toLowerCase();
+      if (filter === 'all') return item;
+      const rows = getCustomerDebtScopedBreakdownRows(item, filter);
+      if (!rows.length) return item;
+      const amount = sumCustomerDebtRowAmount(rows, 'amount');
+      const originalAmount = sumCustomerDebtRowAmount(rows, 'originalAmount');
+      const paidAmount = sumCustomerDebtRowAmount(rows, 'paidAmount');
+      const scopedAmount = amount === null ? Math.max(0, Number(item.amount || 0) || 0) : amount;
+      const scopedOriginal = originalAmount === null ? scopedAmount + Math.max(0, paidAmount || 0) : originalAmount;
+      const scopedPaid = paidAmount === null ? Math.max(0, scopedOriginal - scopedAmount) : paidAmount;
+      return {
+        ...item,
+        amount: scopedAmount,
+        originalAmount: Math.max(scopedAmount, scopedOriginal),
+        paidAmount: Math.max(0, scopedPaid),
+        debtBreakdown: rows,
+        debtKinds: rows.map((row) => ({ code: row.code, label: row.label })),
+        debtKindCodes: Array.from(new Set(rows.map((row) => row.code).filter(Boolean))),
+        __sourceScoped: true,
+        __sourceLabel: getCustomerDebtKindLabel(filter),
+        __sourceOriginalAmount: item.originalAmount,
+        __sourceFullAmount: item.amount,
+      };
+    }
+
     function collectCustomerDebtHistoryRows(item = {}, type = 'invoice') {
       const invoiceKeys = ['invoices', 'invoiceHistory', 'orders', 'orderHistory', 'receipts', 'billHistory'];
       const paymentKeys = ['payments', 'paymentHistory', 'paymentLogs', 'transactions', 'paidHistory'];
@@ -25298,7 +25349,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1819_customer_debt_chart_list_flow';
       const updatedAt = formatCustomerDebtDateTime(item.updatedAt || item.createdAt || item.dueDate || '');
       const debtPreview = buildCustomerDebtKindTagsHtml(item);
       const sourceBreakdown = buildCustomerDebtSourceMiniHtml(item);
-      const statusText = item.status === 'paid' ? 'Xong' : (item.isOverdue ? `QH ${item.overdueDays} ngày` : 'Nợ mở');
+      const statusText = item.__sourceScoped ? 'Còn nguồn' : (item.status === 'paid' ? 'Xong' : (item.isOverdue ? `QH ${item.overdueDays} ngày` : 'Nợ mở'));
       const paidAmount = Math.max(0, Number(item.paidAmount || 0) || 0);
       const originalAmount = Math.max(Number(item.originalAmount || 0) || 0, paidAmount + Math.max(0, Number(item.amount || 0) || 0));
       return `
@@ -25507,10 +25558,13 @@ window.__TK_APP_VERSION__ = 'v20260501_1819_customer_debt_chart_list_flow';
     function renderCustomerDebtList(items = state.customerDebtItems || []) {
       renderCustomerDebtSourceChart(items);
       const filtered = getFilteredCustomerDebtItems(items);
-      const total = filtered.reduce((sum, item) => sum + Math.max(0, Number(item.amount || 0) || 0), 0);
       const filter = String(state.customerDebtStatusFilter || 'unpaid').trim().toLowerCase();
       const typeFilter = String(state.customerDebtTypeFilter || 'all').trim().toLowerCase();
       const typeLabel = typeFilter === 'all' ? 'Tất cả' : getCustomerDebtKindLabel(typeFilter);
+      const displayItems = filtered
+        .map((item) => getCustomerDebtScopedItem(item, typeFilter))
+        .sort((a, b) => Math.max(0, Number(b.amount || 0) || 0) - Math.max(0, Number(a.amount || 0) || 0));
+      const total = displayItems.reduce((sum, item) => sum + Math.max(0, Number(item.amount || 0) || 0), 0);
       if (customerDebtListTitleEl) {
         customerDebtListTitleEl.textContent = filter === 'overdue' ? 'Nợ quá hẹn' : filter === 'paid' ? 'Lịch sử thu nợ' : filter === 'all' ? 'Tất cả công nợ' : 'Nợ cần thu';
       }
@@ -25528,7 +25582,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1819_customer_debt_chart_list_flow';
           <div>
             <small>Danh sách theo nguồn</small>
             <strong>${escapeHtml(typeLabel)}</strong>
-            <span>${filtered.length} khách • ${money(total)}</span>
+            <span>${displayItems.length} khoản • ${money(total)}</span>
           </div>
           <button class="customer-debt-back-map" type="button" data-customer-debt-back-map="true">Bản đồ</button>
         </div>
@@ -25538,7 +25592,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1819_customer_debt_chart_list_flow';
         renderCustomerDebtActivities(items);
         return;
       }
-      customerDebtListEl.innerHTML = selectedHead + filtered.map(buildCustomerDebtItemHtml).join('');
+      customerDebtListEl.innerHTML = selectedHead + displayItems.map(buildCustomerDebtItemHtml).join('');
       renderCustomerDebtActivities(items);
     }
 
