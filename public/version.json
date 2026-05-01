@@ -1,7 +1,10 @@
 {
-  "version": "v20260501_1714_customer_debt_kpi_first",
-  "updatedAt": "2026-05-01T17:14:00+0700",
+  "version": "v20260501_1724_logo_side_nav_drawer",
+  "updatedAt": "2026-05-01T17:24:00+0700",
   "changedModules": [
+    "trillion-nav-drawer-effect",
+    "hide-bottom-nav-until-logo-click",
+    "global-logo-side-nav-drawer",
     "customer-debt-remove-raw-no-kh-title",
     "customer-debt-kpi-first-header",
     "customer-debt-dark-contrast-fix",
