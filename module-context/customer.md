@@ -91,3 +91,10 @@ Last reviewed: 2026-05-01.
 - Correct target: white header/content, 2x2 filters, search + download button, orange summary bar, white settlement cards with label/value rows.
 - Current classes: `customer-settlement-screen`, `customer-settlement-shell`, `customer-settlement-card`.
 - Keep Nợ KH APIs and `customerDebt*` IDs unchanged; visual-only mapping from debt fields into settlement-card rows.
+
+
+## 2026-05-01 — Compact settlement density
+
+- User asked Nợ KH to be more compact after seeing the debt screen.
+- Reduced header/filter/search/summary vertical spacing and changed customer debt cards from 6 label rows to 4 compact rows.
+- Keep white/orange Quyết toán reference style; no API changes.

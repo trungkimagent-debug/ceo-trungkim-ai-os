@@ -1,7 +1,9 @@
 {
-  "version": "v20260501_1214_customer_debt_orange_settlement_1to1",
-  "updatedAt": "2026-05-01T12:14:47+0700",
+  "version": "v20260501_1217_customer_debt_compact_settlement",
+  "updatedAt": "2026-05-01T12:17:13+0700",
   "changedModules": [
+    "customer-debt-compact-settlement-spacing",
+    "customer-debt-compact-settlement-cards",
     "customer-debt-reference-correction",
     "customer-debt-cards-orange-settlement",
     "customer-debt-screen-orange-settlement-1to1",
