@@ -128,3 +128,13 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Visual rules: popup shell/sheet/search/footer/summary/send button now use dark/gold glass, high-contrast text, and no white bottom dock. Gift title receives a small `· 0đ` suffix through `.mode-gift`.
 - Preserve IDs and behavior: `#salesAccessoryPopupGrid`, `#salesAccessoryPopupSummary`, `#salesAccessoryPopupSendBtn`, warehouse request flow, cart state, price/qty editor, checkout payload unchanged.
 - Verification markers: version `v20260501_1938_sales_gift_popup_luxury`, full 85-file artifact, `salesAccessoryPopupEl.classList.toggle('mode-gift'...)`, `sales-accessory-popup-footer` dark override.
+
+## 2026-05-01 — Gift editor free-mode cleanup
+
+- Trigger: screenshot after gift popup polish showed `Chọn quà tặng` editor still displayed a `Giá tặng` money input with value `0`, which is bad UX for a free gift.
+- Scoped fix target: gift mode inside `#salesAccessoryPopupEditor` only.
+- In gift mode (`.sales-accessory-popup.mode-gift`), hide `.sales-accessory-popup-editor-field` entirely so staff only chooses quantity.
+- `openSalesAccessoryPopupEditor()` no longer auto-focuses the price input when `isSalesAccessoryGiftMode()` is true.
+- Gift base price chip now reads `Giá gốc ... • Tặng 0đ`; sale price remains normalized to `0` by existing `normalizeSalesAccessoryEditorSalePrice()`.
+- Preserve behavior: same cart item structure, quantity stepper, `Bỏ chọn`, `Xong`, warehouse request flow, and `saleMode='gift_menu'` remain unchanged.
+- Verification marker/version: `v20260501_1944_sales_gift_editor_free_mode`.

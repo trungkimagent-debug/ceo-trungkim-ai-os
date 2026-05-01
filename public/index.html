@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1938_sales_gift_popup_luxury';
+window.__TK_APP_VERSION__ = 'v20260501_1944_sales_gift_editor_free_mode';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -13426,6 +13426,29 @@ window.__TK_APP_VERSION__ = 'v20260501_1938_sales_gift_popup_luxury';
       font-weight: 900;
     }
 
+
+    .sales-accessory-popup.mode-gift .sales-accessory-popup-editor-field {
+      display: none !important;
+    }
+
+    .sales-accessory-popup.mode-gift .sales-accessory-popup-editor-card {
+      gap: 12px;
+    }
+
+    .sales-accessory-popup.mode-gift .sales-accessory-popup-editor-body {
+      gap: 13px;
+    }
+
+    .sales-accessory-popup.mode-gift .sales-accessory-popup-editor-chip.is-price {
+      color: var(--sales-popup-gold) !important;
+      border-color: rgba(245,198,96,.26) !important;
+      background: rgba(245,198,96,.10) !important;
+    }
+
+    .sales-accessory-popup.mode-gift .sales-accessory-popup-editor-stepper {
+      margin-top: 2px;
+    }
+
     @media (max-width: 520px) {
       .sales-accessory-popup-sheet {
         grid-template-rows: auto auto minmax(0, 1fr) auto;
@@ -18925,7 +18948,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1938_sales_gift_popup_luxury';
         editorEditTitle: isGift ? 'Cập nhật quà tặng' : 'Cập nhật phụ kiện',
         itemFallback: isGift ? 'Quà tặng' : 'Phụ kiện',
         priceFieldLabel: isGift ? 'Giá tặng' : 'Giá bán',
-        basePriceLabel: isGift ? 'Giá niêm yết' : 'Giá gợi ý',
+        basePriceLabel: isGift ? 'Giá gốc' : 'Giá gợi ý',
         flowTitle: isGift ? 'Tặng miễn phí' : 'Bán phụ kiện có ảnh xác nhận',
         flowTitleWithCode(code = '') {
           return code ? `${code} • ${isGift ? 'Tặng miễn phí' : 'Bán phụ kiện'}` : (isGift ? 'Tặng miễn phí' : 'Bán phụ kiện có ảnh xác nhận');
@@ -19218,14 +19241,16 @@ window.__TK_APP_VERSION__ = 'v20260501_1938_sales_gift_popup_luxury';
         salePrice: normalizeSalesAccessoryEditorSalePrice(selectedLine?.salePrice || 0, item),
       };
       syncSalesAccessoryPopupEditorUi();
-      requestAnimationFrame(() => {
-        if (!salesAccessoryPopupEditorPriceInput) return;
-        salesAccessoryPopupEditorPriceInput.focus();
-        const end = String(salesAccessoryPopupEditorPriceInput.value || '').length;
-        try {
-          salesAccessoryPopupEditorPriceInput.setSelectionRange(end, end);
-        } catch {}
-      });
+      if (!isSalesAccessoryGiftMode()) {
+        requestAnimationFrame(() => {
+          if (!salesAccessoryPopupEditorPriceInput) return;
+          salesAccessoryPopupEditorPriceInput.focus();
+          const end = String(salesAccessoryPopupEditorPriceInput.value || '').length;
+          try {
+            salesAccessoryPopupEditorPriceInput.setSelectionRange(end, end);
+          } catch {}
+        });
+      }
     }
 
     function syncSalesAccessoryPopupEditorUi() {
@@ -19258,7 +19283,11 @@ window.__TK_APP_VERSION__ = 'v20260501_1938_sales_gift_popup_luxury';
       }
       if (salesAccessoryPopupEditorNameEl) salesAccessoryPopupEditorNameEl.textContent = String(item.productName || copy.itemFallback).trim() || copy.itemFallback;
       if (salesAccessoryPopupEditorStockEl) salesAccessoryPopupEditorStockEl.textContent = `Còn ${remainingQty.toLocaleString('vi-VN')}`;
-      if (salesAccessoryPopupEditorBasePriceEl) salesAccessoryPopupEditorBasePriceEl.textContent = `${copy.basePriceLabel} ${money(getSalesAccessoryPopupDefaultSalePrice(item))}`;
+      if (salesAccessoryPopupEditorBasePriceEl) {
+        salesAccessoryPopupEditorBasePriceEl.textContent = isSalesAccessoryGiftMode()
+          ? `${copy.basePriceLabel} ${money(getSalesAccessoryPopupDefaultSalePrice(item))} • Tặng 0đ`
+          : `${copy.basePriceLabel} ${money(getSalesAccessoryPopupDefaultSalePrice(item))}`;
+      }
       if (salesAccessoryPopupEditorPriceLabelEl) salesAccessoryPopupEditorPriceLabelEl.textContent = copy.priceFieldLabel;
       if (salesAccessoryPopupEditorQtyEl) salesAccessoryPopupEditorQtyEl.textContent = nextQty.toLocaleString('vi-VN');
       setMoneyInputValue(salesAccessoryPopupEditorPriceInput, salePrice, { blankWhenZero: false });

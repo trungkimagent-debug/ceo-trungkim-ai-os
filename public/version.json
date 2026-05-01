@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1938_sales_gift_popup_luxury",
-  "updatedAt": "2026-05-01T11:38:00.000Z",
+  "version": "v20260501_1944_sales_gift_editor_free_mode",
+  "updatedAt": "2026-05-01T11:44:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -434,5 +434,5 @@
     "stock-audio-5min-reminders",
     "index.html"
   ],
-  "label": "Sửa popup quà tặng Bán sang dark/gold, bỏ thanh đáy trắng"
+  "label": "Ẩn ô giá trong popup chọn quà tặng miễn phí"
 }
