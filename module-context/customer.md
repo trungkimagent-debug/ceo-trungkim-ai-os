@@ -163,3 +163,9 @@ Last reviewed: 2026-05-01.
 - User asked whether the current Nợ KH screenshot is world-class; answer: not yet.
 - Polished only Nợ KH presentation: unified title/search/stat area with subtle gradient, deeper premium cards, larger rounded corners, softer shadows, tighter stat cards, and safer bottom spacing.
 - No DOM IDs, payment logic, APIs, or other tabs changed.
+
+## 2026-05-01 — Luxury Runtime theme application
+
+- User liked the dark/gold splash/startup screen style and asked to apply it to Nợ KH.
+- Added a scoped CSS override for `#screen-customer.customer-settlement-screen` and `#customerDebtDetailModal` only: dark radial background, gold accent badge, glass cards, gold/green stat rails, dark modal/pay form styling.
+- Preserved all `customerDebt*` IDs, list/detail/pay/reminder markup and API logic; no keyboard reflow code added.

@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1648_customer_debt_worldclass';
+window.__TK_APP_VERSION__ = 'v20260501_1702_customer_debt_luxury_runtime';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5366,6 +5366,285 @@ window.__TK_APP_VERSION__ = 'v20260501_1648_customer_debt_worldclass';
       .customer-settlement-pay-actions { gap: 5px; grid-template-columns: .68fr .68fr 1fr; }
       .customer-settlement-pay-actions .btn { min-height: 32px; border-radius: 10px; font-size: 10px; padding: 0 5px; gap: 4px; }
       #customerDebtDetailMsg { margin: 0; font-size: 10px; line-height: 1.25; }
+    }
+
+    /* Nợ KH • Luxury Runtime theme inspired by startup splash */
+    #screen-customer.customer-settlement-screen {
+      --customer-lux-bg: #070707;
+      --customer-lux-panel: rgba(18, 18, 20, 0.86);
+      --customer-lux-panel-2: rgba(26, 24, 22, 0.88);
+      --customer-lux-border: rgba(245, 198, 96, 0.24);
+      --customer-lux-gold: #f5c660;
+      --customer-lux-gold-2: #d99b2b;
+      --customer-lux-text: #fff7df;
+      --customer-lux-muted: rgba(255, 247, 223, 0.62);
+      --customer-lux-green: #53e0bd;
+      position: relative;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% -12%, rgba(245, 198, 96, 0.26) 0%, rgba(245, 198, 96, 0.08) 30%, transparent 58%),
+        radial-gradient(circle at 100% 16%, rgba(255, 185, 60, 0.13) 0%, transparent 36%),
+        linear-gradient(180deg, #101010 0%, #070707 44%, #050505 100%);
+      color: var(--customer-lux-text);
+    }
+
+    #screen-customer.customer-settlement-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        linear-gradient(120deg, transparent 0 18%, rgba(245, 198, 96, 0.055) 28%, transparent 42%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 72px);
+      opacity: .72;
+    }
+
+    #screen-customer .customer-settlement-shell {
+      background: transparent;
+    }
+
+    #screen-customer .customer-settlement-titlebar {
+      padding: 14px 16px 8px;
+      background: transparent;
+      border-bottom: 0;
+    }
+
+    #screen-customer .customer-settlement-titlebar h3 {
+      color: var(--customer-lux-text);
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      text-shadow: 0 0 22px rgba(245, 198, 96, 0.22);
+    }
+
+    #screen-customer .customer-settlement-titlebar h3::after {
+      content: 'Luxury Runtime';
+      display: inline-flex;
+      margin-left: 9px;
+      transform: translateY(-2px);
+      padding: 4px 8px;
+      border: 1px solid rgba(245, 198, 96, 0.32);
+      border-radius: 999px;
+      background: rgba(245, 198, 96, 0.10);
+      color: rgba(255, 231, 170, 0.88);
+      font-size: 8.5px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 18px rgba(245,198,96,.10);
+    }
+
+    #screen-customer .customer-settlement-icon-btn,
+    #screen-customer .customer-settlement-download {
+      border: 1px solid rgba(245, 198, 96, 0.26);
+      background: linear-gradient(180deg, rgba(31, 29, 25, 0.92), rgba(13, 13, 13, 0.92));
+      color: var(--customer-lux-gold);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 12px 30px rgba(0,0,0,0.34), 0 0 18px rgba(245,198,96,.08);
+    }
+
+    #screen-customer .customer-settlement-icon-btn.primary {
+      background: linear-gradient(135deg, #ffe39a 0%, #f2bd4d 44%, #b36d13 100%);
+      border-color: rgba(255, 229, 157, 0.72);
+      color: #15100a;
+      box-shadow: 0 12px 28px rgba(218, 156, 48, .28), inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    #screen-customer .customer-settlement-search-row,
+    #screen-customer .customer-settlement-summary-bar,
+    #screen-customer .customer-settlement-list {
+      background: transparent;
+    }
+
+    #screen-customer .customer-settlement-search-row {
+      padding: 8px 12px 10px;
+    }
+
+    #screen-customer .customer-settlement-search {
+      height: 44px;
+      border-radius: 17px;
+      border: 1px solid rgba(245, 198, 96, 0.22);
+      background: rgba(10, 10, 10, 0.62);
+      color: rgba(255, 231, 170, 0.82);
+      backdrop-filter: blur(16px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 28px rgba(0,0,0,.28);
+    }
+
+    #screen-customer .customer-settlement-search input {
+      color: var(--customer-lux-text);
+      font-weight: 700;
+    }
+
+    #screen-customer .customer-settlement-search input::placeholder {
+      color: rgba(255, 247, 223, 0.42);
+    }
+
+    #screen-customer .customer-settlement-summary-bar {
+      padding: 0 10px 10px;
+    }
+
+    #screen-customer .customer-settlement-summary-bar > div {
+      min-height: 58px;
+      border-radius: 18px;
+      border: 1px solid var(--customer-lux-border);
+      background: linear-gradient(180deg, rgba(31, 30, 27, .86), rgba(12, 12, 12, .88));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 16px 34px rgba(0,0,0,.34), 0 0 28px rgba(245,198,96,.07);
+    }
+
+    #screen-customer .customer-settlement-summary-bar > div::before {
+      background: linear-gradient(180deg, #fbe7a8, #d89422);
+      box-shadow: 0 0 18px rgba(245,198,96,.34);
+    }
+
+    #screen-customer .customer-settlement-summary-bar > div:first-child::before {
+      background: linear-gradient(180deg, #84f6da, #2bc8a8);
+      box-shadow: 0 0 18px rgba(83,224,189,.28);
+    }
+
+    #screen-customer .customer-settlement-summary-bar span,
+    #screen-customer .customer-settlement-label,
+    #screen-customer .customer-settlement-date,
+    #screen-customer .customer-settlement-status,
+    #screen-customer .customer-settlement-note {
+      color: var(--customer-lux-muted);
+    }
+
+    #screen-customer .customer-settlement-summary-bar strong,
+    #screen-customer .customer-settlement-value.strong {
+      color: var(--customer-lux-text);
+    }
+
+    #screen-customer .customer-settlement-summary-bar > div:first-child strong,
+    #screen-customer .customer-settlement-money.green {
+      color: var(--customer-lux-green);
+    }
+
+    #screen-customer .customer-settlement-summary-bar > div:last-child strong,
+    #screen-customer .customer-settlement-date i {
+      color: var(--customer-lux-gold);
+    }
+
+    #screen-customer .customer-settlement-card,
+    #screen-customer .customer-settlement-list .empty {
+      border: 1px solid rgba(245, 198, 96, 0.20);
+      border-radius: 19px;
+      background:
+        linear-gradient(140deg, rgba(255,255,255,.055), rgba(255,255,255,0) 34%),
+        linear-gradient(180deg, rgba(25, 24, 22, 0.90), rgba(9, 9, 9, 0.91));
+      color: var(--customer-lux-text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 16px 36px rgba(0,0,0,.36), 0 0 24px rgba(245,198,96,.055);
+      backdrop-filter: blur(14px);
+    }
+
+    #screen-customer .customer-settlement-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: radial-gradient(circle at 14% 0%, rgba(245,198,96,.14), transparent 34%);
+      opacity: .85;
+    }
+
+    #screen-customer .customer-settlement-check {
+      background: linear-gradient(135deg, #fff0b8 0%, #e3aa37 48%, #a86611 100%);
+      color: #100b05;
+      box-shadow: 0 0 18px rgba(245,198,96,.28), inset 0 1px 0 rgba(255,255,255,.42);
+    }
+
+    #screen-customer .customer-settlement-value,
+    #screen-customer .customer-settlement-money {
+      color: rgba(255, 247, 223, 0.86);
+    }
+
+    #screen-customer .customer-settlement-money.red {
+      color: #ff8f8f;
+    }
+
+    #customerDebtDetailModal.open {
+      background: radial-gradient(circle at 50% 12%, rgba(245,198,96,.22), rgba(0,0,0,.72) 44%, rgba(0,0,0,.84) 100%);
+    }
+
+    #customerDebtDetailModal .customer-settlement-detail-card {
+      border: 1px solid rgba(245, 198, 96, 0.25);
+      background:
+        radial-gradient(circle at 50% -8%, rgba(245,198,96,.18), transparent 46%),
+        linear-gradient(180deg, rgba(20,20,20,.98), rgba(6,6,6,.98));
+      color: var(--customer-lux-text, #fff7df);
+      box-shadow: 0 34px 100px rgba(0,0,0,.62), 0 0 42px rgba(245,198,96,.10);
+    }
+
+    #customerDebtDetailModal .customer-settlement-detail-back,
+    #customerDebtDetailModal .customer-settlement-detail-stat,
+    #customerDebtDetailModal .customer-settlement-detail-item,
+    #customerDebtDetailModal .customer-settlement-pay-card {
+      border: 1px solid rgba(245, 198, 96, 0.20);
+      background: linear-gradient(180deg, rgba(30,29,26,.92), rgba(12,12,12,.92));
+      color: #fff7df;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.065), 0 14px 32px rgba(0,0,0,.36);
+    }
+
+    #customerDebtDetailModal .customer-settlement-detail-title strong,
+    #customerDebtDetailModal .customer-settlement-pay-head strong,
+    #customerDebtDetailModal .customer-settlement-detail-stat strong {
+      color: #fff7df;
+    }
+
+    #customerDebtDetailModal .customer-settlement-detail-title span,
+    #customerDebtDetailModal .customer-settlement-detail-stat small,
+    #customerDebtDetailModal .customer-settlement-detail-stat span,
+    #customerDebtDetailModal .customer-settlement-pay-fields label {
+      color: rgba(255,247,223,.62);
+    }
+
+    #customerDebtDetailModal .customer-settlement-detail-stat.due,
+    #customerDebtDetailModal .customer-settlement-pay-actions .btn.primary {
+      background: linear-gradient(135deg, #ffe39a 0%, #f2bd4d 42%, #b36d13 100%);
+      color: #15100a;
+      border-color: rgba(255, 229, 157, 0.72);
+      box-shadow: 0 16px 34px rgba(218, 156, 48, .24), inset 0 1px 0 rgba(255,255,255,.44);
+    }
+
+    #customerDebtDetailModal .customer-settlement-detail-stat.due strong,
+    #customerDebtDetailModal .customer-settlement-detail-stat.due small,
+    #customerDebtDetailModal .customer-settlement-detail-stat.due span,
+    #customerDebtDetailModal .customer-settlement-detail-stat.due small i,
+    #customerDebtDetailModal .customer-settlement-pay-actions .btn.primary {
+      color: #15100a;
+    }
+
+    #customerDebtDetailModal .customer-settlement-pay-fields input,
+    #customerDebtDetailModal .customer-settlement-pay-fields textarea {
+      border-color: rgba(245,198,96,.24) !important;
+      background: rgba(5,5,5,.72) !important;
+      color: #fff7df !important;
+      -webkit-text-fill-color: #fff7df;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 8px 18px rgba(0,0,0,.24);
+    }
+
+    #customerDebtDetailModal .customer-settlement-pay-fields input::placeholder,
+    #customerDebtDetailModal .customer-settlement-pay-fields textarea::placeholder {
+      color: rgba(255,247,223,.38);
+      -webkit-text-fill-color: rgba(255,247,223,.38);
+    }
+
+    #customerDebtDetailModal .customer-settlement-pay-fields input:focus,
+    #customerDebtDetailModal .customer-settlement-pay-fields textarea:focus {
+      border-color: #f5c660 !important;
+      background: rgba(12,12,12,.92) !important;
+      box-shadow: 0 0 0 3px rgba(245,198,96,.16), 0 0 24px rgba(245,198,96,.12);
+    }
+
+    @media (max-width: 640px) {
+      #screen-customer .customer-settlement-titlebar { padding: 13px 14px 8px; }
+      #screen-customer .customer-settlement-titlebar h3 { font-size: 19px; }
+      #screen-customer .customer-settlement-titlebar h3::after { font-size: 7.5px; padding: 3px 6px; margin-left: 6px; }
+      #screen-customer .customer-settlement-search-row { padding: 7px 9px 9px; }
+      #screen-customer .customer-settlement-summary-bar { padding: 0 8px 9px; }
+      #screen-customer .customer-settlement-summary-bar > div { min-height: 53px; border-radius: 16px; }
+      #screen-customer .customer-settlement-card { width: calc(100% - 16px); margin-inline: 8px; padding: 10px; border-radius: 17px; }
+      #screen-customer .customer-settlement-list { gap: 8px; padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); }
     }
 
     .supplier-debt-open,
