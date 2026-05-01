@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
+window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -16495,6 +16495,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
     const PERF_SAMPLE_STORAGE_KEY = 'tk_perf_samples_v1';
     const PERF_SAMPLE_LIMIT = 80;
     const BATTERY_SAVER_MEMORY_GB = 4;
+    const UI_INPUT_DEBOUNCE_MS = 90;
+    const UI_INPUT_DEBOUNCE_BATTERY_MS = 160;
     const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
@@ -17600,6 +17602,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
     const PURCHASE_QUICK_SYNC_FILTER_MAX_CANDIDATES = 720;
     let purchaseSupplierSearchTimer = null;
     let purchaseFilterTimer = null;
+    const uiTaskTimers = new Map();
     let productCategoriesPromise = null;
     let productCategoriesLoadedAtMs = 0;
     let productCategoriesWarmTimer = 0;
@@ -19529,6 +19532,40 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
       if (!isRealtimePageVisible()) return Math.max(base, 60000);
       const multiplier = state.batterySaver && !options.urgent ? 2 : 1;
       return Math.round(base * multiplier);
+    }
+
+    function getUiInputDelay(delayMs = UI_INPUT_DEBOUNCE_MS) {
+      const requested = Math.max(0, Number(delayMs || UI_INPUT_DEBOUNCE_MS) || UI_INPUT_DEBOUNCE_MS);
+      return state.batterySaver ? Math.max(requested, UI_INPUT_DEBOUNCE_BATTERY_MS) : requested;
+    }
+
+    function runUiTask(callback, options = {}) {
+      if (typeof callback !== 'function') return;
+      const run = () => {
+        if (!options.allowHidden && !isRealtimePageVisible()) return;
+        const frame = () => callback();
+        if (typeof requestAnimationFrame === 'function') requestAnimationFrame(frame);
+        else frame();
+      };
+      const schedulerRef = window.scheduler;
+      if (schedulerRef && typeof schedulerRef.postTask === 'function') {
+        schedulerRef.postTask(run, { priority: options.priority || 'user-visible' }).catch(() => run());
+        return;
+      }
+      run();
+    }
+
+    function scheduleUiTask(key = '', callback, options = {}) {
+      if (typeof callback !== 'function') return;
+      const taskKey = String(key || '').trim() || `ui-task-${Date.now()}`;
+      const previous = uiTaskTimers.get(taskKey);
+      if (previous) clearTimeout(previous);
+      const delay = Math.max(0, Number(options.delay ?? getUiInputDelay()) || 0);
+      const timer = window.setTimeout(() => {
+        uiTaskTimers.delete(taskKey);
+        runUiTask(callback, options);
+      }, delay);
+      uiTaskTimers.set(taskKey, timer);
     }
 
     function stopSalesAccessoryFlowRealtimeWatch() {
@@ -25373,11 +25410,18 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
 
     function scheduleIdle(callback, timeout = 800) {
       if (typeof callback !== 'function') return;
+      const run = () => {
+        if (window.scheduler && typeof window.scheduler.postTask === 'function') {
+          window.scheduler.postTask(callback, { priority: 'background' }).catch(() => callback());
+          return;
+        }
+        callback();
+      };
       if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(() => callback(), { timeout: Math.max(120, Number(timeout || 0) || 800) });
+        window.requestIdleCallback(run, { timeout: Math.max(120, Number(timeout || 0) || 800) });
         return;
       }
-      window.setTimeout(callback, Math.max(0, Math.min(250, Number(timeout || 0) || 0)));
+      window.setTimeout(run, Math.max(0, Math.min(250, Number(timeout || 0) || 0)));
     }
 
     function renderProgressiveList(container, items = [], buildHtml, options = {}) {
@@ -25408,6 +25452,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
       container.innerHTML = headHtml + list.slice(0, index).map(buildHtml).join('') + `<div class="empty" data-progressive-render-note>Đang dựng tiếp ${Number(list.length - index).toLocaleString('vi-VN')} dòng ở nền...</div>`;
       const appendChunk = () => {
         if (progressiveRenderTokens.get(container) !== token) return;
+        if (!isRealtimePageVisible()) {
+          scheduleIdle(appendChunk, 1600);
+          return;
+        }
         const note = container.querySelector('[data-progressive-render-note]');
         if (note) note.remove();
         const nextIndex = Math.min(index + chunkSize, list.length);
@@ -29224,11 +29272,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
     });
 
     purchaseFilterInput.addEventListener('input', () => {
-      if (purchaseFilterTimer) clearTimeout(purchaseFilterTimer);
-      purchaseFilterTimer = setTimeout(() => {
-        state.purchaseFilter = normalizeSearch(purchaseFilterInput.value.trim());
+      state.purchaseFilter = normalizeSearch(purchaseFilterInput.value.trim());
+      scheduleUiTask('purchase-filter-render', () => {
         renderRecentPurchases(state.recentPurchases, { updateHome: false });
-      }, 120);
+      }, { delay: getUiInputDelay(90), priority: 'user-visible' });
     });
 
     function bindRecentPurchaseCardOpen(root) {
@@ -29328,7 +29375,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
 
     supplierDebtSearchInput?.addEventListener('input', () => {
       state.supplierDebtQuery = supplierDebtSearchInput.value.trim();
-      renderSupplierDebtList(state.supplierDebtItems || []);
+      scheduleUiTask('supplier-debt-filter-render', () => {
+        renderSupplierDebtList(state.supplierDebtItems || []);
+      }, { delay: getUiInputDelay(80), priority: 'user-visible' });
     });
 
     supplierDebtRefreshBtn?.addEventListener('click', () => {
@@ -29427,7 +29476,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
     customerDebtSearchInput?.addEventListener('input', () => {
       state.customerDebtQuery = customerDebtSearchInput.value.trim();
       state.customerDebtListOpen = Boolean(state.customerDebtQuery);
-      renderCustomerDebtList(state.customerDebtItems || []);
+      scheduleUiTask('customer-debt-filter-render', () => {
+        renderCustomerDebtList(state.customerDebtItems || []);
+      }, { delay: getUiInputDelay(80), priority: 'user-visible' });
     });
 
     customerDebtTypeFilterSelect?.addEventListener('change', () => {
@@ -29525,7 +29576,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
 
     returnsSourceSearchInput?.addEventListener('input', () => {
       state.supplierReturnSourceQuery = returnsSourceSearchInput.value.trim();
-      renderSupplierReturnSourceList(state.supplierReturnSourceReceipts || []);
+      scheduleUiTask('returns-source-filter-render', () => {
+        renderSupplierReturnSourceList(state.supplierReturnSourceReceipts || []);
+      }, { delay: getUiInputDelay(80), priority: 'user-visible' });
     });
 
     returnsSourceRefreshBtn?.addEventListener('click', () => {
@@ -29633,8 +29686,11 @@ window.__TK_APP_VERSION__ = 'v20260501_1947_lazy_scanner_cool_boot';
 
     purchaseQuickSearch.addEventListener('input', () => {
       if (purchaseQuickSearchComposing) return;
-      renderPurchaseWorkspaceCatalog({ query: purchaseQuickSearch.value, preserveScroll: false });
-      schedulePurchaseQuickSearch(purchaseQuickSearch.value, { immediate: true });
+      const query = purchaseQuickSearch.value;
+      scheduleUiTask('purchase-quick-catalog-render', () => {
+        renderPurchaseWorkspaceCatalog({ query, preserveScroll: false });
+      }, { delay: 0, priority: 'user-blocking' });
+      schedulePurchaseQuickSearch(query, { immediate: true });
     });
 
     purchaseQuickSearch.addEventListener('focus', () => {

@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1947_lazy_scanner_cool_boot",
-  "updatedAt": "2026-05-01T12:47:00.000Z",
+  "version": "v20260501_1958_cool_instant_scheduler",
+  "updatedAt": "2026-05-01T12:58:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -467,7 +467,10 @@
     "lazy-html5-qrcode-scanner",
     "cooler-boot-network",
     "on-demand-purchase-camera-scanner",
-    "scanner-global-safe-formats"
+    "scanner-global-safe-formats",
+    "cool-ui-task-scheduler",
+    "hidden-progressive-render-pause",
+    "search-filter-frame-coalescing"
   ],
   "label": "Boot mát hơn: bộ quét camera chỉ tải khi thật sự bấm quét, màn hình chính hiện nhanh hơn"
 }

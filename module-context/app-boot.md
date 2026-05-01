@@ -15,7 +15,7 @@ Last reviewed: 2026-05-01.
 - On cold app launch after iOS/PWA process is killed, the browser can show default white before full HTML/CSS/JS finishes parsing.
 - Critical inline CSS at the very top of `<head>` forces a dark branded fallback immediately.
 - A tiny inline script at the top of `<body>` disables the fallback as soon as body parsing starts, then the normal `#bootSplash` takes over.
-- `html5-qrcode.min.js` is deferred so scanner code does not block first paint; scanner code only checks/uses `window.Html5Qrcode` when the purchase scanner is opened.
+- `html5-qrcode.min.js` is not boot-loaded; purchase scanner lazy-loads it only when the scanner is opened so normal cold start avoids scanner network/parse work.
 
 ## Safe edit points
 
@@ -32,5 +32,5 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains exactly 85 files.
-- `/1` contains `tk-critical-boot-style`, `tk-boot-fallback-off`, current `window.__TK_APP_VERSION__`, `#bootSplash`, and deferred `/vendor/html5-qrcode.min.js`.
+- `/1` contains `tk-critical-boot-style`, `tk-boot-fallback-off`, current `window.__TK_APP_VERSION__`, `#bootSplash`, and `ensurePurchaseScannerLibrary`; it should not contain a static boot script for `/vendor/html5-qrcode.min.js`.
 - `/vendor/html5-qrcode.min.js`, `/home-rank.js`, `/star-native.js`, `/realtime-runtime.js`, `/realtime-bootstrap.js` return JS MIME.

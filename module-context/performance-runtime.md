@@ -9,7 +9,7 @@ Last reviewed: 2026-05-01.
 - `public/home-rank.js` Home Rank Firestore refresh loop.
 - `public/version.json` version/update metadata.
 
-## Current behavior after v20260501_1947_lazy_scanner_cool_boot
+## Current behavior after v20260501_1958_cool_instant_scheduler
 
 - Duplicate background version polling was reduced: `window.__TK_RT_ROLLOUT__.enabled = false`; visible topbar update check remains active every 60s via `APP_UPDATE_CHECK_MS`.
 - Legacy service-worker/cache cleanup is delayed to idle time in `realtime-runtime.js` instead of competing with first paint.
@@ -61,6 +61,13 @@ Last reviewed: 2026-05-01.
 - Scanner loading keeps the modal feedback visible and retries cleanly if the script download fails.
 - Scanner format lookup now uses `window.Html5QrcodeSupportedFormats` explicitly after lazy load.
 
+## Added in v20260501_1958_cool_instant_scheduler
+
+- Added a shared UI task scheduler using modern `scheduler.postTask` when available, plus `requestAnimationFrame` alignment and visibility guards.
+- Debounced/coalesced hot mobile input renders for purchase receipt filtering, supplier debt search, customer debt search, returns source search, and purchase quick catalog preview so typing stays smooth and avoids repeated main-thread rebuilds.
+- Progressive list background chunks now pause while the app is hidden and resume only when visible, avoiding wasted battery/heat from offscreen DOM work.
+- `scheduleIdle()` now uses background-priority scheduler tasks when supported, keeping non-urgent cache/render chunks behind touch/visible UI work.
+
 ## Safe edit points
 
 - Increase/decrease `APP_UPDATE_CHECK_MS`, `AUTO_REFRESH_MS`, or API snapshot TTLs.
@@ -76,6 +83,6 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains 85 files.
-- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `BATTERY_SAVER_MEMORY_GB`, `getRealtimeDelay`, `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
+- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
 - `/home-rank.js` contains `HOME_RANK_CACHE_KEY`, visible-screen guard, and `AUTO_REFRESH_MS = 60_000`.
 - `/realtime-runtime.js` contains `scheduleIdleCleanupLegacyBrowserCache()`.
