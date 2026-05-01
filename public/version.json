@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1936_perf_delta_monitor",
-  "updatedAt": "2026-05-01T12:36:32.000Z",
+  "version": "v20260501_1939_battery_visibility_saver",
+  "updatedAt": "2026-05-01T12:39:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -452,7 +452,12 @@
     "performance-monitor-lite",
     "render-delta-signature-skip",
     "api-delta-snapshot-write-skip",
-    "slow-api-render-samples"
+    "slow-api-render-samples",
+    "battery-visibility-saver",
+    "background-timer-throttle",
+    "low-device-realtime-cooldown",
+    "layout-resize-debounce",
+    "resume-refresh-guard"
   ],
-  "label": "Tối ưu tiếp: đo điểm chậm, bỏ render/ghi cache khi dữ liệu không đổi"
+  "label": "Tiết kiệm pin hơn: giảm timer khi app ẩn/máy yếu, chống resize/render nền gây nóng máy"
 }

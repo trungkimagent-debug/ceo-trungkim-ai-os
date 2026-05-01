@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
+window.__TK_APP_VERSION__ = 'v20260501_1939_battery_visibility_saver';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -16448,6 +16448,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
     const API_SNAPSHOT_IDB_STORE = 'snapshots';
     const PERF_SAMPLE_STORAGE_KEY = 'tk_perf_samples_v1';
     const PERF_SAMPLE_LIMIT = 80;
+    const BATTERY_SAVER_MEMORY_GB = 4;
     const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
@@ -16580,6 +16581,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
       renderSignatures: {},
       apiPayloadSignatures: {},
       perfSamples: [],
+      batterySaver: false,
+      lastVisibleAtMs: Date.now(),
+      lastLayoutSyncAtMs: 0,
       supplierReturnRecent: [],
       supplierReturnSourceReceipts: [],
       supplierReturnSourceQuery: '',
@@ -19474,6 +19478,13 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
       return document.visibilityState !== 'hidden' && !document.hidden;
     }
 
+    function getRealtimeDelay(baseMs = 5000, options = {}) {
+      const base = Math.max(1000, Number(baseMs || 0) || 5000);
+      if (!isRealtimePageVisible()) return Math.max(base, 60000);
+      const multiplier = state.batterySaver && !options.urgent ? 2 : 1;
+      return Math.round(base * multiplier);
+    }
+
     function stopSalesAccessoryFlowRealtimeWatch() {
       if (salesAccessoryFlowTickTimer) clearInterval(salesAccessoryFlowTickTimer);
       if (salesAccessoryFlowPollTimer) clearInterval(salesAccessoryFlowPollTimer);
@@ -19580,7 +19591,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
         salesAccessoryFlowTickTimer = setInterval(() => {
           if (!isRealtimePageVisible()) return;
           updateSalesAccessoryFlowStatusPanel();
-        }, 5000);
+        }, getRealtimeDelay(5000, { urgent: true }));
         salesAccessoryFlowPollTimer = setInterval(() => {
           if (state.activeScreen !== 'sales' || !isRealtimePageVisible() || salesAccessoryFlowPollInFlight) return;
           salesAccessoryFlowPollInFlight = true;
@@ -19589,7 +19600,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
             .finally(() => {
               salesAccessoryFlowPollInFlight = false;
             });
-        }, 5000);
+        }, getRealtimeDelay(5000));
         return;
       }
       if (status === 'warehouse_confirmed') {
@@ -19988,7 +19999,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
           return;
         }
         loadSalesAccessoryReadyPopupRequest({ silent: true }).catch(() => {});
-      }, delay);
+      }, getRealtimeDelay(delay));
     }
 
     async function loadSalesAccessoryReadyPopupRequest(options = {}) {
@@ -20178,7 +20189,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
           query: state.salesRequestQuery,
           autoRefresh: true,
         }).catch(() => {});
-      }, delay);
+      }, getRealtimeDelay(delay));
     }
 
     async function loadSalesAccessoryPendingFinalizeQueue(options = {}) {
@@ -21529,7 +21540,30 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
       }
     }
 
+    function detectBatterySaverMode() {
+      try {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+        const saveData = Boolean(connection?.saveData);
+        const cores = Number(navigator.hardwareConcurrency || 0);
+        const memory = Number(navigator.deviceMemory || 0);
+        const lowCore = cores > 0 && cores <= 4;
+        const lowMemory = memory > 0 && memory <= BATTERY_SAVER_MEMORY_GB;
+        return Boolean(saveData || lowCore || lowMemory);
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function syncBatterySaverState() {
+      state.batterySaver = detectBatterySaverMode();
+      document.documentElement.classList.toggle('tk-battery-saver', Boolean(state.batterySaver));
+    }
+
     function syncHomeLayoutVars() {
+      if (!isRealtimePageVisible()) return;
+      const nowMs = Date.now();
+      if (state.lastLayoutSyncAtMs && (nowMs - state.lastLayoutSyncAtMs) < 80) return;
+      state.lastLayoutSyncAtMs = nowMs;
       syncLandscapeDrawerMode();
       const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
       const topbarSpace = measureOuterHeight(topbarEl, true);
@@ -21626,6 +21660,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
     }
 
     async function checkAppUpdateForAllUsers({ immediate = false } = {}) {
+      if (!immediate && !isRealtimePageVisible()) return;
       if (state.appUpdateCheckInFlight || state.applyingAppUpdate) return;
       state.appUpdateCheckInFlight = true;
       try {
@@ -21658,7 +21693,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
       checkAppUpdateForAllUsers({ immediate: true });
       state.appUpdateCheckTimer = window.setInterval(() => {
         checkAppUpdateForAllUsers();
-      }, APP_UPDATE_CHECK_MS);
+      }, getRealtimeDelay(APP_UPDATE_CHECK_MS));
     }
 
     function snapshotUpdatePreservedStorage() {
@@ -25128,9 +25163,18 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
       if (event.key === 'Escape') closeLandscapeNavDrawer();
     });
     bindPosShellFocusCompaction();
-    window.addEventListener('resize', syncHomeLayoutVars);
-    window.addEventListener('orientationchange', () => setTimeout(syncHomeLayoutVars, 80));
-    window.visualViewport?.addEventListener('resize', syncHomeLayoutVars);
+    let layoutSyncTimer = 0;
+    function scheduleHomeLayoutSync(delay = 80) {
+      if (layoutSyncTimer) clearTimeout(layoutSyncTimer);
+      layoutSyncTimer = window.setTimeout(() => {
+        layoutSyncTimer = 0;
+        syncHomeLayoutVars();
+      }, Math.max(0, Number(delay || 0) || 0));
+    }
+    window.addEventListener('resize', () => scheduleHomeLayoutSync(120), { passive: true });
+    window.addEventListener('orientationchange', () => scheduleHomeLayoutSync(120), { passive: true });
+    window.visualViewport?.addEventListener('resize', () => scheduleHomeLayoutSync(140), { passive: true });
+    syncBatterySaverState();
     syncHomeLayoutVars();
 
     function getApiSnapshotKey(path = '') {
@@ -27829,7 +27873,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
       if (state.activeScreen !== 'stock' || !hasScreenPermission('stock')) return;
       stockAutoRefreshTimer = window.setTimeout(() => {
         ensureStockDataFresh({ force: true, note: 'Đang tự đồng bộ tồn kho...' }).catch(() => {});
-      }, STOCK_AUTO_REFRESH_MS);
+      }, getRealtimeDelay(STOCK_AUTO_REFRESH_MS));
     }
 
     function scheduleStockAccessoryRequestAutoRefresh() {
@@ -27847,7 +27891,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
           return;
         }
         loadStockAccessoryRequestQueue({ silent: true, preserveMsg: true, autoRefresh: true }).catch(() => {});
-      }, delay);
+      }, getRealtimeDelay(delay));
     }
 
     function applyStockAccessoryFilter(items = []) {
@@ -30059,6 +30103,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
 
     document.addEventListener('visibilitychange', () => {
       if (!isRealtimePageVisible()) {
+        state.lastVisibleAtMs = Date.now();
         clearStockAccessoryRequestAutoRefreshTimer();
         clearSalesAccessoryPendingAutoRefreshTimer();
         clearSalesAccessoryPendingWarmTimer();
@@ -30067,6 +30112,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1936_perf_delta_monitor';
         stopSalesAccessoryFlowRealtimeWatch();
         return;
       }
+      syncBatterySaverState();
+      const hiddenForMs = Date.now() - Number(state.lastVisibleAtMs || Date.now());
+      scheduleHomeLayoutSync(80);
+      if (hiddenForMs < 1200) return;
       if (state.activeScreen === 'stock' && hasScreenPermission('stock')) {
         loadStockAccessoryRequestQueue({ silent: true, preserveMsg: true }).catch(() => {});
       } else if (hasScreenPermission('stock')) {
