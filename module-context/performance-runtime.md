@@ -9,7 +9,7 @@ Last reviewed: 2026-05-01.
 - `public/home-rank.js` Home Rank Firestore refresh loop.
 - `public/version.json` version/update metadata.
 
-## Current behavior after v20260501_1939_battery_visibility_saver
+## Current behavior after v20260501_1943_instant_paint_worldclass
 
 - Duplicate background version polling was reduced: `window.__TK_RT_ROLLOUT__.enabled = false`; visible topbar update check remains active every 60s via `APP_UPDATE_CHECK_MS`.
 - Legacy service-worker/cache cleanup is delayed to idle time in `realtime-runtime.js` instead of competing with first paint.
@@ -44,6 +44,15 @@ Last reviewed: 2026-05-01.
 - Debounced layout recalculation and ignored layout sync while app is hidden to reduce resize/visualViewport jank.
 - Visibility resume now avoids heavy refresh if the app was hidden only briefly.
 
+
+## Added in v20260501_1943_instant_paint_worldclass
+
+- Added preconnect hints for Google Fonts, Google font static host, and Font Awesome CDN to reduce first paint latency.
+- Made Font Awesome stylesheet non-render-blocking (`media=print` + onload) with noscript fallback, so text/shell can paint immediately while icons hydrate after.
+- Added CSS containment and `content-visibility:auto` to large cards/lists so offscreen rows do not cost layout/paint until needed.
+- Battery saver and reduced-motion modes now cut animations/transitions aggressively to prevent heat/jank.
+- Progressive list rendering uses smaller first/chunk sizes in battery saver mode, keeping touch/scroll responsive on weaker phones.
+
 ## Safe edit points
 
 - Increase/decrease `APP_UPDATE_CHECK_MS`, `AUTO_REFRESH_MS`, or API snapshot TTLs.
@@ -59,6 +68,6 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains 85 files.
-- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `BATTERY_SAVER_MEMORY_GB`, `getRealtimeDelay`, `syncBatterySaverState`, `shouldSkipRender`, `renderProgressiveList`, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`.
+- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `BATTERY_SAVER_MEMORY_GB`, `getRealtimeDelay`, `syncBatterySaverState`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`.
 - `/home-rank.js` contains `HOME_RANK_CACHE_KEY`, visible-screen guard, and `AUTO_REFRESH_MS = 60_000`.
 - `/realtime-runtime.js` contains `scheduleIdleCleanupLegacyBrowserCache()`.

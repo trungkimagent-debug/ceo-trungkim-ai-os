@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1939_battery_visibility_saver';
+window.__TK_APP_VERSION__ = 'v20260501_1943_instant_paint_worldclass';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -92,8 +92,12 @@ window.__TK_APP_VERSION__ = 'v20260501_1939_battery_visibility_saver';
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/king-favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/king-favicon-16.png" />
   <link rel="shortcut icon" href="/assets/icons/king-favicon-32.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" /></noscript>
   <script src="/vendor/html5-qrcode.min.js" defer></script>
   <style>
     :root {
@@ -1827,6 +1831,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1939_battery_visibility_saver';
       overflow: auto;
       padding: 0 12px 8px;
       scrollbar-width: none;
+      contain: layout paint style;
+      will-change: auto;
       animation: screenFade 240ms ease;
     }
 
@@ -1849,6 +1855,47 @@ window.__TK_APP_VERSION__ = 'v20260501_1939_battery_visibility_saver';
     .screen.active > *:nth-child(2) { animation-delay: 40ms; }
     .screen.active > *:nth-child(3) { animation-delay: 70ms; }
     .screen.active > *:nth-child(4) { animation-delay: 100ms; }
+
+    .list,
+    .sales-accessory-pending-bucket,
+    #stockImeiList,
+    #stockAccessoryList,
+    #supplierDebtList,
+    #customerDebtList {
+      contain: layout paint style;
+    }
+
+    .ticket-item,
+    .supplier-debt-item,
+    .customer-debt-item,
+    .sales-recent-item,
+    .purchase-receipt-card {
+      content-visibility: auto;
+      contain-intrinsic-size: 86px;
+      contain: layout paint style;
+    }
+
+    html.tk-battery-saver *,
+    html.tk-battery-saver *::before,
+    html.tk-battery-saver *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    html.tk-battery-saver .screen.active > * {
+      animation: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
 
     @keyframes screenFade {
       from { opacity: 0.55; }
@@ -25326,8 +25373,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1939_battery_visibility_saver';
       progressiveRenderTokens.set(container, token);
       const headHtml = String(options.headHtml || '');
       const emptyHtml = String(options.emptyHtml || '<div class="empty">Chưa có dữ liệu.</div>');
-      const firstCount = Math.max(12, Number(options.firstCount || 48) || 48);
-      const chunkSize = Math.max(8, Number(options.chunkSize || 40) || 40);
+      const requestedFirstCount = Math.max(12, Number(options.firstCount || 48) || 48);
+      const requestedChunkSize = Math.max(8, Number(options.chunkSize || 40) || 40);
+      const firstCount = state.batterySaver ? Math.min(requestedFirstCount, 24) : requestedFirstCount;
+      const chunkSize = state.batterySaver ? Math.min(requestedChunkSize, 18) : requestedChunkSize;
       if (!list.length) {
         container.innerHTML = headHtml + emptyHtml;
         markPerfEnd('render', renderKey || 'progressive-empty', perfStart, { count: 0 });

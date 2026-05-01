@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1939_battery_visibility_saver",
-  "updatedAt": "2026-05-01T12:39:00.000Z",
+  "version": "v20260501_1943_instant_paint_worldclass",
+  "updatedAt": "2026-05-01T12:43:54.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -457,7 +457,13 @@
     "background-timer-throttle",
     "low-device-realtime-cooldown",
     "layout-resize-debounce",
-    "resume-refresh-guard"
+    "resume-refresh-guard",
+    "instant-paint-resource-hints",
+    "nonblocking-fontawesome",
+    "css-containment-large-lists",
+    "content-visibility-auto-cards",
+    "battery-saver-motion-cut",
+    "battery-saver-smaller-render-chunks"
   ],
-  "label": "Tiết kiệm pin hơn: giảm timer khi app ẩn/máy yếu, chống resize/render nền gây nóng máy"
+  "label": "Hiển thị tức thời đẳng cấp: giảm render-blocking, containment danh sách lớn, mát máy hơn"
 }
