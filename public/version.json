@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_2010_performance_cooldown",
-  "updatedAt": "2026-05-01T12:10:00.000Z",
+  "version": "v20260501_1918_cold_boot_splash",
+  "updatedAt": "2026-05-01T12:18:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -432,7 +432,9 @@
     "tablet-native-update-manifest",
     "stock-audio-announce-request-pickup",
     "stock-audio-5min-reminders",
-    "index.html"
+    "index.html",
+    "app-cold-boot-dark-fallback",
+    "scanner-script-defer"
   ],
-  "label": "Tối ưu tải nền để app nhanh hơn, mát máy hơn"
+  "label": "Chống trắng màn hình khi mở lại app sau khi tắt nền"
 }
