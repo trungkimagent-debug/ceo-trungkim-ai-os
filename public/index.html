@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
+window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -9252,7 +9252,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
     .sales-menu-grid {
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 6px;
       align-items: stretch;
     }
@@ -9681,6 +9681,50 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       font-size: 10px;
       line-height: 1.2;
       font-weight: 800;
+    }
+
+    .sales-accessory-popup-quick-stepper {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) 30px;
+      gap: 5px;
+      align-items: center;
+      margin-top: 1px;
+    }
+
+    .sales-accessory-popup-quick-stepper button {
+      min-width: 30px;
+      min-height: 28px;
+      border: 1px solid rgba(17,24,39,0.14);
+      border-radius: 10px;
+      background: #ffffff;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      box-shadow: 0 4px 10px rgba(15,23,42,0.08);
+    }
+
+    .sales-accessory-popup-quick-stepper button:disabled {
+      opacity: 0.35;
+      box-shadow: none;
+    }
+
+    .sales-accessory-popup-quick-qty {
+      min-height: 28px;
+      border-radius: 10px;
+      background: rgba(15,23,42,0.06);
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      font-family: var(--font-num);
+    }
+
+    .sales-accessory-popup.mode-quick .sales-accessory-popup-card {
+      grid-template-rows: minmax(0, 1fr) auto auto auto !important;
     }
 
     .sales-accessory-popup-footer {
@@ -15769,6 +15813,10 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
               <i class="fa-solid fa-plug-circle-bolt"></i>
               <span>Bán Phụ Kiện</span>
             </button>
+            <button type="button" class="sales-menu-card" data-sales-menu="quick">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Bán nhanh</span>
+            </button>
             <button type="button" class="sales-menu-card" data-sales-menu="exchange">
               <i class="fa-solid fa-arrows-rotate"></i>
               <span>Đổi phụ kiện</span>
@@ -19593,6 +19641,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       const normalized = String(mode || '').trim().toLowerCase();
       if (normalized === 'gift_menu') return 'gift_menu';
       if (normalized === 'exchange_menu') return 'exchange_menu';
+      if (normalized === 'quick_menu') return 'quick_menu';
       return 'accessory_menu';
     }
 
@@ -19604,6 +19653,10 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       return getCurrentSalesAccessorySaleMode() === 'gift_menu';
     }
 
+    function isSalesAccessoryQuickMode() {
+      return getCurrentSalesAccessorySaleMode() === 'quick_menu';
+    }
+
     function normalizeSalesAccessoryEditorSalePrice(rawValue = 0, item = null) {
       if (isSalesAccessoryGiftMode()) return 0;
       return Math.max(0, Number(rawValue || 0) || (item ? getSalesAccessoryPopupDefaultSalePrice(item) : 0));
@@ -19613,10 +19666,11 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       const normalizedMode = normalizeSalesAccessorySaleMode(mode || getCurrentSalesAccessorySaleMode());
       const isGift = normalizedMode === 'gift_menu';
       const isExchange = normalizedMode === 'exchange_menu';
-      const itemLabel = isGift ? 'quà tặng' : (isExchange ? 'phụ kiện đổi' : 'phụ kiện');
-      const titleLabel = isGift ? 'Tặng miễn phí' : (isExchange ? 'Đổi phụ kiện' : 'Bán phụ kiện');
+      const isQuick = normalizedMode === 'quick_menu';
+      const itemLabel = isGift ? 'quà tặng' : (isExchange ? 'phụ kiện đổi' : (isQuick ? 'sản phẩm bán nhanh' : 'phụ kiện'));
+      const titleLabel = isGift ? 'Tặng miễn phí' : (isExchange ? 'Đổi phụ kiện' : (isQuick ? 'Bán nhanh' : 'Bán phụ kiện'));
       return {
-        requestLabel: isGift ? 'Phiếu quà tặng' : (isExchange ? 'Phiếu đổi phụ kiện' : 'Phiếu phụ kiện'),
+        requestLabel: isGift ? 'Phiếu quà tặng' : (isExchange ? 'Phiếu đổi phụ kiện' : (isQuick ? 'Phiếu bán nhanh' : 'Phiếu phụ kiện')),
         popupTitle: titleLabel,
         searchPlaceholder: isGift ? 'Tìm quà tặng' : 'Tìm phụ kiện',
         loadingCatalog: `Đang tải danh sách ${itemLabel}...`,
@@ -19633,44 +19687,53 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
         basePriceLabel: isGift ? 'Giá gốc' : 'Giá gợi ý',
         flowTitle: titleLabel,
         flowTitleWithCode(code = '') {
-          return code ? `${code} • ${isGift ? 'Tặng miễn phí' : 'Bán phụ kiện'}` : (isGift ? 'Tặng miễn phí' : 'Bán phụ kiện có ảnh xác nhận');
+          return code ? `${code} • ${isGift ? 'Tặng miễn phí' : (isQuick ? 'Bán nhanh' : 'Bán phụ kiện')}` : (isGift ? 'Tặng miễn phí' : (isQuick ? 'Bán nhanh' : 'Bán phụ kiện có ảnh xác nhận'));
         },
-        flowIntroNote: isGift ? 'Mở danh sách quà tặng, chọn hàng rồi gửi kho lấy hàng.' : 'Chụp ảnh xong sẽ vào ngay danh sách phụ kiện, chọn hàng rồi gửi kho lấy hàng.',
+        flowIntroNote: isGift ? 'Mở danh sách quà tặng, chọn hàng rồi gửi kho lấy hàng.' : (isQuick ? 'Bấm sản phẩm để tăng số lượng, bấm trừ để bớt, rồi gửi kho xuất hàng.' : 'Chụp ảnh xong sẽ vào ngay danh sách phụ kiện, chọn hàng rồi gửi kho lấy hàng.'),
         flowDraftNote(dirty = false) {
           if (isGift) return dirty ? 'Giỏ quà tặng vừa đổi, cần gửi kho lại để họ lấy đúng hàng.' : 'Đã có ảnh. Chọn quà tặng rồi gửi kho lấy hàng.';
+          if (isQuick) return dirty ? 'Giỏ bán nhanh vừa đổi, cần gửi kho lại để họ lấy đúng hàng.' : 'Chọn sản phẩm bán nhanh rồi gửi kho xuất hàng.';
           return dirty ? 'Giỏ vừa đổi, cần gửi kho lại để họ lấy đúng hàng.' : 'Đã có ảnh. Chọn phụ kiện rồi gửi kho lấy hàng.';
         },
-        cartDirtyMsg: isGift ? 'Giỏ quà tặng vừa đổi, cần gửi kho lại để họ lấy đúng hàng.' : 'Giỏ phụ kiện vừa đổi, cần gửi kho lại để họ lấy đúng hàng.',
-        cartQtyDirtyMsg: isGift ? 'Giỏ quà tặng vừa đổi số lượng, cần gửi kho lại.' : 'Giỏ phụ kiện vừa đổi số lượng, cần gửi kho lại.',
-        cartPriceDirtyMsg: isGift ? 'Giá quà tặng vừa đổi, cần gửi kho lại.' : 'Giỏ phụ kiện vừa đổi giá, cần gửi kho lại.',
-        cartClearDirtyMsg: isGift ? 'Đã xoá giỏ quà tặng, nếu cần làm lại thì gửi kho lại từ đầu.' : 'Đã xoá giỏ, nếu cần bán lại thì gửi kho lại từ đầu.',
-        startCreateMsg: isGift ? 'Đang tạo phiếu quà tặng...' : 'Đang tạo phiếu bán phụ kiện...',
+        cartDirtyMsg: isGift ? 'Giỏ quà tặng vừa đổi, cần gửi kho lại để họ lấy đúng hàng.' : (isQuick ? 'Giỏ bán nhanh vừa đổi, cần gửi kho lại.' : 'Giỏ phụ kiện vừa đổi, cần gửi kho lại để họ lấy đúng hàng.'),
+        cartQtyDirtyMsg: isGift ? 'Giỏ quà tặng vừa đổi số lượng, cần gửi kho lại.' : (isQuick ? 'Giỏ bán nhanh vừa đổi số lượng, cần gửi kho lại.' : 'Giỏ phụ kiện vừa đổi số lượng, cần gửi kho lại.'),
+        cartPriceDirtyMsg: isGift ? 'Giá quà tặng vừa đổi, cần gửi kho lại.' : (isQuick ? 'Giá bán nhanh vừa đổi, cần gửi kho lại.' : 'Giỏ phụ kiện vừa đổi giá, cần gửi kho lại.'),
+        cartClearDirtyMsg: isGift ? 'Đã xoá giỏ quà tặng, nếu cần làm lại thì gửi kho lại từ đầu.' : (isQuick ? 'Đã xoá giỏ bán nhanh, nếu cần làm lại thì chọn sản phẩm lại.' : 'Đã xoá giỏ, nếu cần bán lại thì gửi kho lại từ đầu.'),
+        startCreateMsg: isGift ? 'Đang tạo phiếu quà tặng...' : (isQuick ? 'Đang tạo phiếu bán nhanh...' : 'Đang tạo phiếu bán phụ kiện...'),
         createdMsg(code = '') {
           return isGift
             ? `Đã tạo ${code || 'phiếu quà tặng'}. Chọn hàng rồi gửi kho lấy hàng.`
-            : `Đã tạo ${code || 'phiếu phụ kiện'}. Chọn hàng rồi gửi kho lấy hàng.`;
+            : isQuick
+              ? `Đã tạo ${code || 'phiếu bán nhanh'}. Chọn hàng rồi gửi kho xuất hàng.`
+              : `Đã tạo ${code || 'phiếu phụ kiện'}. Chọn hàng rồi gửi kho lấy hàng.`;
         },
-        openMsg: isGift ? 'Đang mở màn quà tặng...' : 'Đang mở màn bán phụ kiện...',
+        openMsg: isGift ? 'Đang mở màn quà tặng...' : (isQuick ? 'Đang mở Bán nhanh...' : 'Đang mở màn bán phụ kiện...'),
         openedMsg(code = '') {
           return isGift
             ? `Đã mở ${code || 'phiếu quà tặng'}. Chọn quà tặng rồi gửi yêu cầu xuất kho.`
-            : `Đã mở ${code || 'phiếu phụ kiện'}. Chọn phụ kiện rồi gửi yêu cầu xuất kho.`;
+            : isQuick
+              ? `Đã mở ${code || 'phiếu bán nhanh'}. Bấm sản phẩm để tăng số lượng rồi gửi kho xuất hàng.`
+              : `Đã mở ${code || 'phiếu phụ kiện'}. Chọn phụ kiện rồi gửi yêu cầu xuất kho.`;
         },
         openPendingMsg(code = '') {
           return isGift
             ? `Đã mở ${code || 'phiếu quà tặng'} để xử lý tiếp.`
-            : `Đã mở ${code || 'phiếu phụ kiện'} để xử lý tiếp.`;
+            : isQuick
+              ? `Đã mở ${code || 'phiếu bán nhanh'} để hoàn thành phiếu.`
+              : `Đã mở ${code || 'phiếu phụ kiện'} để xử lý tiếp.`;
         },
-        noRequestSendMsg: isGift ? 'Chưa có phiếu quà tặng để gửi kho.' : 'Chưa có phiếu phụ kiện để gửi kho.',
-        onlyItemsMsg: isGift ? 'Flow này chỉ nhận quà tặng. Chọn quà tặng rồi gửi kho.' : 'Flow này chỉ nhận phụ kiện. Chọn phụ kiện rồi gửi kho.',
+        noRequestSendMsg: isGift ? 'Chưa có phiếu quà tặng để gửi kho.' : (isQuick ? 'Chưa có phiếu bán nhanh để gửi kho.' : 'Chưa có phiếu phụ kiện để gửi kho.'),
+        onlyItemsMsg: isGift ? 'Flow này chỉ nhận quà tặng. Chọn quà tặng rồi gửi kho.' : (isQuick ? 'Bán nhanh chỉ nhận sản phẩm không quản lý IMEI.' : 'Flow này chỉ nhận phụ kiện. Chọn phụ kiện rồi gửi kho.'),
         sentMsg(code = '') {
           return isGift
             ? `Đã gửi ${code || 'phiếu quà tặng'} sang kho. Phiếu đang nằm ở Chờ kho xác nhận.`
-            : `Đã gửi ${code || 'phiếu phụ kiện'} sang kho. Phiếu đang nằm ở Chờ kho xác nhận.`;
+            : isQuick
+              ? `Đã gửi ${code || 'phiếu bán nhanh'} sang kho. Phiếu đã vào danh sách phiếu tạm để hoàn thành sau.`
+              : `Đã gửi ${code || 'phiếu phụ kiện'} sang kho. Phiếu đang nằm ở Chờ kho xác nhận.`;
         },
-        noRequestCheckoutMsg: isGift ? 'Chưa có phiếu quà tặng để chốt.' : 'Chưa có phiếu phụ kiện để chốt.',
-        onlyCheckoutItemsMsg: isGift ? 'Flow này chỉ được chốt khi giỏ toàn quà tặng.' : 'Flow này chỉ được chốt khi giỏ toàn phụ kiện.',
-        queueReadyMoveMsg: isGift ? 'Đã xác nhận lấy hàng, phiếu quà tặng đã sang Xử lý tiếp.' : 'Đã xác nhận lấy hàng, phiếu đã sang Xử lý tiếp.',
+        noRequestCheckoutMsg: isGift ? 'Chưa có phiếu quà tặng để chốt.' : (isQuick ? 'Chưa có phiếu bán nhanh để chốt.' : 'Chưa có phiếu phụ kiện để chốt.'),
+        onlyCheckoutItemsMsg: isGift ? 'Flow này chỉ được chốt khi giỏ toàn quà tặng.' : (isQuick ? 'Bán nhanh chỉ được chốt khi giỏ toàn sản phẩm không IMEI.' : 'Flow này chỉ được chốt khi giỏ toàn phụ kiện.'),
+        queueReadyMoveMsg: isGift ? 'Đã xác nhận lấy hàng, phiếu quà tặng đã sang Xử lý tiếp.' : (isQuick ? 'Đã xác nhận lấy hàng, phiếu bán nhanh đã sang danh sách hoàn thành phiếu.' : 'Đã xác nhận lấy hàng, phiếu đã sang Xử lý tiếp.'),
         popupReadyTitle(code = '') {
           return code ? `${code} đã có hàng` : (isGift ? 'Kho đã xác nhận quà tặng' : 'Kho đã xác nhận xong');
         },
@@ -19686,6 +19749,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       const normalized = String(mode || '').trim().toLowerCase();
       if (normalized === 'gift_menu') return 'gift_menu';
       if (normalized === 'exchange_menu') return 'exchange_menu';
+      if (normalized === 'quick_menu') return 'quick_menu';
       if (normalized === 'accessory_menu') return 'accessory_menu';
       return 'default';
     }
@@ -19706,6 +19770,14 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
           shortLabel: 'Đổi phụ kiện',
           historyLabel: 'Phiếu đổi phụ kiện',
           receiptTitle: 'Phiếu đổi phụ kiện',
+        };
+      }
+      if (normalizedMode === 'quick_menu') {
+        return {
+          mode: 'quick_menu',
+          shortLabel: 'Bán nhanh',
+          historyLabel: 'Phiếu bán nhanh',
+          receiptTitle: 'Bill bán nhanh',
         };
       }
       if (normalizedMode === 'accessory_menu') {
@@ -19889,7 +19961,8 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       if (salesAccessoryPopupEl) {
         salesAccessoryPopupEl.hidden = !visible;
         salesAccessoryPopupEl.classList.toggle('mode-gift', isSalesAccessoryGiftMode());
-        salesAccessoryPopupEl.classList.toggle('mode-accessory', !isSalesAccessoryGiftMode());
+        salesAccessoryPopupEl.classList.toggle('mode-quick', isSalesAccessoryQuickMode());
+        salesAccessoryPopupEl.classList.toggle('mode-accessory', !isSalesAccessoryGiftMode() && !isSalesAccessoryQuickMode());
       }
       syncSalesOverlayUi();
       if (salesAccessoryPopupCodeEl) salesAccessoryPopupCodeEl.textContent = state.salesAccessoryFlow?.requestCode || state.salesFlowTicketCode || 'HĐ';
@@ -20124,6 +20197,15 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
             const selectedQty = Math.max(0, Number(selectedLine?.quantity || 0) || 0);
             const productImageUrl = String(item.productImageUrl || item.imageUrl || '').trim();
             const displayPrice = normalizeSalesAccessoryEditorSalePrice(selectedLine?.salePrice || 0, item);
+            const quickMode = isSalesAccessoryQuickMode();
+            const remainingQty = Math.max(0, Number(item.remainingQty || 0) || 0);
+            const quickStepper = quickMode ? `
+              <div class="sales-accessory-popup-quick-stepper" data-popup-accessory-stepper="${batchId}">
+                <button type="button" data-popup-accessory-dec="${batchId}" ${selectedQty <= 0 ? 'disabled' : ''}><i class="fa-solid fa-minus"></i></button>
+                <span class="sales-accessory-popup-quick-qty">${selectedQty.toLocaleString('vi-VN')}</span>
+                <button type="button" data-popup-accessory-inc="${batchId}" ${selectedQty >= remainingQty ? 'disabled' : ''}><i class="fa-solid fa-plus"></i></button>
+              </div>
+            ` : '';
             return `
               <button type="button" class="sales-accessory-popup-card${selectedQty > 0 ? ' is-selected' : ''}" data-popup-accessory-open="${batchId}">
                 ${selectedQty > 0 ? `<span class="sales-accessory-popup-selected-badge">${selectedQty.toLocaleString('vi-VN')}</span>` : ''}
@@ -20133,6 +20215,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
                 </div>
                 <div class="sales-accessory-popup-name">${escapeHtml(item.productName || copy.itemFallback)}</div>
                 <div class="sales-accessory-popup-price">${money(displayPrice)}</div>
+                ${quickStepper}
               </button>
             `;
           }).join('')}
@@ -20140,6 +20223,57 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       `).join('');
       salesAccessoryPopupUiScrollToStart();
       syncSalesAccessoryPopupUi();
+    }
+
+    function changeSalesQuickPopupQuantity(batchId = '', delta = 1) {
+      if (!isSalesAccessoryQuickMode()) return;
+      const normalizedBatchId = String(batchId || '').trim();
+      const change = Number(delta || 0) || 0;
+      if (!normalizedBatchId || !change) return;
+      const item = state.salesAccessoryCatalog.find((entry) => String(entry?.batchId || '').trim() === normalizedBatchId);
+      if (!item) return;
+      const cartIndex = state.cart.findIndex((entry) => entry?.kind === 'accessory' && String(entry.batchId || '').trim() === normalizedBatchId);
+      const selectedLine = cartIndex >= 0 ? state.cart[cartIndex] : null;
+      const remainingQty = Math.max(0, Number(item.remainingQty || 0) || 0);
+      const currentQty = Math.max(0, Number(selectedLine?.quantity || 0) || 0);
+      const nextQty = Math.max(0, Math.min(remainingQty, currentQty + change));
+      if (change > 0 && nextQty === currentQty) {
+        setMsg(salesMsg, `${item.productName || item.batchCode || 'Sản phẩm'} chỉ còn ${remainingQty.toLocaleString('vi-VN')}.`, 'error');
+        return;
+      }
+      invalidateSalesAccessoryWarehouse(getSalesAccessoryModeCopy().cartQtyDirtyMsg);
+      if (nextQty <= 0) {
+        if (cartIndex >= 0) state.cart.splice(cartIndex, 1);
+        renderCart();
+        return;
+      }
+      const salePrice = normalizeSalesAccessoryEditorSalePrice(selectedLine?.salePrice || getSalesAccessoryPopupDefaultSalePrice(item), item);
+      if (salePrice <= 0 && !isSalesAccessoryGiftMode()) {
+        setMsg(salesMsg, 'Sản phẩm này chưa có giá bán, dùng Bán Phụ Kiện để nhập giá trước.', 'error');
+        return;
+      }
+      const nextLine = {
+        ...(selectedLine || {}),
+        kind: 'accessory',
+        batchId: item.batchId,
+        id: item.batchId,
+        name: item.productName,
+        productId: item.productId || '',
+        batchCode: item.batchCode || '',
+        productName: item.productName || item.batchCode || item.batchId,
+        productImageUrl: String(item.productImageUrl || item.imageUrl || '').trim(),
+        productImagePath: String(item.productImagePath || item.imagePath || '').trim(),
+        productImageName: String(item.productImageName || item.imageName || '').trim(),
+        salePrice,
+        quantity: nextQty,
+        subtotal: salePrice * nextQty,
+        remainingQty,
+        stockQty: remainingQty,
+        imageUrl: String(item.productImageUrl || item.imageUrl || '').trim(),
+      };
+      if (cartIndex >= 0) state.cart.splice(cartIndex, 1, nextLine);
+      else state.cart.push(nextLine);
+      renderCart();
     }
 
     function formatSalesAccessoryWaitDuration(value = '') {
@@ -21384,6 +21518,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       state.salesAccessoryPopupOpen = false;
       state.salesProcessingPopupOpen = false;
       state.salesAccessoryFlow = normalizeSalesAccessoryFlow(data.request || data);
+      state.salesFlowTicketCode = String(state.salesAccessoryFlow.requestCode || state.salesFlowTicketCode || '').trim();
+      state.salesFlowTicketMode = normalizeSalesAccessorySaleMode(state.salesAccessoryFlow.saleMode || state.salesFlowTicketMode);
+      renderSalesFlowTicketBadge();
       setSalesScreenMode('menu');
       renderSalesAccessoryFlow();
       syncSalesAccessoryCheckoutGate();
@@ -30899,10 +31036,24 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
     });
 
     salesAccessoryPopupGridEl?.addEventListener('click', (event) => {
-      const openBtn = event.target instanceof Element ? event.target.closest('[data-popup-accessory-open]') : null;
+      const target = event.target instanceof Element ? event.target : null;
+      const decBtn = target?.closest('[data-popup-accessory-dec]');
+      const incBtn = target?.closest('[data-popup-accessory-inc]');
+      if (decBtn || incBtn) {
+        event.preventDefault();
+        event.stopPropagation();
+        const batchId = String((decBtn || incBtn)?.getAttribute(decBtn ? 'data-popup-accessory-dec' : 'data-popup-accessory-inc') || '').trim();
+        changeSalesQuickPopupQuantity(batchId, decBtn ? -1 : 1);
+        return;
+      }
+      const openBtn = target?.closest('[data-popup-accessory-open]') || null;
       const batchId = String(openBtn?.dataset.popupAccessoryOpen || '').trim();
       if (!batchId) return;
       try {
+        if (isSalesAccessoryQuickMode()) {
+          changeSalesQuickPopupQuantity(batchId, 1);
+          return;
+        }
         openSalesAccessoryPopupEditor(batchId);
       } catch (error) {
         setMsg(salesMsg, error.message || String(error), 'error');
@@ -30991,6 +31142,12 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
     });
 
     salesAccessoryPopupCloseBtn?.addEventListener('click', () => {
+      if (isSalesAccessoryQuickMode()) {
+        closeSalesQuickPopupToQueue().catch((error) => {
+          setMsg(salesMsg, error.message || String(error), 'error');
+        });
+        return;
+      }
       cancelSalesAccessoryFlowAndReturnToMenu().catch((error) => {
         setMsg(salesMsg, error.message || String(error), 'error');
       });
@@ -31026,6 +31183,22 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
     document.getElementById('salesDockCheckoutBtn')?.addEventListener('click', () => {
       document.getElementById('checkoutBtn')?.click();
     });
+
+    async function closeSalesQuickPopupToQueue() {
+      state.cart = [];
+      state.salesAccessoryCatalog = [];
+      state.salesAccessoryPopupOpen = false;
+      state.salesAccessoryPopupPendingCreate = false;
+      state.salesProcessingPopupOpen = false;
+      state.salesAccessoryFlow = createEmptySalesAccessoryFlow();
+      resetSalesOrderDraft({ preserveCustomer: false });
+      resetSalesFlowTicket();
+      setSalesScreenMode('menu');
+      renderCart();
+      openScreen('sales');
+      await loadSalesAccessoryPendingFinalizeQueue({ silent: true, filter: 'waiting', preserveFocus: true }).catch(() => {});
+      setMsg(salesMsg, 'Đã đóng Bán nhanh. Danh sách phiếu tạm đang hiển thị bên dưới.', 'ok');
+    }
 
     function closeSalesProductPicker() {
       state.salesProductPickerOpen = false;
@@ -31115,9 +31288,15 @@ window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
       button.addEventListener('click', async () => {
         const action = String(button.dataset.salesMenu || '').trim();
         try {
-          if (action === 'accessory' || action === 'gift' || action === 'exchange') {
+          if (action === 'accessory' || action === 'gift' || action === 'exchange' || action === 'quick') {
             resetSalesFlowTicket();
-            state.salesFlowTicketMode = action === 'gift' ? 'gift_menu' : (action === 'exchange' ? 'exchange_menu' : 'accessory_menu');
+            state.salesFlowTicketMode = action === 'gift'
+              ? 'gift_menu'
+              : action === 'exchange'
+                ? 'exchange_menu'
+                : action === 'quick'
+                  ? 'quick_menu'
+                  : 'accessory_menu';
             await startSalesAccessoryPopupFlow();
             return;
           }
