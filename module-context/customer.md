@@ -105,3 +105,10 @@ Last reviewed: 2026-05-01.
 - After screenshot review, the top area still had too much blank space.
 - Hidden the inactive 2x2 filter block and tightened title/search/orange summary spacing.
 - Keep compact settlement cards and all `customerDebt*` IDs unchanged.
+
+
+## 2026-05-01 — Ultra dense polish
+
+- User said to keep going without repeated prompts.
+- Further tightened Nợ KH: smaller title/icon/search/summary/card padding, blank search placeholder to match reference screenshot more closely, card rows slightly smaller.
+- Preserve current white/orange Quyết toán visual language and all `customerDebt*` IDs.

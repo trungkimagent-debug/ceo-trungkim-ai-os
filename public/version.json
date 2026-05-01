@@ -1,7 +1,9 @@
 {
-  "version": "v20260501_1230_customer_debt_dense_top",
-  "updatedAt": "2026-05-01T12:30:19+0700",
+  "version": "v20260501_1237_customer_debt_ultra_dense",
+  "updatedAt": "2026-05-01T12:37:32+0700",
   "changedModules": [
+    "customer-debt-empty-search-reference-match",
+    "customer-debt-ultra-dense-reference-polish",
     "customer-debt-dense-top-layout",
     "customer-debt-hide-filter-blank-space",
     "customer-debt-compact-settlement-spacing",
