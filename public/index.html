@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1356_customer_debt_zero_supplier_trace';
+window.__TK_APP_VERSION__ = 'v20260501_1408_customer_debt_pay_form_fix';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5180,39 +5180,57 @@ window.__TK_APP_VERSION__ = 'v20260501_1356_customer_debt_zero_supplier_trace';
 
     .customer-settlement-pay-fields {
       display: grid;
-      gap: 7px;
+      gap: 6px;
     }
 
     .customer-settlement-pay-fields label {
       display: grid;
       gap: 4px;
-      color: #9ca3af;
+      color: #7b8494;
       font-size: 10px;
       font-weight: 800;
       letter-spacing: .03em;
     }
 
-    .customer-settlement-pay-fields input,
-    .customer-settlement-pay-fields textarea {
+    #customerDebtDetailModal .customer-settlement-pay-fields input,
+    #customerDebtDetailModal .customer-settlement-pay-fields textarea {
       width: 100%;
-      height: 40px;
-      min-height: 40px;
+      height: 36px;
+      min-height: 36px;
       display: block;
-      padding: 8px 10px;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      background: #f9fafb;
-      color: #111827;
+      padding: 7px 10px;
+      border: 1px solid #dbe1ea !important;
+      border-radius: 11px;
+      background: #f8fafc !important;
+      color: #111827 !important;
+      -webkit-text-fill-color: #111827;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
+      line-height: 1.2;
       outline: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.92);
     }
 
-    .customer-settlement-pay-fields textarea {
-      height: 44px;
-      min-height: 44px;
+    #customerDebtDetailModal .customer-settlement-pay-fields input::placeholder,
+    #customerDebtDetailModal .customer-settlement-pay-fields textarea::placeholder {
+      color: #a3acba;
+      -webkit-text-fill-color: #a3acba;
+      font-weight: 650;
+    }
+
+    #customerDebtDetailModal .customer-settlement-pay-fields input:focus,
+    #customerDebtDetailModal .customer-settlement-pay-fields textarea:focus {
+      border-color: #f59e0b !important;
+      background: #ffffff !important;
+      box-shadow: 0 0 0 3px rgba(245,158,11,.12);
+    }
+
+    #customerDebtDetailModal .customer-settlement-pay-fields textarea {
+      height: 38px;
+      min-height: 38px;
+      max-height: 38px;
       resize: none;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .customer-settlement-pay-actions {
@@ -5263,8 +5281,11 @@ window.__TK_APP_VERSION__ = 'v20260501_1356_customer_debt_zero_supplier_trace';
       .customer-settlement-detail-item .customer-settlement-row {
         grid-template-columns: minmax(54px, .62fr) minmax(0, 1.45fr) minmax(80px, .95fr);
       }
-      .customer-settlement-pay-card { padding: 9px; }
-      .customer-settlement-pay-actions .btn { min-height: 38px; font-size: 11px; }
+      .customer-settlement-pay-card { padding: 8px; gap: 6px; }
+      #customerDebtDetailModal .customer-settlement-pay-fields input { height: 34px; min-height: 34px; }
+      #customerDebtDetailModal .customer-settlement-pay-fields textarea { height: 36px; min-height: 36px; max-height: 36px; }
+      .customer-settlement-pay-actions { gap: 6px; }
+      .customer-settlement-pay-actions .btn { min-height: 36px; font-size: 11px; }
     }
 
     .supplier-debt-open,

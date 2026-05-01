@@ -1,7 +1,9 @@
 {
-  "version": "v20260501_1356_customer_debt_zero_supplier_trace",
-  "updatedAt": "2026-05-01T13:56:23+0700",
+  "version": "v20260501_1408_customer_debt_pay_form_fix",
+  "updatedAt": "2026-05-01T14:08:00+0700",
   "changedModules": [
+    "customer-debt-detail-popup-input-frame-fix",
+    "customer-debt-pay-form-visible-compact",
     "customer-debt-remove-obsolete-detail-css",
     "customer-debt-activity-settlement-style",
     "customer-debt-zero-supplier-style-trace",

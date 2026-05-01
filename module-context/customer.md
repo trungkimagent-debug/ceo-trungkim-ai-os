@@ -133,3 +133,9 @@ Last reviewed: 2026-05-01.
 - Removed obsolete customer detail drawer CSS and old `customer-debt-detail-card` selectors.
 - Customer Nợ KH section and modal HTML now contain no `supplier-*`/NCC classes/text.
 - Customer debt activity renderer also uses `customer-settlement-*` classes, not supplier table classes.
+
+## 2026-05-01 — Pay form visible input frame fix
+
+- Screenshot showed `Thu tiền` area looked blank because amount/note controls were too subtle and too tall.
+- Scoped CSS to `#customerDebtDetailModal .customer-settlement-pay-fields input/textarea` with stronger specificity and visible light-gray frames, dark text, compact heights, focus ring, and mobile compact overrides.
+- Only touched Nợ KH detail pay-form presentation plus app version; preserved all `customerDebt*` IDs, payment/reminder API flow, and unrelated tabs.
