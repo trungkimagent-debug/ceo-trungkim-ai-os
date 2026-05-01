@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2142_request_card_compact_staff_product_name';
+window.__TK_APP_VERSION__ = 'v20260501_2147_sales_gift_popup_fullscreen';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -13501,14 +13501,29 @@ window.__TK_APP_VERSION__ = 'v20260501_2142_request_card_compact_staff_product_n
 
     body.sales-accessory-popup-shell-hidden .sales-accessory-popup,
     .sales-accessory-popup {
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      max-height: none !important;
+      z-index: 180 !important;
+      padding: 0 !important;
       background:
         radial-gradient(circle at 18% -12%, rgba(245,198,96,.16), transparent 34%),
         radial-gradient(circle at 100% 0%, rgba(255,231,170,.10), transparent 32%),
         linear-gradient(180deg, #080806 0%, #11100e 45%, #050505 100%) !important;
+      overflow: hidden !important;
     }
 
     body.sales-accessory-popup-shell-hidden .sales-accessory-popup-sheet,
     .sales-accessory-popup-sheet {
+      width: 100vw !important;
+      height: 100dvh !important;
+      min-height: 100dvh !important;
+      max-height: 100dvh !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: max(10px, var(--safe-top)) 8px 0 !important;
       background:
         linear-gradient(180deg, rgba(12,12,10,.95), rgba(5,5,5,.98)) !important;
       color: var(--sales-popup-text) !important;

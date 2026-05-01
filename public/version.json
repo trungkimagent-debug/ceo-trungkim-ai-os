@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2142_request_card_compact_staff_product_name",
-  "updatedAt": "2026-05-01T14:42:00.000Z",
+  "version": "v20260501_2147_sales_gift_popup_fullscreen",
+  "updatedAt": "2026-05-01T14:47:00.000Z",
   "changedModules": [
+    "sales-gift-popup-fullscreen",
     "request-card-compact-staff-product-name",
     "request-item-name-under-frame",
     "request-card-staff-name-top",
@@ -497,5 +498,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Tên nhân viên chỉ còn icon+tên nằm cùng hàng HĐ; tên sản phẩm tách ra ngoài khung sản phẩm"
+  "label": "Popup chọn quà tặng/phụ kiện hiển thị full màn hình mobile"
 }

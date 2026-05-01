@@ -175,3 +175,11 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Item tile now uses `.sales-accessory-item-frame` around image + quantity only; `.sales-accessory-item-name` renders below/outside that frame.
 - Applies to Sales waiting cards and Stock/Kho request cards.
 - Verification marker/version: `v20260501_2142_request_card_compact_staff_product_name`.
+
+## 2026-05-01 — Gift/accessory popup fullscreen mobile
+
+- Trigger: Chủ tịch gửi ảnh popup `Tặng miễn phí` và yêu cầu “Hiển thị full màn hình”.
+- Scoped CSS only to `.sales-accessory-popup` / `.sales-accessory-popup-sheet` in `public/index.html`.
+- Popup now forces `inset: 0`, `width: 100vw`, `height/min/max-height: 100dvh`, `z-index: 180`, `padding: 0`, no radius/shadow so it fills the visible mobile viewport instead of sitting below the app topbar area.
+- Preserve product grid, gift mode, footer send button, and editor behavior.
+- Verification marker/version: `v20260501_2147_sales_gift_popup_fullscreen`.
