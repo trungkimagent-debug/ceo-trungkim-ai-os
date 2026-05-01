@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2022_local_web_vitals_cooldown';
+window.__TK_APP_VERSION__ = 'v20260501_2034_adaptive_visual_cooldown';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -65,7 +65,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2022_local_web_vitals_cooldown';
   </script>
   <script src="/realtime-runtime.js?v20260428_200400"></script>
   <script src="/realtime-bootstrap.js?v20260428_200400"></script>
-  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2022_local_web_vitals_cooldown" fetchpriority="high" />
+  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2034_adaptive_visual_cooldown" fetchpriority="high" />
   <title>TRUNG HẬU KIM DUNG</title>
   <meta name="description" content="Di Động Trung Hậu Kim Dung." />
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
@@ -1886,6 +1886,42 @@ window.__TK_APP_VERSION__ = 'v20260501_2022_local_web_vitals_cooldown';
 
     html.tk-battery-saver .screen.active > * {
       animation: none !important;
+    }
+
+    html.tk-performance-cooldown,
+    html.tk-performance-cooldown body {
+      --shadow: 0 3px 10px rgba(17,24,39,0.045);
+      --gold-glow: 0 4px 10px rgba(245,158,11,0.08);
+    }
+
+    html.tk-performance-cooldown *,
+    html.tk-performance-cooldown *::before,
+    html.tk-performance-cooldown *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    html.tk-performance-cooldown .screen.active > * {
+      animation: none !important;
+    }
+
+    html.tk-performance-cooldown .modal-card,
+    html.tk-performance-cooldown .panel,
+    html.tk-performance-cooldown .card,
+    html.tk-performance-cooldown .nav,
+    html.tk-performance-cooldown .topbar,
+    html.tk-performance-cooldown .search-box,
+    html.tk-performance-cooldown .customer-debt-card,
+    html.tk-performance-cooldown .supplier-debt-item,
+    html.tk-performance-cooldown .customer-debt-item,
+    html.tk-performance-cooldown .purchase-receipt-card,
+    html.tk-performance-cooldown .ticket-item {
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      filter: none !important;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -19538,7 +19574,8 @@ window.__TK_APP_VERSION__ = 'v20260501_2022_local_web_vitals_cooldown';
     function getRealtimeDelay(baseMs = 5000, options = {}) {
       const base = Math.max(1000, Number(baseMs || 0) || 5000);
       if (!isRealtimePageVisible()) return Math.max(base, 60000);
-      const multiplier = state.batterySaver && !options.urgent ? 2 : 1;
+      if (options.urgent) return base;
+      const multiplier = state.performanceCooldown ? 3 : (state.batterySaver ? 2 : 1);
       return Math.round(base * multiplier);
     }
 
@@ -22304,14 +22341,14 @@ window.__TK_APP_VERSION__ = 'v20260501_2022_local_web_vitals_cooldown';
 
     function canWarmNonCriticalModules() {
       try {
-        if (!isRealtimePageVisible() || state.batterySaver) return false;
+        if (!isRealtimePageVisible() || state.batterySaver || state.performanceCooldown) return false;
         const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
         if (connection?.saveData) return false;
         const effectiveType = String(connection?.effectiveType || '').toLowerCase();
         if (effectiveType === 'slow-2g' || effectiveType === '2g') return false;
         return true;
       } catch (_) {
-        return isRealtimePageVisible() && !state.batterySaver;
+        return isRealtimePageVisible() && !state.batterySaver && !state.performanceCooldown;
       }
     }
 

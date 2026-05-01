@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_2022_local_web_vitals_cooldown",
-  "updatedAt": "2026-05-01T13:22:00.000Z",
+  "version": "v20260501_2034_adaptive_visual_cooldown",
+  "updatedAt": "2026-05-01T13:34:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -476,7 +476,10 @@
     "battery-aware-dynamic-import-cache",
     "local-web-vitals-observer",
     "adaptive-performance-cooldown",
-    "bfcache-resume-sample"
+    "bfcache-resume-sample",
+    "adaptive-visual-cooldown-css",
+    "performance-cooldown-realtime-throttle",
+    "cooldown-stops-noncritical-warmup"
   ],
   "label": "Boot mát hơn: bộ quét camera chỉ tải khi thật sự bấm quét, màn hình chính hiện nhanh hơn"
 }
