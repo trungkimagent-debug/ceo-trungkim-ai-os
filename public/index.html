@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
+window.__TK_APP_VERSION__ = 'v20260501_2216_sales_product_first_picker';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -13688,6 +13688,122 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
       }
     }
 
+
+    body.sales-product-picker-open .topbar,
+    body.sales-product-picker-open .nav {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+    }
+
+    body.sales-product-picker-open #screen-sales {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      overflow: hidden !important;
+      z-index: 178 !important;
+      background: #050505 !important;
+      transform: none !important;
+      contain: none !important;
+    }
+
+    .sales-product-picker[hidden] { display: none !important; }
+
+    .sales-product-picker {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 181 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 36%), #050505 !important;
+      color: #f8fafc;
+      overflow: hidden !important;
+      padding: max(8px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) !important;
+      box-sizing: border-box;
+    }
+
+    .sales-product-picker-sheet {
+      height: 100% !important;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: 8px;
+      overflow: hidden !important;
+    }
+
+    .sales-product-picker-head,
+    .sales-product-picker-search {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .sales-product-picker-head strong {
+      display: block;
+      font-size: clamp(18px, 5vw, 24px);
+      line-height: 1.05;
+    }
+
+    .sales-product-picker-head span {
+      display: block;
+      color: rgba(248,250,252,0.68);
+      font-size: 12px;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 64vw;
+    }
+
+    .sales-product-picker-search .search-box { flex: 1; min-width: 0; }
+
+    .sales-product-picker-list {
+      min-height: 0;
+      overflow-y: auto !important;
+      overscroll-behavior: contain;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+      gap: 8px;
+      padding: 1px 1px 8px;
+    }
+
+    .sales-product-picker-card {
+      min-width: 0;
+      border: 1px solid rgba(245, 158, 11, 0.26);
+      border-radius: 18px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025));
+      color: inherit;
+      padding: 10px;
+      text-align: left;
+      display: grid;
+      gap: 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .sales-product-picker-card strong,
+    .sales-product-picker-card span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sales-product-picker-card strong { font-size: 13px; line-height: 1.2; }
+    .sales-product-picker-card span { color: rgba(248,250,252,0.66); font-size: 11px; }
+    .sales-product-picker-card small { color: #fbbf24; font-weight: 800; font-size: 12px; }
+
+    @media (min-width: 760px) {
+      .sales-product-picker-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
     /* Pin the whole Sales screen to viewport while the gift/accessory popup is open.
        Some mobile shells make fixed children relative to the screen panel; pinning the
        parent removes the black top gap from the hidden app shell. */
@@ -15663,6 +15779,25 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
             </button>
           </div>
         </div>
+        <div id="salesProductPicker" class="sales-product-picker" hidden>
+          <div class="sales-product-picker-sheet">
+            <div class="sales-product-picker-head">
+              <div>
+                <strong id="salesProductPickerTitle">Chọn sản phẩm</strong>
+                <span id="salesProductPickerHint">Chọn hàng trước, tạo phiếu sau.</span>
+              </div>
+              <button id="salesProductPickerCloseBtn" type="button" class="btn btn-secondary"><i class="fa-solid fa-xmark"></i><span>Đóng</span></button>
+            </div>
+            <div class="sales-product-picker-search">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="salesProductPickerSearch" placeholder="Tìm sản phẩm / IMEI / mã hàng" />
+              </div>
+              <button id="salesProductPickerSearchBtn" type="button" class="btn btn-secondary"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div id="salesProductPickerList" class="sales-product-picker-list"><div class="empty">Đang tải sản phẩm...</div></div>
+          </div>
+        </div>
         <div id="salesAccessoryPendingQueuePanel" class="panel sales-accessory-pending-panel" hidden>
           <div class="section-title" hidden>
             <div>
@@ -16866,6 +17001,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
       salesAccessoryReadyPopupDismissedUntilMs: 0,
       salesAccessoryPopupOpen: false,
       salesAccessoryPopupPendingCreate: false,
+      salesProductPickerOpen: false,
+      salesProductPickerMode: '',
+      salesProductPickerItems: [],
       salesProcessingPopupOpen: false,
       salesProcessingPopupOrderSheetOpen: false,
       salesDebtInfoPopupOpen: false,
@@ -17573,6 +17711,13 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
     const salesMenuOnlyEl = salesScreenEl?.querySelector('.sales-menu-only');
     const salesRequestToolbarEl = salesScreenEl?.querySelector('.sales-request-toolbar');
     const salesMenuCards = Array.from(document.querySelectorAll('[data-sales-menu]'));
+    const salesProductPickerEl = document.getElementById('salesProductPicker');
+    const salesProductPickerTitleEl = document.getElementById('salesProductPickerTitle');
+    const salesProductPickerHintEl = document.getElementById('salesProductPickerHint');
+    const salesProductPickerSearchInput = document.getElementById('salesProductPickerSearch');
+    const salesProductPickerSearchBtn = document.getElementById('salesProductPickerSearchBtn');
+    const salesProductPickerCloseBtn = document.getElementById('salesProductPickerCloseBtn');
+    const salesProductPickerListEl = document.getElementById('salesProductPickerList');
     const salesAccessoryCameraInput = document.getElementById('salesAccessoryCameraInput');
     const salesAccessoryFlowBar = document.getElementById('salesAccessoryFlowBar');
     const salesAccessoryStatusEl = document.getElementById('salesAccessoryStatus');
@@ -19445,7 +19590,10 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
     }
 
     function normalizeSalesAccessorySaleMode(mode = '') {
-      return String(mode || '').trim().toLowerCase() === 'gift_menu' ? 'gift_menu' : 'accessory_menu';
+      const normalized = String(mode || '').trim().toLowerCase();
+      if (normalized === 'gift_menu') return 'gift_menu';
+      if (normalized === 'exchange_menu') return 'exchange_menu';
+      return 'accessory_menu';
     }
 
     function getCurrentSalesAccessorySaleMode() {
@@ -19464,25 +19612,26 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
     function getSalesAccessoryModeCopy(mode = '') {
       const normalizedMode = normalizeSalesAccessorySaleMode(mode || getCurrentSalesAccessorySaleMode());
       const isGift = normalizedMode === 'gift_menu';
+      const isExchange = normalizedMode === 'exchange_menu';
+      const itemLabel = isGift ? 'quà tặng' : (isExchange ? 'phụ kiện đổi' : 'phụ kiện');
+      const titleLabel = isGift ? 'Tặng miễn phí' : (isExchange ? 'Đổi phụ kiện' : 'Bán phụ kiện');
       return {
-        requestLabel: isGift ? 'Phiếu quà tặng' : 'Phiếu phụ kiện',
-        popupTitle: isGift ? 'Tặng miễn phí' : 'Bán phụ kiện',
+        requestLabel: isGift ? 'Phiếu quà tặng' : (isExchange ? 'Phiếu đổi phụ kiện' : 'Phiếu phụ kiện'),
+        popupTitle: titleLabel,
         searchPlaceholder: isGift ? 'Tìm quà tặng' : 'Tìm phụ kiện',
-        loadingCatalog: isGift ? 'Đang tải danh sách quà tặng...' : 'Đang tải danh sách phụ kiện...',
-        noMatchCatalog: isGift ? 'Không thấy quà tặng phù hợp.' : 'Không thấy phụ kiện phù hợp.',
-        readySearch: isGift ? 'Sẵn sàng tìm quà tặng mới.' : 'Sẵn sàng tìm phụ kiện mới.',
-        emptyTitle: isGift ? 'Chưa chọn quà tặng' : 'Chưa chọn phụ kiện',
-        emptyHint: isGift ? 'Bấm vào sản phẩm để nhập số lượng quà tặng.' : 'Bấm vào sản phẩm để nhập số lượng và giá bán.',
-        pendingTitle: isGift ? 'Đang mở phiếu quà tặng' : 'Đang mở phiếu phụ kiện',
-        pendingHint: isGift
-          ? 'Popup đã lên ngay, hệ thống đang tạo phiếu nền để anh chọn quà tặng không phải chờ.'
-          : 'Popup đã lên ngay, hệ thống đang tạo phiếu nền để anh chọn hàng không phải chờ.',
-        editorPickTitle: isGift ? 'Chọn quà tặng' : 'Chọn phụ kiện',
-        editorEditTitle: isGift ? 'Cập nhật quà tặng' : 'Cập nhật phụ kiện',
+        loadingCatalog: `Đang tải danh sách ${itemLabel}...`,
+        noMatchCatalog: `Không thấy ${itemLabel} phù hợp.`,
+        readySearch: `Sẵn sàng tìm ${itemLabel} mới.`,
+        emptyTitle: `Chưa chọn ${itemLabel}`,
+        emptyHint: isGift ? 'Bấm vào sản phẩm để nhập số lượng quà tặng.' : 'Bấm vào sản phẩm để nhập số lượng và giá.',
+        pendingTitle: `Đang mở ${isGift ? 'phiếu quà tặng' : (isExchange ? 'phiếu đổi phụ kiện' : 'phiếu phụ kiện')}`,
+        pendingHint: 'Chọn sản phẩm trước; hệ thống chỉ tạo phiếu khi bấm gửi kho.',
+        editorPickTitle: `Chọn ${itemLabel}`,
+        editorEditTitle: `Cập nhật ${itemLabel}`,
         itemFallback: isGift ? 'Quà tặng' : 'Phụ kiện',
-        priceFieldLabel: isGift ? 'Giá tặng' : 'Giá bán',
+        priceFieldLabel: isGift ? 'Giá tặng' : (isExchange ? 'Giá đổi' : 'Giá bán'),
         basePriceLabel: isGift ? 'Giá gốc' : 'Giá gợi ý',
-        flowTitle: isGift ? 'Tặng miễn phí' : 'Bán phụ kiện có ảnh xác nhận',
+        flowTitle: titleLabel,
         flowTitleWithCode(code = '') {
           return code ? `${code} • ${isGift ? 'Tặng miễn phí' : 'Bán phụ kiện'}` : (isGift ? 'Tặng miễn phí' : 'Bán phụ kiện có ảnh xác nhận');
         },
@@ -19536,6 +19685,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
     function normalizeSalesOrderMode(mode = '') {
       const normalized = String(mode || '').trim().toLowerCase();
       if (normalized === 'gift_menu') return 'gift_menu';
+      if (normalized === 'exchange_menu') return 'exchange_menu';
       if (normalized === 'accessory_menu') return 'accessory_menu';
       return 'default';
     }
@@ -19548,6 +19698,14 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
           shortLabel: 'Quà tặng',
           historyLabel: 'Phiếu quà tặng',
           receiptTitle: 'Phiếu quà tặng',
+        };
+      }
+      if (normalizedMode === 'exchange_menu') {
+        return {
+          mode: 'exchange_menu',
+          shortLabel: 'Đổi phụ kiện',
+          historyLabel: 'Phiếu đổi phụ kiện',
+          receiptTitle: 'Phiếu đổi phụ kiện',
         };
       }
       if (normalizedMode === 'accessory_menu') {
@@ -19747,7 +19905,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
             ? `<strong>${copy.pendingTitle}</strong><span>${copy.pendingHint}</span>`
             : `<strong>${copy.emptyTitle}</strong><span>${copy.emptyHint}</span>`;
       }
-      if (salesAccessoryPopupSendBtn) salesAccessoryPopupSendBtn.disabled = pendingCreate || !accessoryLines.length || !state.salesAccessoryFlow?.requestId;
+      if (salesAccessoryPopupSendBtn) salesAccessoryPopupSendBtn.disabled = pendingCreate || !accessoryLines.length;
       if (salesAccessoryPopupCloseBtn) salesAccessoryPopupCloseBtn.disabled = false;
       if (!visible) {
         closeSalesAccessoryPopupEditor();
@@ -21171,6 +21329,18 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
         setMsg(salesMsg, error.message || String(error), 'error');
       });
       salesAccessoryPopupSearchInput?.focus();
+      state.salesAccessoryPopupPendingCreate = false;
+      syncSalesAccessoryPopupUi();
+      setMsg(salesMsg, `${copy.popupTitle}: chọn sản phẩm trước, bấm gửi kho mới tạo phiếu.`, 'ok');
+    }
+
+    async function ensureSalesAccessoryRequestStarted() {
+      if (state.salesAccessoryFlow?.requestId) return state.salesAccessoryFlow;
+      const saleMode = getCurrentSalesAccessorySaleMode();
+      const copy = getSalesAccessoryModeCopy(saleMode);
+      state.salesAccessoryPopupPendingCreate = true;
+      syncSalesAccessoryPopupUi();
+      setMsg(salesMsg, `Đang tạo ${copy.requestLabel.toLowerCase()}...`, '');
       try {
         const data = await callApi('/internal/pos/sales/accessory-requests/start', {
           method: 'POST',
@@ -21182,46 +21352,25 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
             saleMode,
           },
         });
-        const nextFlow = normalizeSalesAccessoryFlow(data.request || data);
-        if (createSeq !== salesAccessoryPopupCreateSeq || !state.salesAccessoryPopupOpen || state.salesMode !== 'accessory') {
-          if (nextFlow.requestId) {
-            callApi(`/internal/pos/sales/accessory-requests/${encodeURIComponent(nextFlow.requestId)}/cancel`, {
-              method: 'POST',
-              body: {},
-            }).catch(() => {});
-          }
-          return;
-        }
-        state.salesAccessoryFlow = nextFlow;
+        state.salesAccessoryFlow = normalizeSalesAccessoryFlow(data.request || data);
         state.salesFlowTicketCode = String(state.salesAccessoryFlow.requestCode || state.salesFlowTicketCode || '').trim();
         state.salesFlowTicketMode = normalizeSalesAccessorySaleMode(state.salesAccessoryFlow.saleMode || saleMode);
-        state.salesAccessoryPopupPendingCreate = false;
         renderSalesFlowTicketBadge();
-        syncSalesAccessoryPopupUi();
-        setMsg(salesMsg, copy.openedMsg(state.salesAccessoryFlow.requestCode), 'ok');
-      } catch (error) {
-        if (createSeq !== salesAccessoryPopupCreateSeq) return;
+        return state.salesAccessoryFlow;
+      } finally {
         state.salesAccessoryPopupPendingCreate = false;
-        state.salesAccessoryPopupOpen = false;
-        state.salesAccessoryFlow = createEmptySalesAccessoryFlow();
-        setSalesScreenMode('menu');
-        renderCart();
-        openScreen('sales');
-        throw error;
+        syncSalesAccessoryPopupUi();
       }
     }
 
     async function sendSalesAccessoryRequestToWarehouse() {
       if (!isSalesAccessoryModeActive()) return;
-      if (!state.salesAccessoryFlow?.requestId) {
-        setMsg(salesMsg, getSalesAccessoryModeCopy().noRequestSendMsg, 'error');
-        return;
-      }
       const items = buildSalesAccessoryFlowSnapshot();
       if (!items.length || items.length !== state.cart.length) {
         setMsg(salesMsg, getSalesAccessoryModeCopy().onlyItemsMsg, 'error');
         return;
       }
+      await ensureSalesAccessoryRequestStarted();
       setMsg(salesMsg, 'Đang gửi lệnh sang kho...', '');
       const data = await callApi(`/internal/pos/sales/accessory-requests/${encodeURIComponent(state.salesAccessoryFlow.requestId)}/request-warehouse`, {
         method: 'POST',
@@ -30878,28 +31027,102 @@ window.__TK_APP_VERSION__ = 'v20260501_2204_popup_pin_screen_full_viewport';
       document.getElementById('checkoutBtn')?.click();
     });
 
+    function closeSalesProductPicker() {
+      state.salesProductPickerOpen = false;
+      state.salesProductPickerMode = '';
+      if (salesProductPickerEl) salesProductPickerEl.hidden = true;
+      document.body.classList.remove('sales-product-picker-open');
+      requestAnimationFrame(syncHomeLayoutVars);
+    }
+
+    function renderSalesProductPickerItems(items = []) {
+      if (!salesProductPickerListEl) return;
+      const list = Array.isArray(items) ? items : [];
+      if (!list.length) {
+        salesProductPickerListEl.innerHTML = '<div class="empty">Không có sản phẩm phù hợp.</div>';
+        return;
+      }
+      salesProductPickerListEl.innerHTML = list.map((item, index) => `
+        <button type="button" class="sales-product-picker-card" data-sales-product-picker-index="${index}">
+          <strong>${escapeHtml(item.productName || 'Chưa có tên hàng')}</strong>
+          <span>${escapeHtml(item.imei || item.productId || 'Không có mã')}</span>
+          <small>${money(item.importPrice || item.salePrice || 0)}</small>
+        </button>
+      `).join('');
+    }
+
+    async function loadSalesProductPickerItems(query = '') {
+      if (!salesProductPickerListEl) return [];
+      salesProductPickerListEl.innerHTML = '<div class="empty">Đang tải sản phẩm IMEI...</div>';
+      const data = await callApi(`/internal/pos/stock/imei?query=${encodeURIComponent(String(query || '').trim())}`, { cacheTtlMs: 2 * 60 * 1000 });
+      state.salesProductPickerItems = (Array.isArray(data.items) ? data.items : [])
+        .filter((item) => String(item?.status || '').trim().toLowerCase() === 'in_stock');
+      renderSalesProductPickerItems(state.salesProductPickerItems);
+      return state.salesProductPickerItems;
+    }
+
+    async function openSalesPhoneProductPicker() {
+      state.salesProductPickerOpen = true;
+      state.salesProductPickerMode = 'phone';
+      if (salesProductPickerTitleEl) salesProductPickerTitleEl.textContent = 'Chọn máy IMEI';
+      if (salesProductPickerHintEl) salesProductPickerHintEl.textContent = 'Chọn máy trước, hệ thống mới tạo phiếu bán điện thoại.';
+      if (salesProductPickerSearchInput) salesProductPickerSearchInput.value = '';
+      if (salesProductPickerEl) salesProductPickerEl.hidden = false;
+      document.body.classList.add('sales-product-picker-open');
+      openScreen('sales');
+      salesProductPickerSearchInput?.focus();
+      await loadSalesProductPickerItems('');
+    }
+
+    async function selectSalesPhoneProduct(item = {}) {
+      if (!item?.imei) throw new Error('Sản phẩm này chưa có IMEI để bán.');
+      await startSalesFlowTicket('default', { forceNew: true });
+      state.cart = [];
+      state.salesAccessoryCatalog = [];
+      state.salesAccessoryPopupOpen = false;
+      state.salesProcessingPopupOpen = false;
+      resetSalesOrderDraft({ preserveCustomer: false });
+      state.salesAccessoryFlow = createEmptySalesAccessoryFlow();
+      renderCart();
+      setSalesScreenMode('standard');
+      closeSalesProductPicker();
+      if (document.getElementById('imeiInput')) document.getElementById('imeiInput').value = String(item.imei || '');
+      renderImeiResult({ ...item, status: item.status || 'in_stock' });
+      setMsg(salesMsg, `Đã chọn IMEI ${item.imei}. Kiểm tra giá rồi bấm Thêm.`, 'ok');
+    }
+
+    salesProductPickerCloseBtn?.addEventListener('click', closeSalesProductPicker);
+
+    salesProductPickerSearchInput?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') salesProductPickerSearchBtn?.click();
+    });
+
+    salesProductPickerSearchBtn?.addEventListener('click', () => {
+      loadSalesProductPickerItems(salesProductPickerSearchInput?.value || '').catch((error) => {
+        if (salesProductPickerListEl) salesProductPickerListEl.innerHTML = `<div class="empty">${escapeHtml(error.message || String(error))}</div>`;
+      });
+    });
+
+    salesProductPickerListEl?.addEventListener('click', (event) => {
+      const button = event.target instanceof Element ? event.target.closest('[data-sales-product-picker-index]') : null;
+      if (!button) return;
+      const index = Number(button.getAttribute('data-sales-product-picker-index') || -1);
+      const item = state.salesProductPickerItems[index];
+      selectSalesPhoneProduct(item).catch((error) => setMsg(salesMsg, error.message || String(error), 'error'));
+    });
+
     salesMenuCards.forEach((button) => {
       button.addEventListener('click', async () => {
         const action = String(button.dataset.salesMenu || '').trim();
         try {
-          if (action === 'accessory' || action === 'gift') {
-            await startSalesFlowTicket(action === 'gift' ? 'gift_menu' : 'accessory_menu', { forceNew: true });
+          if (action === 'accessory' || action === 'gift' || action === 'exchange') {
+            resetSalesFlowTicket();
+            state.salesFlowTicketMode = action === 'gift' ? 'gift_menu' : (action === 'exchange' ? 'exchange_menu' : 'accessory_menu');
             await startSalesAccessoryPopupFlow();
             return;
           }
           if (action === 'phone') {
-            await startSalesFlowTicket('default', { forceNew: true });
-            state.cart = [];
-            state.salesAccessoryCatalog = [];
-            state.salesAccessoryPopupOpen = false;
-            state.salesProcessingPopupOpen = false;
-            resetSalesOrderDraft({ preserveCustomer: false });
-            state.salesAccessoryFlow = createEmptySalesAccessoryFlow();
-            renderCart();
-            setSalesScreenMode('standard');
-            openScreen('sales');
-            document.getElementById('imeiInput')?.focus();
-            setMsg(salesMsg, `Đã tạo ${state.salesFlowTicketCode || 'phiếu mới'}, quét IMEI để bán.`, 'ok');
+            await openSalesPhoneProductPicker();
             return;
           }
           resetSalesFlowTicket();

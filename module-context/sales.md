@@ -211,3 +211,12 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Purpose: remove parent screen/topbar offset so the popup content starts at the viewport top instead of below the hidden app shell.
 - Preserve: popup grid, horizontal paging, no vertical scroll rule, cart/request behavior.
 - Verification marker/version: `v20260501_2204_popup_pin_screen_full_viewport`.
+
+## 2026-05-01 — Sales product-first picker from menu
+
+- Trigger: Chủ tịch muốn tăng tốc thao tác tại menu Bán: bấm menu thì danh sách sản phẩm hiện full màn để nhân viên chọn hàng trước, sau đó hệ thống mới tạo phiếu theo hình thức Bán điện thoại / Bán phụ kiện / Đổi phụ kiện / Tặng miễn phí.
+- Added `#salesProductPicker` for Bán điện thoại: full-screen IMEI picker backed by `/internal/pos/stock/imei`, showing in-stock IMEI cards. Selecting an IMEI starts the sales ticket and opens the normal price/add-to-cart step.
+- Changed non-IMEI menu flows (`accessory`, `gift`, `exchange`) to open the existing full-screen product popup immediately without creating the backend request first. The request is created only when the employee has selected products and presses send warehouse.
+- Added `exchange_menu` as an accessory-style sale mode for “Đổi phụ kiện” labels and receipt/history copy.
+- Preserve: cart structure, warehouse request endpoint, pending queue, full-screen/no-vertical-scroll popup behavior, and production artifact count.
+- Verification marker/version: `v20260501_2216_sales_product_first_picker`.

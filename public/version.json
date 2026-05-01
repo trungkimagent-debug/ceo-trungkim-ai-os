@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2204_popup_pin_screen_full_viewport",
-  "updatedAt": "2026-05-01T15:04:00.000Z",
+  "version": "v20260501_2216_sales_product_first_picker",
+  "updatedAt": "2026-05-01T15:16:00.000Z",
   "changedModules": [
+    "sales-product-first-picker",
     "popup-pin-screen-full-viewport",
     "gift-popup-no-vertical-scroll",
     "gift-catalog-dedupe-in-stock",
@@ -501,5 +502,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Khi popup quà/phụ kiện mở, ghim màn Bán vào viewport để xoá khoảng trống đen phía trên shell app"
+  "label": "Màn Bán mở danh sách sản phẩm full màn trước, chọn sản phẩm xong mới tạo phiếu/gửi kho"
 }
