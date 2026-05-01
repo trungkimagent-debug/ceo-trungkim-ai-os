@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1811_customer_debt_luxury_chart_gate';
+window.__TK_APP_VERSION__ = 'v20260501_1819_customer_debt_chart_list_flow';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -6222,6 +6222,90 @@ window.__TK_APP_VERSION__ = 'v20260501_1811_customer_debt_luxury_chart_gate';
       height: 100%;
       border-radius: inherit;
       background: linear-gradient(90deg, #f5c660, #6ff1d1);
+    }
+
+    #screen-customer .customer-debt-chart-stage.source-selected {
+      gap: 8px;
+      padding-bottom: 10px;
+    }
+
+    #screen-customer .customer-debt-chart-stage.source-selected .customer-debt-chart-hero {
+      display: none;
+    }
+
+    #screen-customer .customer-debt-chart-stage.source-selected .customer-debt-chart-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #screen-customer .customer-debt-chart-stage.source-selected .customer-debt-chart-card {
+      min-height: 48px;
+      padding: 7px;
+      border-radius: 14px;
+      gap: 3px;
+    }
+
+    #screen-customer .customer-debt-chart-stage.source-selected .customer-debt-chart-card-money {
+      font-size: 11px;
+    }
+
+    #screen-customer .customer-debt-chart-stage.source-selected .customer-debt-chart-card-count {
+      display: none;
+    }
+
+    #screen-customer .customer-debt-selected-list-head {
+      width: calc(100% - 16px);
+      margin: 0 8px 2px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(245,198,96,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.024));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055);
+    }
+
+    #screen-customer .customer-debt-selected-list-head div {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    #screen-customer .customer-debt-selected-list-head small {
+      color: rgba(255,231,170,.62);
+      font-size: 8.5px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    #screen-customer .customer-debt-selected-list-head strong {
+      min-width: 0;
+      color: #fff7df;
+      font-size: 13px;
+      font-weight: 950;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #screen-customer .customer-debt-selected-list-head span {
+      color: rgba(255,247,223,.54);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    #screen-customer .customer-debt-back-map {
+      flex: 0 0 auto;
+      min-height: 32px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(245,198,96,.28);
+      background: linear-gradient(135deg, rgba(255,227,154,.95), rgba(181,108,16,.95));
+      color: #15100a;
+      font-size: 10px;
+      font-weight: 950;
     }
 
     #screen-customer .customer-debt-chart-loading,
@@ -25376,7 +25460,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1811_customer_debt_luxury_chart_gate';
       const rowTotal = rows.reduce((sum, row) => sum + Math.max(0, Number(row.amount || 0) || 0), 0);
       const total = rawTotal > 0 ? rawTotal : rowTotal;
       const active = String(state.customerDebtTypeFilter || 'all').trim().toLowerCase();
+      customerDebtChartEl.classList.toggle('source-selected', Boolean(state.customerDebtListOpen && active !== 'all'));
       if (!rows.length || total <= 0) {
+        customerDebtChartEl.classList.remove('source-selected');
         customerDebtChartEl.innerHTML = '<div class="customer-debt-chart-empty">Chưa có dữ liệu công nợ để dựng biểu đồ.</div>';
         return;
       }
@@ -25437,12 +25523,22 @@ window.__TK_APP_VERSION__ = 'v20260501_1811_customer_debt_luxury_chart_gate';
         renderCustomerDebtActivities(items);
         return;
       }
+      const selectedHead = `
+        <div class="customer-debt-selected-list-head">
+          <div>
+            <small>Danh sách theo nguồn</small>
+            <strong>${escapeHtml(typeLabel)}</strong>
+            <span>${filtered.length} khách • ${money(total)}</span>
+          </div>
+          <button class="customer-debt-back-map" type="button" data-customer-debt-back-map="true">Bản đồ</button>
+        </div>
+      `;
       if (!filtered.length) {
-        customerDebtListEl.innerHTML = `<div class="empty">${state.customerDebtQuery ? 'Không thấy khách khớp bộ lọc.' : `${escapeHtml(typeLabel)} chưa có khách nào đang nợ.`}</div>`;
+        customerDebtListEl.innerHTML = `${selectedHead}<div class="empty">${state.customerDebtQuery ? 'Không thấy khách khớp bộ lọc.' : `${escapeHtml(typeLabel)} chưa có khách nào đang nợ.`}</div>`;
         renderCustomerDebtActivities(items);
         return;
       }
-      customerDebtListEl.innerHTML = filtered.map(buildCustomerDebtItemHtml).join('');
+      customerDebtListEl.innerHTML = selectedHead + filtered.map(buildCustomerDebtItemHtml).join('');
       renderCustomerDebtActivities(items);
     }
 
@@ -27832,7 +27928,6 @@ window.__TK_APP_VERSION__ = 'v20260501_1811_customer_debt_luxury_chart_gate';
       state.customerDebtListOpen = true;
       if (customerDebtTypeFilterSelect) customerDebtTypeFilterSelect.value = source;
       renderCustomerDebtList(state.customerDebtItems || []);
-      customerDebtListEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     customerDebtRefreshBtn?.addEventListener('click', () => {
@@ -27851,6 +27946,15 @@ window.__TK_APP_VERSION__ = 'v20260501_1811_customer_debt_luxury_chart_gate';
     });
 
     customerDebtListEl?.addEventListener('click', (event) => {
+      const backMap = event.target instanceof Element ? event.target.closest('[data-customer-debt-back-map]') : null;
+      if (backMap) {
+        state.customerDebtTypeFilter = 'all';
+        state.customerDebtListOpen = false;
+        if (customerDebtTypeFilterSelect) customerDebtTypeFilterSelect.value = 'all';
+        renderCustomerDebtList(state.customerDebtItems || []);
+        customerDebtChartEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
       const trigger = event.target instanceof Element ? event.target.closest('[data-customer-debt-id]') : null;
       const debtId = String(trigger?.getAttribute('data-customer-debt-id') || '').trim();
       if (!debtId) return;

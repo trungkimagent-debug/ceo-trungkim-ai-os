@@ -208,3 +208,9 @@ Last reviewed: 2026-05-01.
 - Added `#customerDebtChart` chart stage above search/list and `state.customerDebtListOpen` gate.
 - `renderCustomerDebtSourceChart()` aggregates unpaid debt by source from `debtBreakdown`, including a grouped `Cty tài chính` total for credit-company sources, and renders an orb + leaderboard + tappable source cards.
 - Default/all view now shows a gated prompt instead of the full customer list; tapping a chart source or selecting a specific filter opens the filtered list. Search also opens the list.
+
+## 2026-05-01 — Chart tap flow correction
+
+- User showed screenshot after tapping a debt source: the view jumped straight into the normal list/search area, making it feel like the chart-first flow was lost.
+- Removed automatic scroll-to-list on source tap. When a source is selected, `#customerDebtChart` stays visible but becomes compact via `.source-selected`; list renders with a premium selected-source header and a `Bản đồ` button to return to overview.
+- Scope remains Nợ KH UI flow only; IDs/API/payment/detail logic unchanged.
