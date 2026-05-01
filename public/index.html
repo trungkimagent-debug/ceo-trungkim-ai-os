@@ -10,16 +10,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/assets/styles.css" />
+  <meta name="app-version" content="2026.05.01.0410" />
+  <link rel="stylesheet" href="/assets/styles.css?v=2026.05.01.0410" />
 </head>
 <body>
-  <main class="shell">
+  <main id="top" class="shell">
     <nav class="nav glass">
       <div class="brand">
         <span class="brand-mark">⚡</span>
         <span>Trung Kim OS</span>
       </div>
       <div class="nav-actions">
+        <div id="updateCenter" class="update-center" data-state="current">
+          <button id="updateButton" class="employee-chip" type="button" aria-live="polite">
+            <span class="employee-name">CHỦ TỊCH</span>
+            <span id="versionText" class="version-text">v2026.05.01.0410</span>
+          </button>
+        </div>
         <span id="apiStatus" class="pill">Đang kiểm tra API...</span>
         <a class="btn ghost" href="/api/health">API Health</a>
       </div>
@@ -75,6 +82,22 @@
     </section>
   </main>
 
-  <script src="/assets/app.js" defer></script>
+  <nav class="bottom-menu" aria-label="Menu điều hướng nhanh">
+    <button class="home-toggle" type="button" aria-expanded="false" aria-controls="quickMenu">
+      <span class="home-icon">⌂</span>
+      <span class="home-label">Home</span>
+    </button>
+    <div id="quickMenu" class="quick-menu" aria-hidden="true">
+      <a class="quick-item active" href="#top" data-label="Home"><span>⌂</span><small>Home</small></a>
+      <a class="quick-item" href="#thu-gop" data-label="Thu góp"><span>💰</span><small>Thu góp</small></a>
+      <a class="quick-item" href="#pos" data-label="POS"><span>🛠</span><small>POS</small></a>
+      <a class="quick-item" href="#thu-may" data-label="Thu máy"><span>📱</span><small>Thu máy</small></a>
+      <a class="quick-item" href="#ban" data-label="Bán"><span>🛒</span><small>Bán</small></a>
+      <a class="quick-item" href="#nhap" data-label="Nhập"><span>📦</span><small>Nhập</small></a>
+      <a class="quick-item" href="#kho" data-label="Kho"><span>🏬</span><small>Kho</small></a>
+    </div>
+  </nav>
+
+  <script src="/assets/app.js?v=2026.05.01.0410" defer></script>
 </body>
 </html>

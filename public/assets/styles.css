@@ -59,3 +59,122 @@ p { color: var(--muted); line-height: 1.75; font-size: 17px; }
 @keyframes pulse { to { transform: scaleY(.72); filter: brightness(1.2); } }
 @media (max-width: 860px) { .hero, .grid { grid-template-columns: 1fr; } .nav { align-items: flex-start; flex-direction: column; } .command-card { min-height: 360px; } }
 @media (max-width: 520px) { .shell { width: min(100% - 20px, 1180px); padding-top: 10px; } .metrics { grid-template-columns: 1fr; } h1 { font-size: 42px; } }
+
+.bottom-menu {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 24px);
+}
+.home-toggle {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  gap: 1px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 19px;
+  color: #1b1303;
+  background: linear-gradient(180deg, #fff2be 0%, #ffc226 46%, #f29812 100%);
+  box-shadow: 0 18px 38px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.55);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+.home-toggle:active { transform: scale(.96); }
+.home-icon { font-size: 28px; line-height: 1; }
+.home-label { font-size: 11px; line-height: 1; }
+.quick-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(-18px) scaleX(.84);
+  transform-origin: left center;
+  pointer-events: none;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255,205,48,.98), rgba(242,149,18,.98));
+  box-shadow: 0 18px 40px rgba(0,0,0,.38);
+  transition: max-width .42s cubic-bezier(.2,.85,.2,1), opacity .22s ease, transform .42s cubic-bezier(.2,.85,.2,1);
+}
+.bottom-menu.is-open .quick-menu {
+  max-width: min(610px, calc(100vw - 90px));
+  opacity: 1;
+  transform: translateX(0) scaleX(1);
+  pointer-events: auto;
+}
+.quick-item {
+  min-width: 62px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  gap: 1px;
+  border-radius: 16px;
+  color: #201506;
+  font-weight: 900;
+  white-space: nowrap;
+  transition: background .2s ease, transform .2s ease;
+}
+.quick-item span { font-size: 22px; line-height: 1; }
+.quick-item small { font-size: 11px; }
+.quick-item:hover,
+.quick-item.active { background: rgba(255,255,255,.42); transform: translateY(-1px); }
+@media (max-width: 520px) {
+  body { padding-bottom: 92px; }
+  .quick-menu { gap: 4px; padding: 6px; overflow-x: auto; scrollbar-width: none; }
+  .quick-menu::-webkit-scrollbar { display: none; }
+  .quick-item { min-width: 54px; }
+  .quick-item span { font-size: 20px; }
+  .quick-item small { font-size: 10px; }
+}
+
+.update-center { display: flex; align-items: center; }
+.employee-chip {
+  min-height: 46px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 15px;
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(255,255,255,.1), rgba(255,255,255,.04));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+  font: inherit;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.employee-chip:hover { transform: translateY(-1px); border-color: rgba(247,198,95,.55); }
+.employee-name { font-size: 12px; font-weight: 950; letter-spacing: .06em; }
+.version-text { color: var(--muted); font-size: 11px; font-weight: 800; white-space: nowrap; }
+.update-center[data-state="available"] .employee-chip {
+  color: #161004;
+  border-color: rgba(255,255,255,.35);
+  background: linear-gradient(135deg, #fff2ad, #ffc428 52%, #f08d22);
+  box-shadow: 0 0 0 3px rgba(247,198,95,.16), 0 18px 36px rgba(240,147,43,.24);
+  animation: updateGlow 1.4s ease-in-out infinite alternate;
+}
+.update-center[data-state="available"] .version-text { color: #3b2605; }
+.update-center[data-state="updating"] .employee-chip {
+  color: #071313;
+  background: linear-gradient(135deg, #8cf4ff, #f7c65f);
+}
+.update-center[data-state="error"] .employee-chip {
+  border-color: rgba(255,120,120,.55);
+  background: rgba(255,80,80,.14);
+}
+@keyframes updateGlow { to { box-shadow: 0 0 0 6px rgba(247,198,95,.08), 0 20px 42px rgba(240,147,43,.34); } }
+@media (max-width: 520px) {
+  .nav-actions { width: 100%; justify-content: space-between; }
+  .employee-chip { min-height: 42px; padding: 7px 10px; }
+}
