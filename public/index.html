@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2115_landscape_drawer_backdrop_fix';
+window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -17444,6 +17444,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2115_landscape_drawer_backdrop_fix';
     let stockAutoRefreshTimer = 0;
     let stockAccessoryRequestAutoRefreshTimer = 0;
     let stockAccessoryRequestAutoRefreshStableRounds = 0;
+    let stockAccessoryRequestAutoRefreshErrorRounds = 0;
     let stockAccessoryRequestLastSignature = '';
     let salesAccessoryPendingAutoRefreshTimer = 0;
     let salesAccessoryPendingRefreshInFlight = 0;
@@ -17466,6 +17467,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2115_landscape_drawer_backdrop_fix';
     let stockLoadPromise = null;
     const STOCK_AUTO_REFRESH_MS = 120000;
     const STOCK_ACCESSORY_REQUEST_AUTO_REFRESH_MS = 12000;
+    const STOCK_ACCESSORY_REQUEST_LIVE_ACTIVE_MS = 2500;
+    const STOCK_ACCESSORY_REQUEST_LIVE_QUIET_MS = 5000;
+    const STOCK_ACCESSORY_REQUEST_LIVE_IDLE_MS = 8000;
     const STOCK_ACCESSORY_AUDIO_REMIND_MS = 5 * 60 * 1000;
     const STOCK_ACCESSORY_AUDIO_STORAGE_KEY = 'tk-stock-accessory-audio-alerts-v1';
     const ACCESSORY_REALTIME_FAST_MS = 3000;
@@ -20963,11 +20967,15 @@ window.__TK_APP_VERSION__ = 'v20260501_2115_landscape_drawer_backdrop_fix';
         stockAccessoryRequestAutoRefreshStableRounds = signature === stockAccessoryRequestLastSignature
           ? (stockAccessoryRequestAutoRefreshStableRounds + 1)
           : 0;
+        stockAccessoryRequestAutoRefreshErrorRounds = 0;
         stockAccessoryRequestLastSignature = signature;
         renderStockAccessoryRequestQueue(items);
         handleStockAccessoryAudioAlerts(items);
         if (stockAccessoryRequestMsgEl && !options.preserveMsg) setMsg(stockAccessoryRequestMsgEl, '', '');
         return items;
+      } catch (error) {
+        stockAccessoryRequestAutoRefreshErrorRounds = Math.min(8, Math.max(0, Number(stockAccessoryRequestAutoRefreshErrorRounds || 0) || 0) + 1);
+        throw error;
       } finally {
         state.stockAccessoryRequestsLoading = false;
         scheduleStockAccessoryRequestAutoRefresh();
@@ -28161,6 +28169,10 @@ window.__TK_APP_VERSION__ = 'v20260501_2115_landscape_drawer_backdrop_fix';
       return hasScreenPermission('stock') && isRealtimePageVisible() && (state.activeScreen === 'stock' || isNativeTabletAndroidMode());
     }
 
+    function isStockAccessoryRequestForegroundWatch() {
+      return hasScreenPermission('stock') && isRealtimePageVisible() && state.activeScreen === 'stock';
+    }
+
     function readStockAccessoryAudioMemory() {
       try {
         const raw = localStorage.getItem(STOCK_ACCESSORY_AUDIO_STORAGE_KEY);
@@ -28315,14 +28327,28 @@ window.__TK_APP_VERSION__ = 'v20260501_2115_landscape_drawer_backdrop_fix';
       }, getRealtimeDelay(STOCK_AUTO_REFRESH_MS));
     }
 
+    function getStockAccessoryRequestLiveDelay() {
+      const foreground = isStockAccessoryRequestForegroundWatch();
+      const hasItems = Array.isArray(state.stockAccessoryRequests) && state.stockAccessoryRequests.length > 0;
+      const stableRounds = Math.max(0, Number(stockAccessoryRequestAutoRefreshStableRounds || 0) || 0);
+      const errorRounds = Math.max(0, Number(stockAccessoryRequestAutoRefreshErrorRounds || 0) || 0);
+      if (errorRounds) {
+        return Math.min(ACCESSORY_REALTIME_SLEEP_MS, STOCK_ACCESSORY_REQUEST_LIVE_IDLE_MS * Math.pow(1.55, errorRounds));
+      }
+      if (foreground) {
+        if (stableRounds <= 1) return STOCK_ACCESSORY_REQUEST_LIVE_ACTIVE_MS;
+        if (stableRounds <= 18) return STOCK_ACCESSORY_REQUEST_LIVE_QUIET_MS;
+        return STOCK_ACCESSORY_REQUEST_LIVE_IDLE_MS;
+      }
+      if (hasItems) {
+        return stableRounds <= 1 ? ACCESSORY_REALTIME_FAST_MS : stableRounds <= 4 ? ACCESSORY_REALTIME_BALANCED_MS : STOCK_ACCESSORY_REQUEST_AUTO_REFRESH_MS;
+      }
+      return stableRounds <= 1 ? ACCESSORY_REALTIME_IDLE_MS : ACCESSORY_REALTIME_SLEEP_MS;
+    }
+
     function scheduleStockAccessoryRequestAutoRefresh() {
       clearStockAccessoryRequestAutoRefreshTimer();
       if (!shouldWatchStockAccessoryRequestBackground()) return;
-      const hasItems = Array.isArray(state.stockAccessoryRequests) && state.stockAccessoryRequests.length > 0;
-      const stableRounds = Math.max(0, Number(stockAccessoryRequestAutoRefreshStableRounds || 0) || 0);
-      const delay = hasItems
-        ? (stableRounds <= 1 ? ACCESSORY_REALTIME_FAST_MS : stableRounds <= 4 ? ACCESSORY_REALTIME_BALANCED_MS : STOCK_ACCESSORY_REQUEST_AUTO_REFRESH_MS)
-        : (stableRounds <= 1 ? ACCESSORY_REALTIME_IDLE_MS : ACCESSORY_REALTIME_SLEEP_MS);
       stockAccessoryRequestAutoRefreshTimer = window.setTimeout(() => {
         if (!shouldWatchStockAccessoryRequestBackground()) return;
         if (state.stockAccessoryRequestsLoading) {
@@ -28330,7 +28356,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2115_landscape_drawer_backdrop_fix';
           return;
         }
         loadStockAccessoryRequestQueue({ silent: true, preserveMsg: true, autoRefresh: true }).catch(() => {});
-      }, getRealtimeDelay(delay));
+      }, getRealtimeDelay(getStockAccessoryRequestLiveDelay()));
     }
 
     function applyStockAccessoryFilter(items = []) {

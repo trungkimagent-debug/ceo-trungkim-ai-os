@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2115_landscape_drawer_backdrop_fix",
-  "updatedAt": "2026-05-01T13:42:00.000Z",
+  "version": "v20260501_2120_stock_request_live_cool_watch",
+  "updatedAt": "2026-05-01T14:20:00.000Z",
   "changedModules": [
+    "stock-accessory-request-live-cool-watch",
     "landscape-drawer-backdrop-clear-content",
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -492,5 +493,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Sửa lớp phủ mờ che nội dung trên tablet ngang và PC khi mở menu logo"
+  "label": "Kho tự nhận phiếu yêu cầu gần realtime, không cần bấm làm mới, có giảm tải khi máy yếu hoặc chạy nền"
 }
