@@ -157,3 +157,9 @@ Last reviewed: 2026-05-01.
 - User screenshot criticized the Nợ KH yellow summary strip as a floating low-quality bar.
 - Replaced the full-width orange/yellow banner with two compact white stat cards using subtle left accent rails (green collected, amber remaining debt).
 - Added bottom safe padding to the Nợ KH list so fixed bottom nav no longer visually cuts through the final cards.
+
+## 2026-05-01 — World-class mobile polish pass
+
+- User asked whether the current Nợ KH screenshot is world-class; answer: not yet.
+- Polished only Nợ KH presentation: unified title/search/stat area with subtle gradient, deeper premium cards, larger rounded corners, softer shadows, tighter stat cards, and safer bottom spacing.
+- No DOM IDs, payment logic, APIs, or other tabs changed.

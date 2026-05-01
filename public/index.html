@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
+window.__TK_APP_VERSION__ = 'v20260501_1648_customer_debt_worldclass';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -4707,9 +4707,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 9px 16px 6px;
-      background: #ffffff;
-      border-bottom: 0;
+      padding: 11px 16px 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+      border-bottom: 1px solid #eef1f5;
     }
 
     .customer-settlement-titlebar h3 {
@@ -4772,24 +4772,24 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
 
     .customer-settlement-search-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 46px;
+      grid-template-columns: minmax(0, 1fr) 44px;
       gap: 8px;
-      padding: 5px 12px 8px;
-      background: #ffffff;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 9px 12px 10px;
+      background: linear-gradient(180deg, #fbfcfe 0%, #f4f5f7 100%);
+      border-bottom: 0;
     }
 
     .customer-settlement-search {
-      height: 40px;
+      height: 42px;
       display: flex;
       align-items: center;
       gap: 10px;
-      border-radius: 11px;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      background: rgba(255,255,255,0.92);
       padding: 0 13px;
       color: #9ca3af;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.045), inset 0 1px 0 rgba(255,255,255,0.92);
     }
 
     .customer-settlement-search input {
@@ -4808,19 +4808,22 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
     }
 
     .customer-settlement-download {
-      width: 46px;
-      height: 40px;
+      width: 44px;
+      height: 42px;
+      border-radius: 14px;
       color: #111827;
+      background: #ffffff;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.055);
     }
 
     .customer-settlement-summary-bar {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
-      padding: 8px 12px 9px;
+      padding: 0 10px 8px;
       background: #f4f5f7;
       color: #111827;
-      border-top: 1px solid #eef1f5;
+      border-top: 0;
     }
 
     .customer-settlement-summary-bar > div {
@@ -4829,12 +4832,12 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
       align-content: center;
       gap: 4px;
       min-width: 0;
-      min-height: 50px;
-      padding: 8px 10px 8px 12px;
-      border: 1px solid #e6e9ee;
-      border-radius: 14px;
-      background: #ffffff;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.045);
+      min-height: 54px;
+      padding: 9px 10px 9px 13px;
+      border: 1px solid rgba(226, 232, 240, 0.96);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+      box-shadow: 0 7px 20px rgba(15, 23, 42, 0.06);
       overflow: hidden;
     }
 
@@ -4844,7 +4847,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
       left: 0;
       top: 8px;
       bottom: 8px;
-      width: 3px;
+      width: 4px;
       border-radius: 999px;
       background: #65d6bd;
     }
@@ -4867,7 +4870,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
     .customer-settlement-summary-bar strong {
       font-family: var(--font-num);
       color: #111827;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 850;
       line-height: 1.08;
       white-space: nowrap;
@@ -4883,8 +4886,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
 
     .customer-settlement-list {
       display: grid;
-      gap: 8px;
-      padding: 0 0 calc(96px + env(safe-area-inset-bottom, 0px));
+      gap: 9px;
+      padding: 2px 0 calc(104px + env(safe-area-inset-bottom, 0px));
       background: #f4f5f7;
     }
 
@@ -4906,21 +4909,21 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
       position: relative;
       display: grid;
       gap: 6px;
-      width: calc(100% - 24px);
-      margin: 0 12px;
-      padding: 8px 10px;
-      border: 1px solid #e6e9ee;
-      border-radius: 13px;
-      background: #ffffff;
+      width: calc(100% - 20px);
+      margin: 0 10px;
+      padding: 10px 11px;
+      border: 1px solid rgba(226, 232, 240, 0.96);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
       color: #111827;
       text-align: left;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+      box-shadow: 0 7px 20px rgba(15, 23, 42, 0.06);
     }
 
     .customer-settlement-card:first-child {
       margin-top: 0;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
     }
 
     .customer-settlement-check {
@@ -4928,7 +4931,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
       height: 18px;
       margin-left: 12px;
       border-radius: 999px;
-      background: #5ed7bd;
+      background: linear-gradient(135deg, #6ee7cf 0%, #31c9aa 100%);
       color: #ffffff;
       display: inline-flex;
       align-items: center;
@@ -4997,7 +5000,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
     }
 
     .customer-settlement-money.red { color: #d7787f; }
-    .customer-settlement-money.green { color: #62c5a6; }
+    .customer-settlement-money.green { color: #2fb596; }
     .customer-settlement-date { color: #8b8f99; font-size: 10px; font-weight: 600; text-align: right; white-space: nowrap; }
     .customer-settlement-date i { color: #d59b2f; margin-right: 5px; }
     .customer-settlement-status { color: #6b7280; font-size: 10px; font-weight: 600; text-align: right; }
@@ -5005,17 +5008,17 @@ window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
     @media (max-width: 640px) {
       #screen-customer.customer-settlement-screen { margin-inline: -14px; }
       .customer-settlement-shell { min-height: calc(100vh - 122px); }
-      .customer-settlement-titlebar { padding: 8px 16px 6px; }
+      .customer-settlement-titlebar { padding: 10px 16px 8px; }
       .customer-settlement-titlebar h3 { font-size: 18px; }
       .customer-settlement-icon-btn { width: 38px; height: 38px; }
       .customer-settlement-filters { display: none; gap: 8px; padding: 0 14px 8px; }
       .customer-settlement-filters select { height: 40px; font-size: 13px; }
-      .customer-settlement-search-row { grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; padding: 5px 12px 8px; }
-      .customer-settlement-summary-bar { gap: 8px; padding: 8px 10px 9px; }
-      .customer-settlement-summary-bar > div { min-height: 48px; padding: 7px 8px 7px 10px; border-radius: 13px; }
+      .customer-settlement-search-row { grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; padding: 8px 10px 9px; }
+      .customer-settlement-summary-bar { gap: 8px; padding: 0 8px 8px; }
+      .customer-settlement-summary-bar > div { min-height: 50px; padding: 8px 8px 8px 11px; border-radius: 15px; }
       .customer-settlement-summary-bar span { font-size: 9px; }
       .customer-settlement-summary-bar strong { font-size: 15px; }
-      .customer-settlement-card { width: calc(100% - 20px); margin-inline: 10px; padding: 8px 10px; }
+      .customer-settlement-card { width: calc(100% - 16px); margin-inline: 8px; padding: 9px 10px; }
       .customer-settlement-download { width: 44px; height: 40px; }
       .customer-settlement-row { grid-template-columns: minmax(54px, 0.64fr) minmax(0, 1.58fr) minmax(78px, 0.95fr); }
       .customer-settlement-row-top { grid-template-columns: 22px minmax(0, 1fr) minmax(86px, 0.92fr); }

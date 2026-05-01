@@ -1,7 +1,10 @@
 {
-  "version": "v20260501_1641_customer_debt_stat_cards",
-  "updatedAt": "2026-05-01T16:41:00+0700",
+  "version": "v20260501_1648_customer_debt_worldclass",
+  "updatedAt": "2026-05-01T16:48:00+0700",
   "changedModules": [
+    "customer-debt-top-section-unified",
+    "customer-debt-premium-card-depth",
+    "customer-debt-worldclass-mobile-polish",
     "customer-debt-bottom-nav-safe-padding",
     "customer-debt-premium-stat-cards",
     "customer-debt-remove-floating-yellow-summary",
