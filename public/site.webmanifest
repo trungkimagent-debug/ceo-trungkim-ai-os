@@ -1,0 +1,27 @@
+{
+  "name": "TRUNG HẬU KIM DUNG",
+  "short_name": "THKD",
+  "description": "Hệ thống nội bộ đẳng cấp cho Di Động Trung Hậu Kim Dung.",
+  "lang": "vi",
+  "start_url": "/1",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#09090b",
+  "background_color": "#09090b",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/assets/icons/king-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/king-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

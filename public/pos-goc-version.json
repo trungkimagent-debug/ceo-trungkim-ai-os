@@ -1,0 +1,11 @@
+{
+  "version": "pos_goc_20260428_044105",
+  "updatedAt": "2026-04-28T04:41:05Z",
+  "changedModules": [
+    "pos-goc.html",
+    "pos-goc-root.js",
+    "pos-goc-native-shell.html",
+    "pos-goc-native.css",
+    "pos-goc-version.json"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "version": "thugop_goc_20260427_130800",
+  "updatedAt": "2026-04-27T13:08:00Z",
+  "changedModules": [
+    "thugop-goc.html",
+    "thugop-goc-root.js",
+    "legacy-core/thugop-goc-repo.js",
+    "thugop-goc-version.json"
+  ]
+}

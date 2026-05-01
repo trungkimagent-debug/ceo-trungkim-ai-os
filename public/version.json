@@ -1,6 +1,5 @@
 {
-  "version": "2026.05.01.0410",
-  "label": "TKOS 2026.05.01.0410",
-  "deployedAt": "2026-05-01T04:10:00Z",
-  "notes": "Menu thu gọn + trung tâm cập nhật mềm"
+  "version": "v20260501_0428_nav_collapse",
+  "updatedAt": "2026-05-01T04:28:00Z",
+  "notes": "Thu gọn menu dưới: mặc định chỉ còn Home, bấm Home xổ menu trái sang phải."
 }

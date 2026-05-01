@@ -5,49 +5,27 @@
     "cleanUrls": true,
     "headers": [
       {
-        "source": "/version.json",
+        "source": "**/*.@(html|js|css)",
         "headers": [
-          { "key": "Cache-Control", "value": "no-store,max-age=0" }
-        ]
-      },
-      {
-        "source": "/index.html",
-        "headers": [
-          { "key": "Cache-Control", "value": "no-store,max-age=0" }
-        ]
-      },
-      {
-        "source": "**/*.@(js|css)",
-        "headers": [
-          { "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }
+          { "key": "Cache-Control", "value": "no-store, max-age=0" },
+          { "key": "X-Content-Type-Options", "value": "nosniff" }
         ]
       },
       {
         "source": "**",
         "headers": [
-          { "key": "X-Content-Type-Options", "value": "nosniff" },
-          { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+          { "key": "X-Content-Type-Options", "value": "nosniff" }
         ]
       }
     ],
     "rewrites": [
       {
-        "source": "/api/**",
-        "function": "api"
+        "source": "/internal/pos/**",
+        "run": { "serviceId": "api", "region": "us-central1" }
       },
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+      { "source": "/1", "destination": "/1/index.html" },
+      { "source": "/1/**", "destination": "/1/index.html" },
+      { "source": "**", "destination": "/1/index.html" }
     ]
-  },
-  "functions": {
-    "source": "functions",
-    "runtime": "nodejs20",
-    "predeploy": ["cd functions && npm run build"]
-  },
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
   }
 }
