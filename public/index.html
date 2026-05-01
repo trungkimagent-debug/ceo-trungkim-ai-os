@@ -18,11 +18,11 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
+window.__TK_APP_VERSION__ = 'v20260501_2010_performance_cooldown';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
-      checkMs: 8000,
+      checkMs: 30000,
       forceReloadOnVersionChange: false,
       enableModuleImport: false,
       versionUrl: './version.json',
@@ -16406,7 +16406,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
       CACHE_BUST_APPLIED_STORAGE_KEY,
     ];
     const APP_UPDATE_VERSION_URL = './version.json';
-    const APP_UPDATE_CHECK_MS = 8000;
+    const APP_UPDATE_CHECK_MS = 30000;
     const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
@@ -17308,15 +17308,15 @@ window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
     let stockAccessoryAudioLastItems = new Map();
     let salesAccessoryFlowPollInFlight = false;
     let stockLoadPromise = null;
-    const STOCK_AUTO_REFRESH_MS = 30000;
-    const STOCK_ACCESSORY_REQUEST_AUTO_REFRESH_MS = 4000;
+    const STOCK_AUTO_REFRESH_MS = 120000;
+    const STOCK_ACCESSORY_REQUEST_AUTO_REFRESH_MS = 12000;
     const STOCK_ACCESSORY_AUDIO_REMIND_MS = 5 * 60 * 1000;
     const STOCK_ACCESSORY_AUDIO_STORAGE_KEY = 'tk-stock-accessory-audio-alerts-v1';
-    const ACCESSORY_REALTIME_FAST_MS = 1800;
-    const ACCESSORY_REALTIME_BALANCED_MS = 2800;
-    const ACCESSORY_REALTIME_IDLE_MS = 4200;
-    const ACCESSORY_REALTIME_SLEEP_MS = 6500;
-    const STOCK_STALE_MS = 20000;
+    const ACCESSORY_REALTIME_FAST_MS = 3000;
+    const ACCESSORY_REALTIME_BALANCED_MS = 6000;
+    const ACCESSORY_REALTIME_IDLE_MS = 12000;
+    const ACCESSORY_REALTIME_SLEEP_MS = 30000;
+    const STOCK_STALE_MS = 120000;
     const teamListEl = document.getElementById('teamList');
     const teamMsg = document.getElementById('teamMsg');
     const teamCreateNameInput = document.getElementById('teamCreateName');
@@ -19536,7 +19536,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
         salesAccessoryFlowTickTimer = setInterval(() => {
           if (!isRealtimePageVisible()) return;
           updateSalesAccessoryFlowStatusPanel();
-        }, 3000);
+        }, 5000);
         salesAccessoryFlowPollTimer = setInterval(() => {
           if (state.activeScreen !== 'sales' || !isRealtimePageVisible() || salesAccessoryFlowPollInFlight) return;
           salesAccessoryFlowPollInFlight = true;
@@ -19545,7 +19545,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
             .finally(() => {
               salesAccessoryFlowPollInFlight = false;
             });
-        }, 2200);
+        }, 5000);
         return;
       }
       if (status === 'warehouse_confirmed') {
@@ -19867,7 +19867,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
     }
 
     function shouldWatchSalesAccessoryReadyPopup() {
-      return Boolean(String(state.sessionToken || '').trim() && state.currentActor && hasScreenPermission('sales') && isRealtimePageVisible());
+      const screen = String(state.activeScreen || '').trim();
+      return Boolean(String(state.sessionToken || '').trim() && state.currentActor && hasScreenPermission('sales') && isRealtimePageVisible() && (screen === 'sales' || screen === 'stock'));
     }
 
     function syncSalesAccessoryReadyPopupUi() {
@@ -22568,10 +22569,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
       } else {
         stopSalesAccessoryFlowRealtimeWatch();
         clearSalesAccessoryPendingAutoRefreshTimer();
-        if (state.sessionToken && hasScreenPermission('sales')) {
-          scheduleSalesAccessoryWaitingWarm(1200);
-          scheduleSalesAccessoryCatalogWarm(1500);
-        }
+        clearSalesAccessoryPendingWarmTimer();
+        clearSalesAccessoryCatalogWarmTimer();
       }
       syncSalesAccessoryReadyPopupWatch({ immediate: false });
       document.getElementById(`screen-${nextName}`)?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -27839,6 +27838,54 @@ window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
       });
     }
 
+    function runAppIdleTask(callback, timeout = 1600) {
+      if (typeof callback !== 'function') return;
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => {
+          try { callback(); } catch (_) {}
+        }, { timeout: Math.max(500, Number(timeout || 0) || 1600) });
+        return;
+      }
+      window.setTimeout(() => {
+        try { callback(); } catch (_) {}
+      }, Math.max(0, Math.min(1200, Number(timeout || 0) || 0)));
+    }
+
+    function runPostLoginWarmup(launchScreen = 'home') {
+      const screen = String(launchScreen || '').trim();
+      runAppIdleTask(() => {
+        if (!String(state.sessionToken || '').trim()) return;
+        if (screen !== 'home' && hasScreenPermission('home')) loadDashboard().catch(() => {});
+      }, 1200);
+      runAppIdleTask(() => {
+        if (!String(state.sessionToken || '').trim()) return;
+        if (screen !== 'purchase' && hasScreenPermission('purchase')) loadRecentPurchases().catch(() => {});
+      }, 2600);
+      runAppIdleTask(() => {
+        if (!String(state.sessionToken || '').trim()) return;
+        if (screen === 'purchase' && hasScreenPermission('purchase')) warmPurchaseEntryResources();
+      }, 1800);
+    }
+
+    async function hydrateLaunchScreenFast(launchScreen = 'home') {
+      const screen = String(launchScreen || '').trim();
+      if (screen === 'home' && hasScreenPermission('home')) {
+        await loadDashboard().catch(() => {});
+        return;
+      }
+      if (screen === 'purchase' && hasScreenPermission('purchase')) {
+        await loadRecentPurchases().catch(() => {});
+        return;
+      }
+      if (screen === 'stock' && hasScreenPermission('stock')) {
+        await ensureStockDataFresh({ note: 'Đang đồng bộ tồn kho thật...' }).catch(() => {});
+        return;
+      }
+      if (screen === 'team' && hasScreenPermission('team')) {
+        await loadStaffAdminData({ silent: true }).catch(() => {});
+      }
+    }
+
     async function unlockApp() {
       if (!isInternalEntry()) {
         redirectToPublicEntry();
@@ -27957,19 +28004,15 @@ window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
         }
         resetLoginFailCount();
         setBootSplashNote('Xác nhận thành công!');
-        const bootstrapTasks = [];
-        if (hasScreenPermission('home')) bootstrapTasks.push(loadDashboard());
-        if (hasScreenPermission('purchase')) bootstrapTasks.push(loadRecentPurchases());
-        if (hasScreenPermission('stock')) bootstrapTasks.push(loadStockData());
-        if (hasScreenPermission('team')) bootstrapTasks.push(loadStaffAdminData({ silent: true }).catch(() => {}));
-        await Promise.all(bootstrapTasks);
-        warmPurchaseEntryResources();
+        const launchScreen = getPreferredLaunchScreen(REQUESTED_SCREEN || 'home');
         unlockOverlay.style.display = 'none';
-        openScreen(getPreferredLaunchScreen(REQUESTED_SCREEN || 'home'));
+        openScreen(launchScreen);
         maybeOpenChairmanReconnectPanel();
         if (loginPasswordInput) loginPasswordInput.value = '';
         setMsg(unlockMsg, 'Đăng nhập thành công.', 'ok');
-        hideBootSplash(220);
+        hideBootSplash(120);
+        hydrateLaunchScreenFast(launchScreen).catch(() => {});
+        runPostLoginWarmup(launchScreen);
       } catch (error) {
         const status = Number(error?.status || 0);
         const shouldCountFailure = INTERNAL_ANTI_TERROR_ENABLED && wantsFreshLogin && [401, 403, 404].includes(status);

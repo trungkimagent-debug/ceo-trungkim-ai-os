@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1955_global_update_button",
-  "updatedAt": "2026-05-01T11:55:00.000Z",
+  "version": "v20260501_2010_performance_cooldown",
+  "updatedAt": "2026-05-01T12:10:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -434,5 +434,5 @@
     "stock-audio-5min-reminders",
     "index.html"
   ],
-  "label": "Hiển thị nút cập nhật bản mới cho tất cả nhân viên"
+  "label": "Tối ưu tải nền để app nhanh hơn, mát máy hơn"
 }
