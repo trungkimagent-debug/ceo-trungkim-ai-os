@@ -159,3 +159,10 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Sales pending cards and stock waiting request cards now render `NV tạo: <tên>` as the first/top row of the card.
 - Card signatures include creator label so realtime DOM patch updates name changes without rebuilding unrelated UI.
 - Verification marker/version: `v20260501_2132_request_card_staff_top`.
+
+## 2026-05-01 — Product name under request item frame
+
+- Trigger: Chủ tịch gửi ảnh Kho và yêu cầu “Hiển thị tên sản phẩm dưới khung sản phẩm”.
+- Added `.sales-accessory-item-name` and rendered the product label directly under each item image frame, before the quantity pill.
+- Applies to both Sales waiting cards and Stock/Kho accessory request cards because they share the same item tile markup.
+- Verification marker/version: `v20260501_2136_request_item_name_under_frame`.

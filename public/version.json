@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2132_request_card_staff_top",
-  "updatedAt": "2026-05-01T14:32:00.000Z",
+  "version": "v20260501_2136_request_item_name_under_frame",
+  "updatedAt": "2026-05-01T14:36:00.000Z",
   "changedModules": [
+    "request-item-name-under-frame",
     "request-card-staff-name-top",
     "sales-accessory-request-owner-scope",
     "stock-accessory-request-live-cool-watch",
@@ -495,5 +496,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Hiển thị tên nhân viên tạo phiếu ở phía trên card yêu cầu phụ kiện"
+  "label": "Hiển thị tên sản phẩm ngay dưới khung ảnh trong card yêu cầu phụ kiện"
 }

@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2132_request_card_staff_top';
+window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -11901,6 +11901,26 @@ window.__TK_APP_VERSION__ = 'v20260501_2132_request_card_staff_top';
       display: block;
     }
 
+    .sales-accessory-item-name {
+      min-width: 0;
+      color: #111827;
+      font-size: clamp(9px, 2.55vw, 11px);
+      font-weight: 900;
+      line-height: 1.18;
+      text-align: center;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+    }
+
+    .sales-accessory-pending-card.waiting-inline-head .sales-accessory-item-name {
+      font-size: clamp(8px, 2.35vw, 10px);
+      line-height: 1.16;
+      color: #111827;
+    }
+
     .sales-accessory-item-qty {
       display: inline-flex;
       align-items: center;
@@ -20068,6 +20088,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2132_request_card_staff_top';
                 <div class="sales-accessory-item-media">${imageUrl
                   ? `<img src="${imageUrl}" alt="${label}" loading="lazy" decoding="async" />`
                   : '<i class="fa-solid fa-plug-circle-bolt"></i>'}</div>
+                <div class="sales-accessory-item-name">${label}</div>
                 <div class="sales-accessory-item-qty">X ${qty}</div>
               </div>
             `;
@@ -21080,6 +21101,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2132_request_card_staff_top';
             <div class="sales-accessory-item-media">${imageUrl
               ? `<img src="${imageUrl}" alt="${label}" loading="lazy" decoding="async" />`
               : '<i class="fa-solid fa-plug-circle-bolt"></i>'}</div>
+            <div class="sales-accessory-item-name">${label}</div>
             <div class="sales-accessory-item-qty">X ${qty}</div>
           </div>
         `;
