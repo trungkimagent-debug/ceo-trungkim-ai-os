@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
+window.__TK_APP_VERSION__ = 'v20260501_1811_customer_debt_luxury_chart_gate';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5969,6 +5969,294 @@ window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
       #screen-customer .customer-settlement-search { height: 41px; }
     }
 
+
+
+    /* Nợ KH • world-class source chart first, list opens after tap */
+    #screen-customer .customer-debt-chart-stage {
+      position: relative;
+      display: grid;
+      gap: 10px;
+      margin: 2px 9px 9px;
+      padding: 13px 12px 12px;
+      border-radius: 24px;
+      border: 1px solid rgba(245, 198, 96, 0.22);
+      background:
+        radial-gradient(circle at 18% 8%, rgba(111,241,209,.14), transparent 34%),
+        radial-gradient(circle at 88% 18%, rgba(245,198,96,.20), transparent 38%),
+        linear-gradient(150deg, rgba(255,255,255,.06), rgba(255,255,255,0) 36%),
+        linear-gradient(180deg, rgba(22,21,19,.88), rgba(5,5,5,.90));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 18px 42px rgba(0,0,0,.38), 0 0 42px rgba(245,198,96,.055);
+      overflow: hidden;
+    }
+
+    #screen-customer .customer-debt-chart-stage::before {
+      content: '';
+      position: absolute;
+      inset: -40% -20% auto auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(245,198,96,.20), transparent 62%);
+      filter: blur(4px);
+      pointer-events: none;
+    }
+
+    #screen-customer .customer-debt-chart-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    #screen-customer .customer-debt-chart-title {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    #screen-customer .customer-debt-chart-title small {
+      color: rgba(255, 231, 170, 0.64);
+      font-size: 8.5px;
+      font-weight: 950;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    #screen-customer .customer-debt-chart-title strong {
+      color: #fff7df;
+      font-size: 15px;
+      font-weight: 950;
+      letter-spacing: -.02em;
+      line-height: 1.08;
+    }
+
+    #screen-customer .customer-debt-chart-total {
+      display: grid;
+      gap: 2px;
+      text-align: right;
+      color: rgba(255,247,223,.52);
+      font-size: 9px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    #screen-customer .customer-debt-chart-total strong {
+      color: #f5c660;
+      font-family: var(--font-num);
+      font-size: 16px;
+      font-weight: 950;
+      letter-spacing: -.035em;
+    }
+
+    #screen-customer .customer-debt-chart-hero {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    #screen-customer .customer-debt-orb {
+      --orb: 0deg;
+      width: 118px;
+      height: 118px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(7,7,7,.96) 0 47%, transparent 48%),
+        conic-gradient(from -90deg, #6ff1d1 0 var(--orb), rgba(245,198,96,.22) var(--orb) 360deg);
+      border: 1px solid rgba(245,198,96,.22);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 0 34px rgba(245,198,96,.12);
+    }
+
+    #screen-customer .customer-debt-orb-inner {
+      display: grid;
+      gap: 2px;
+      text-align: center;
+    }
+
+    #screen-customer .customer-debt-orb-inner small {
+      color: rgba(255,247,223,.50);
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    #screen-customer .customer-debt-orb-inner strong {
+      color: #6ff1d1;
+      font-family: var(--font-num);
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing: -.035em;
+    }
+
+    #screen-customer .customer-debt-chart-leader {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    #screen-customer .customer-debt-leader-row {
+      display: grid;
+      gap: 4px;
+    }
+
+    #screen-customer .customer-debt-leader-copy {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: rgba(255,247,223,.68);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    #screen-customer .customer-debt-leader-copy strong {
+      color: #fff7df;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #screen-customer .customer-debt-leader-copy span {
+      color: #f5c660;
+      font-family: var(--font-num);
+      white-space: nowrap;
+    }
+
+    #screen-customer .customer-debt-leader-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      overflow: hidden;
+    }
+
+    #screen-customer .customer-debt-leader-fill {
+      display: block;
+      width: var(--w, 0%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #6ff1d1, #f5c660);
+      box-shadow: 0 0 14px rgba(245,198,96,.22);
+    }
+
+    #screen-customer .customer-debt-chart-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    #screen-customer .customer-debt-chart-card {
+      min-width: 0;
+      min-height: 62px;
+      display: grid;
+      gap: 5px;
+      padding: 9px;
+      border-radius: 17px;
+      border: 1px solid rgba(245, 198, 96, 0.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.022));
+      color: #fff7df;
+      text-align: left;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 20px rgba(0,0,0,.22);
+      cursor: pointer;
+    }
+
+    #screen-customer .customer-debt-chart-card.active {
+      border-color: rgba(111,241,209,.42);
+      background: linear-gradient(180deg, rgba(111,241,209,.12), rgba(245,198,96,.055));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 24px rgba(111,241,209,.10);
+    }
+
+    #screen-customer .customer-debt-chart-card:active { transform: scale(.985); }
+
+    #screen-customer .customer-debt-chart-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    #screen-customer .customer-debt-chart-card-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: rgba(255,247,223,.76);
+      font-size: 10.5px;
+      font-weight: 950;
+    }
+
+    #screen-customer .customer-debt-chart-card-count {
+      color: rgba(255,247,223,.48);
+      font-size: 8.5px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    #screen-customer .customer-debt-chart-card-money {
+      color: #6ff1d1;
+      font-family: var(--font-num);
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing: -.035em;
+      white-space: nowrap;
+    }
+
+    #screen-customer .customer-debt-chart-card-bar {
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      overflow: hidden;
+    }
+
+    #screen-customer .customer-debt-chart-card-bar span {
+      display: block;
+      width: var(--w, 0%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f5c660, #6ff1d1);
+    }
+
+    #screen-customer .customer-debt-chart-loading,
+    #screen-customer .customer-debt-chart-empty,
+    #screen-customer .customer-debt-list-gate {
+      min-height: 112px;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(245, 198, 96, 0.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.018));
+      color: rgba(255,247,223,.70);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    #screen-customer .customer-debt-list-gate strong {
+      display: block;
+      color: #fff7df;
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    @media (max-width: 640px) {
+      #screen-customer .customer-debt-chart-stage { margin: 1px 8px 8px; padding: 11px 10px; border-radius: 22px; }
+      #screen-customer .customer-debt-chart-hero { grid-template-columns: 102px minmax(0, 1fr); gap: 10px; }
+      #screen-customer .customer-debt-orb { width: 102px; height: 102px; }
+      #screen-customer .customer-debt-orb-inner strong { font-size: 12px; }
+      #screen-customer .customer-debt-chart-grid { gap: 6px; }
+      #screen-customer .customer-debt-chart-card { min-height: 58px; padding: 8px; border-radius: 15px; }
+      #screen-customer .customer-debt-chart-card-money { font-size: 12.5px; }
+    }
 
     /* Nợ KH • split debt sources + invoice/payment history */
     #screen-customer .customer-debt-source-breakdown {
@@ -14596,6 +14884,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
           </div>
         </div>
 
+        <div id="customerDebtChart" class="customer-debt-chart-stage" aria-live="polite">
+          <div class="customer-debt-chart-loading">Đang dựng bản đồ công nợ...</div>
+        </div>
+
         <div class="customer-settlement-filters">
           <select aria-label="Tất cả công nợ">
             <option>All</option>
@@ -15297,6 +15589,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
       customerDebtQuery: '',
       customerDebtStatusFilter: 'unpaid',
       customerDebtTypeFilter: 'all',
+      customerDebtListOpen: false,
       customerDebtFetchedAt: '',
       customerDebtLoading: false,
       customerDebtActiveId: '',
@@ -16000,6 +16293,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
     const customerDebtListMetaTopEl = document.getElementById('customerDebtListMetaTop');
     const customerDebtSearchInput = document.getElementById('customerDebtSearch');
     const customerDebtTypeFilterSelect = document.getElementById('customerDebtTypeFilter');
+    const customerDebtChartEl = document.getElementById('customerDebtChart');
     const customerDebtRefreshBtn = document.getElementById('customerDebtRefreshBtn');
     const customerDebtFilterBtns = Array.from(document.querySelectorAll('[data-customer-debt-filter]'));
     const customerDebtListTitleEl = document.getElementById('customerDebtListTitle');
@@ -25031,7 +25325,101 @@ window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
       }
     }
 
+    function getCustomerDebtSourceChartRows(items = state.customerDebtItems || []) {
+      const sourceMap = new Map();
+      const ensure = (code, label) => {
+        const key = String(code || 'other').trim().toLowerCase() || 'other';
+        if (!sourceMap.has(key)) sourceMap.set(key, { code: key, label: getCustomerDebtKindLabel(key, label), amount: 0, customers: new Set(), count: 0 });
+        return sourceMap.get(key);
+      };
+      (Array.isArray(items) ? items : []).forEach((item) => {
+        if (item.status === 'paid') return;
+        const breakdown = Array.isArray(item.debtBreakdown) && item.debtBreakdown.length ? item.debtBreakdown : buildCustomerDebtBreakdownEntries(item);
+        const usable = breakdown.length ? breakdown : [{ code: 'other', label: 'Khác', amount: item.amount }];
+        usable.forEach((entry) => {
+          const code = String(entry.code || getCustomerDebtKindCode(entry.label || entry.name) || 'other').trim().toLowerCase() || 'other';
+          const amount = entry.amount === null || entry.amount === undefined
+            ? (usable.length === 1 ? Math.max(0, Number(item.amount || 0) || 0) : 0)
+            : Math.max(0, Number(entry.amount || 0) || 0);
+          const row = ensure(code, entry.label || entry.name);
+          row.amount += amount;
+          row.count += 1;
+          row.customers.add(String(item.customerName || item.customerPhone || item.id || '').trim() || String(item.id || row.count));
+        });
+      });
+      const rows = Array.from(sourceMap.values()).map((row) => ({ ...row, customerCount: row.customers.size }));
+      const creditRows = rows.filter((row) => row.code !== 'credit' && isCustomerDebtCreditCode(row.code));
+      if (creditRows.length) {
+        const credit = ensure('credit', 'Cty tài chính');
+        credit.amount = creditRows.reduce((sum, row) => sum + row.amount, Number(credit.amount || 0));
+        credit.count = creditRows.reduce((sum, row) => sum + row.count, Number(credit.count || 0));
+        creditRows.forEach((row) => row.customers.forEach((customer) => credit.customers.add(customer)));
+      }
+      const order = ['nch', 'credit', 'fe-credit', 'home-credit', 'hd-saison', 'mcredit', 'mirae-asset', 'rut-the', 'other'];
+      return Array.from(sourceMap.values())
+        .map((row) => ({ ...row, customerCount: row.customers.size }))
+        .filter((row) => row.amount > 0 || row.count > 0)
+        .sort((a, b) => {
+          const ai = order.indexOf(a.code);
+          const bi = order.indexOf(b.code);
+          if (ai !== bi) return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+          return b.amount - a.amount;
+        });
+    }
+
+    function renderCustomerDebtSourceChart(items = state.customerDebtItems || []) {
+      if (!customerDebtChartEl) return;
+      const rows = getCustomerDebtSourceChartRows(items);
+      const rawTotal = (Array.isArray(items) ? items : [])
+        .filter((item) => item.status !== 'paid')
+        .reduce((sum, item) => sum + Math.max(0, Number(item.amount || 0) || 0), 0);
+      const rowTotal = rows.reduce((sum, row) => sum + Math.max(0, Number(row.amount || 0) || 0), 0);
+      const total = rawTotal > 0 ? rawTotal : rowTotal;
+      const active = String(state.customerDebtTypeFilter || 'all').trim().toLowerCase();
+      if (!rows.length || total <= 0) {
+        customerDebtChartEl.innerHTML = '<div class="customer-debt-chart-empty">Chưa có dữ liệu công nợ để dựng biểu đồ.</div>';
+        return;
+      }
+      const topRows = rows.slice().sort((a, b) => b.amount - a.amount).slice(0, 3);
+      const leader = topRows.map((row) => {
+        const width = Math.max(4, Math.min(100, Math.round((row.amount / total) * 100)));
+        return `
+          <div class="customer-debt-leader-row">
+            <div class="customer-debt-leader-copy"><strong>${escapeHtml(row.label)}</strong><span>${money(row.amount)}</span></div>
+            <div class="customer-debt-leader-track"><span class="customer-debt-leader-fill" style="--w:${width}%"></span></div>
+          </div>
+        `;
+      }).join('');
+      const leadingPct = Math.max(0, Math.min(360, Math.round(((topRows[0]?.amount || 0) / total) * 360)));
+      const cards = rows.map((row) => {
+        const width = Math.max(4, Math.min(100, Math.round((row.amount / total) * 100)));
+        const isActive = active === row.code || (active === 'credit' && isCustomerDebtCreditCode(row.code));
+        return `
+          <button class="customer-debt-chart-card ${isActive ? 'active' : ''}" type="button" data-customer-debt-source="${escapeHtml(row.code)}" aria-label="Xem danh sách ${escapeHtml(row.label)}">
+            <div class="customer-debt-chart-card-top">
+              <span class="customer-debt-chart-card-label">${escapeHtml(row.label)}</span>
+              <span class="customer-debt-chart-card-count">${row.customerCount} KH</span>
+            </div>
+            <div class="customer-debt-chart-card-money">${money(row.amount)}</div>
+            <div class="customer-debt-chart-card-bar"><span style="--w:${width}%"></span></div>
+          </button>
+        `;
+      }).join('');
+      customerDebtChartEl.innerHTML = `
+        <div class="customer-debt-chart-head">
+          <div class="customer-debt-chart-title"><small>Debt intelligence map</small><strong>Bản đồ công nợ theo nguồn</strong></div>
+          <div class="customer-debt-chart-total"><span>Tổng còn nợ</span><strong>${money(total)}</strong></div>
+        </div>
+        <div class="customer-debt-chart-hero">
+          <div class="customer-debt-orb" style="--orb:${leadingPct}deg"><div class="customer-debt-orb-inner"><small>Lớn nhất</small><strong>${money(topRows[0]?.amount || 0)}</strong></div></div>
+          <div class="customer-debt-chart-leader">${leader}</div>
+        </div>
+        <div class="customer-debt-chart-grid">${cards}</div>
+      `;
+    }
+
     function renderCustomerDebtList(items = state.customerDebtItems || []) {
+      renderCustomerDebtSourceChart(items);
       const filtered = getFilteredCustomerDebtItems(items);
       const total = filtered.reduce((sum, item) => sum + Math.max(0, Number(item.amount || 0) || 0), 0);
       const filter = String(state.customerDebtStatusFilter || 'unpaid').trim().toLowerCase();
@@ -25043,8 +25431,14 @@ window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
       if (customerDebtListMetaEl) customerDebtListMetaEl.textContent = `${typeLabel} • ${filtered.length} khách • ${money(total)}`;
       customerDebtFilterBtns.forEach((button) => button.classList.toggle('active', button.dataset.customerDebtFilter === filter));
       if (!customerDebtListEl) return;
+      const listOpen = Boolean(state.customerDebtListOpen || state.customerDebtQuery || typeFilter !== 'all' || filter !== 'unpaid');
+      if (!listOpen) {
+        customerDebtListEl.innerHTML = '<div class="customer-debt-list-gate"><div><strong>Chọn một nguồn trên biểu đồ</strong><span>Bấm NCH / Công ty tài chính / Rút thẻ để xem khách nào còn nợ bao nhiêu.</span></div></div>';
+        renderCustomerDebtActivities(items);
+        return;
+      }
       if (!filtered.length) {
-        customerDebtListEl.innerHTML = `<div class="empty">${state.customerDebtQuery ? 'Không thấy khách khớp bộ lọc.' : 'Chưa có khách nào đang nợ.'}</div>`;
+        customerDebtListEl.innerHTML = `<div class="empty">${state.customerDebtQuery ? 'Không thấy khách khớp bộ lọc.' : `${escapeHtml(typeLabel)} chưa có khách nào đang nợ.`}</div>`;
         renderCustomerDebtActivities(items);
         return;
       }
@@ -27420,12 +27814,25 @@ window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
 
     customerDebtSearchInput?.addEventListener('input', () => {
       state.customerDebtQuery = customerDebtSearchInput.value.trim();
+      state.customerDebtListOpen = Boolean(state.customerDebtQuery);
       renderCustomerDebtList(state.customerDebtItems || []);
     });
 
     customerDebtTypeFilterSelect?.addEventListener('change', () => {
       state.customerDebtTypeFilter = String(customerDebtTypeFilterSelect.value || 'all').trim().toLowerCase() || 'all';
+      state.customerDebtListOpen = state.customerDebtTypeFilter !== 'all';
       renderCustomerDebtList(state.customerDebtItems || []);
+    });
+
+    customerDebtChartEl?.addEventListener('click', (event) => {
+      const trigger = event.target instanceof Element ? event.target.closest('[data-customer-debt-source]') : null;
+      const source = String(trigger?.getAttribute('data-customer-debt-source') || '').trim().toLowerCase();
+      if (!source) return;
+      state.customerDebtTypeFilter = source;
+      state.customerDebtListOpen = true;
+      if (customerDebtTypeFilterSelect) customerDebtTypeFilterSelect.value = source;
+      renderCustomerDebtList(state.customerDebtItems || []);
+      customerDebtListEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     customerDebtRefreshBtn?.addEventListener('click', () => {
@@ -27438,6 +27845,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
       button.addEventListener('click', () => {
         const nextFilter = String(button.dataset.customerDebtFilter || '').trim() || 'unpaid';
         state.customerDebtStatusFilter = nextFilter;
+        state.customerDebtListOpen = nextFilter !== 'unpaid' || state.customerDebtTypeFilter !== 'all';
         renderCustomerDebtList(state.customerDebtItems || []);
       });
     });

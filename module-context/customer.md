@@ -201,3 +201,10 @@ Last reviewed: 2026-05-01.
 - Extended frontend normalization to derive detailed `debtBreakdown` rows from `debtEntries` when backend provides per-source amounts; if backend only sends one total, UI avoids inventing split amounts and marks rows as chưa tách.
 - List cards now show compact per-source remaining amounts; detail modal now shows “Tách theo nguồn nợ” plus “Lịch sử” columns for hóa đơn and thanh toán using available item arrays (`invoices`, `payments`, etc.) or the current invoice/paid summary fallback.
 - Added individual source filter options while preserving old grouped `credit` behavior; no API paths/payloads changed.
+
+## 2026-05-01 — Luxury chart-first debt map
+
+- User requested Nợ KH entry state show a premium chart/overview first; customer list should only appear after tapping a debt source.
+- Added `#customerDebtChart` chart stage above search/list and `state.customerDebtListOpen` gate.
+- `renderCustomerDebtSourceChart()` aggregates unpaid debt by source from `debtBreakdown`, including a grouped `Cty tài chính` total for credit-company sources, and renders an orb + leaderboard + tappable source cards.
+- Default/all view now shows a gated prompt instead of the full customer list; tapping a chart source or selecting a specific filter opens the filtered list. Search also opens the list.
