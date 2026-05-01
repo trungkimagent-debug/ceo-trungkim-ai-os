@@ -1,7 +1,9 @@
 {
-  "version": "v20260501_1856_customer_debt_top_search_row",
-  "updatedAt": "2026-05-01T18:56:00+0700",
+  "version": "v20260501_1907_customer_debt_visible_top_controls",
+  "updatedAt": "2026-05-01T19:07:00+0700",
   "changedModules": [
+    "customer-debt-single-top-control-row",
+    "customer-debt-visible-top-controls",
     "customer-debt-chart-below-controls",
     "customer-debt-top-search-row",
     "customer-debt-source-filter-total-fix",

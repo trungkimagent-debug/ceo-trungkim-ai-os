@@ -227,3 +227,10 @@ Last reviewed: 2026-05-01.
 - Reordered only `#screen-customer` DOM: summary KPI, title/actions, hidden filters, search row, then `#customerDebtChart`, then list/meta.
 - Version deployed: `v20260501_1856_customer_debt_top_search_row`.
 - Preserve this order for future Nợ KH edits unless Chủ tịch explicitly asks to move chart above controls again.
+
+## 2026-05-01 — Visible single-row top controls
+
+- Screenshot showed the previous top controls were still not visible: KPI jumped straight to the chart/prompt.
+- Replaced the separate title/action row + search row with one visible `customer-debt-top-controls` row directly under the KPI cards and before `#customerDebtChart`.
+- This row contains search, source selector, refresh/briefcase, and export/download; titlebar is hidden to remove wasted vertical space.
+- Version deployed: `v20260501_1907_customer_debt_visible_top_controls`.

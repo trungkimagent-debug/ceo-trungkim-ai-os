@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1856_customer_debt_top_search_row';
+window.__TK_APP_VERSION__ = 'v20260501_1907_customer_debt_visible_top_controls';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5910,6 +5910,31 @@ window.__TK_APP_VERSION__ = 'v20260501_1856_customer_debt_top_search_row';
 
     #screen-customer .customer-settlement-search-row {
       padding: 4px 9px 9px;
+    }
+
+    #screen-customer .customer-debt-top-controls {
+      position: relative;
+      z-index: 12;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) 40px 40px;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 9px 9px;
+      background: transparent;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    #screen-customer .customer-debt-top-controls .customer-settlement-search {
+      min-width: 0;
+      width: 100%;
+    }
+
+    #screen-customer .customer-debt-top-controls .customer-settlement-icon-btn,
+    #screen-customer .customer-debt-top-controls .customer-settlement-download {
+      width: 40px;
+      height: 40px;
+      border-radius: 15px;
     }
 
     #screen-customer .customer-settlement-search {
@@ -14960,12 +14985,29 @@ window.__TK_APP_VERSION__ = 'v20260501_1856_customer_debt_top_search_row';
           </div>
         </div>
 
-        <div class="customer-settlement-titlebar">
-          <h3>Công nợ khách hàng</h3>
-          <div class="customer-settlement-actions">
-            <button class="customer-settlement-icon-btn" type="button" aria-label="Chế độ tối"><i class="fa-solid fa-moon"></i></button>
-            <button id="customerDebtRefreshBtn" class="customer-settlement-icon-btn primary" type="button" aria-label="Làm mới"><i class="fa-solid fa-briefcase"></i></button>
+        <div class="customer-debt-top-controls">
+          <div class="customer-settlement-search" role="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="customerDebtSearch" type="search" placeholder="" autocomplete="off" aria-label="Tìm khách hoặc mã đơn" />
+            <select id="customerDebtTypeFilter" class="customer-debt-type-filter" aria-label="Lọc loại công nợ">
+              <option value="all">Tất cả</option>
+              <option value="nch">NCH</option>
+              <option value="fe-credit">FE Credit</option>
+              <option value="home-credit">Home Credit</option>
+              <option value="hd-saison">HD Saison</option>
+              <option value="mcredit">Mcredit</option>
+              <option value="mirae-asset">Mirae Asset</option>
+              <option value="rut-the">Rút thẻ</option>
+              <option value="credit">Cty TC</option>
+              <option value="other">Khác</option>
+            </select>
           </div>
+          <button id="customerDebtRefreshBtn" class="customer-settlement-icon-btn primary" type="button" aria-label="Làm mới"><i class="fa-solid fa-briefcase"></i></button>
+          <button id="customerDebtExportBtn" class="customer-settlement-download" type="button" aria-label="Xuất dữ liệu"><i class="fa-solid fa-download"></i></button>
+        </div>
+
+        <div class="customer-settlement-titlebar" hidden>
+          <h3>Công nợ khách hàng</h3>
         </div>
 
         <div class="customer-settlement-filters">
@@ -14988,26 +15030,6 @@ window.__TK_APP_VERSION__ = 'v20260501_1856_customer_debt_top_search_row';
             <option>Quá hẹn</option>
             <option>Nợ mở</option>
           </select>
-        </div>
-
-        <div class="customer-settlement-search-row">
-          <div class="customer-settlement-search" role="search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input id="customerDebtSearch" type="search" placeholder="" autocomplete="off" aria-label="Tìm khách hoặc mã đơn" />
-            <select id="customerDebtTypeFilter" class="customer-debt-type-filter" aria-label="Lọc loại công nợ">
-              <option value="all">Tất cả</option>
-              <option value="nch">NCH</option>
-              <option value="fe-credit">FE Credit</option>
-              <option value="home-credit">Home Credit</option>
-              <option value="hd-saison">HD Saison</option>
-              <option value="mcredit">Mcredit</option>
-              <option value="mirae-asset">Mirae Asset</option>
-              <option value="rut-the">Rút thẻ</option>
-              <option value="credit">Cty TC</option>
-              <option value="other">Khác</option>
-            </select>
-          </div>
-          <button id="customerDebtExportBtn" class="customer-settlement-download" type="button" aria-label="Xuất dữ liệu"><i class="fa-solid fa-download"></i></button>
         </div>
 
         <div id="customerDebtChart" class="customer-debt-chart-stage" aria-live="polite">
