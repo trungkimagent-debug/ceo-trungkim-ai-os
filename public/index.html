@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
+window.__TK_APP_VERSION__ = 'v20260501_2126_sales_request_owner_scope';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -16988,6 +16988,108 @@ window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
       return String(state.currentActor?.role || '').trim().toLowerCase();
     }
 
+    function canCurrentActorSeeAllSalesAccessoryRequests() {
+      const role = getCurrentActorRoleKey();
+      return ['manager', 'admin', 'ceo', 'chairman'].includes(role);
+    }
+
+    function normalizeOwnerToken(value = '') {
+      return String(value ?? '').trim().toLowerCase();
+    }
+
+    function getCurrentActorOwnerTokens() {
+      const actor = state.currentActor && typeof state.currentActor === 'object' ? state.currentActor : {};
+      return new Set([
+        actor.userId,
+        actor.keyId,
+        actor.id,
+        actor.staffId,
+        actor.staffCode,
+        actor.phone,
+        actor.email,
+        state.loginId,
+      ].map(normalizeOwnerToken).filter(Boolean));
+    }
+
+    function getCurrentActorNameTokens() {
+      const actor = state.currentActor && typeof state.currentActor === 'object' ? state.currentActor : {};
+      return new Set([
+        actor.name,
+        actor.displayName,
+        actor.fullName,
+      ].map(normalizeOwnerToken).filter(Boolean));
+    }
+
+    function isSalesAccessoryRequestOwnedByCurrentActor(request = {}) {
+      if (canCurrentActorSeeAllSalesAccessoryRequests()) return true;
+      const item = request && typeof request === 'object' ? request : {};
+      const requestId = String(item.id || item.requestId || '').trim();
+      if (requestId && requestId === String(state.salesAccessoryFlow?.requestId || '').trim()) return true;
+      if (requestId) {
+        const buckets = state.salesAccessoryPendingBuckets && typeof state.salesAccessoryPendingBuckets === 'object'
+          ? state.salesAccessoryPendingBuckets
+          : {};
+        const visibleSources = [
+          state.salesAccessoryPendingFinalize,
+          buckets.waiting,
+          buckets.processing,
+          buckets.completed,
+          buckets.all,
+        ];
+        if (visibleSources.some((list) => Array.isArray(list) && list.some((entry) => String(entry?.id || entry?.requestId || '').trim() === requestId))) {
+          return true;
+        }
+      }
+      const ownerTokens = getCurrentActorOwnerTokens();
+      const ownerFields = [
+        item.createdBy,
+        item.createdById,
+        item.createdByUserId,
+        item.createdByStaffId,
+        item.createdByStaffCode,
+        item.staffId,
+        item.staffCode,
+        item.employeeId,
+        item.employeeCode,
+        item.salespersonId,
+        item.salespersonCode,
+        item.sellerId,
+        item.sellerCode,
+        item.cashierId,
+        item.cashierCode,
+        item.warehouseRequestedBy,
+        item.warehouseRequestedById,
+        item.warehouseRequestedByStaffCode,
+      ].map(normalizeOwnerToken).filter(Boolean);
+      if (ownerFields.some((token) => ownerTokens.has(token))) return true;
+      const nameTokens = getCurrentActorNameTokens();
+      const nameFields = [
+        item.createdByName,
+        item.staffName,
+        item.employeeName,
+        item.salespersonName,
+        item.sellerName,
+        item.cashierName,
+        item.warehouseRequestedByName,
+      ].map(normalizeOwnerToken).filter(Boolean);
+      return nameFields.some((token) => nameTokens.has(token));
+    }
+
+    function filterSalesAccessoryRequestsForCurrentActor(items = []) {
+      const list = Array.isArray(items) ? items : [];
+      if (canCurrentActorSeeAllSalesAccessoryRequests()) return list.slice();
+      return list.filter((item) => isSalesAccessoryRequestOwnedByCurrentActor(item));
+    }
+
+    function summarizeSalesAccessoryPendingItems(items = []) {
+      const buckets = buildSalesAccessoryPendingBuckets(items);
+      return normalizeSalesAccessoryPendingSummary({
+        waiting: buckets.waiting.length,
+        processing: buckets.processing.length,
+        completed: buckets.completed.length,
+      });
+    }
+
     function isPurchaseReceiptDraft(item = {}) {
       return String(item?.status || '').trim().toLowerCase() === 'draft' || item?.stockApplied === false;
     }
@@ -18941,8 +19043,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
     }
 
     function syncSalesAccessoryPendingCache(items = [], summary = null, query = '') {
-      state.salesAccessoryPendingBuckets = buildSalesAccessoryPendingBuckets(items);
-      state.salesAccessoryPendingSummary = normalizeSalesAccessoryPendingSummary(summary);
+      const scopedItems = filterSalesAccessoryRequestsForCurrentActor(items);
+      state.salesAccessoryPendingBuckets = buildSalesAccessoryPendingBuckets(scopedItems);
+      state.salesAccessoryPendingSummary = summarizeSalesAccessoryPendingItems(scopedItems);
       state.salesAccessoryPendingCacheQuery = String(query || '').trim();
       state.salesAccessoryPendingCacheWarm = true;
       state.salesAccessoryPendingCacheUpdatedAt = Date.now();
@@ -19042,6 +19145,11 @@ window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
         customerName: String(request.customerName || customerNameInput?.value || 'Khách lẻ').trim() || 'Khách lẻ',
         customerPhone: String(request.customerPhone || customerPhoneInput?.value || '').trim(),
         note: String(request.note || orderNoteInput?.value || '').trim(),
+        createdBy: String(request.createdBy || request.createdById || request.createdByUserId || '').trim(),
+        createdByName: String(request.createdByName || '').trim(),
+        staffCode: String(request.staffCode || request.createdByStaffCode || '').trim(),
+        warehouseRequestedBy: String(request.warehouseRequestedBy || '').trim(),
+        warehouseRequestedByName: String(request.warehouseRequestedByName || '').trim(),
         itemsSignature: String(request.itemsSignature || '').trim(),
         warehouseRequestedAt: String(request.warehouseRequestedAt || '').trim(),
         warehouseConfirmedAt: String(request.warehouseConfirmedAt || '').trim(),
@@ -19993,9 +20101,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
     }
 
     function renderSalesAccessoryPendingFinalizeQueue(items = [], options = {}) {
-      const list = Array.isArray(items) ? items : [];
+      const list = filterSalesAccessoryRequestsForCurrentActor(items);
       const filter = normalizeSalesRequestFilter(options.filter || state.salesRequestFilter);
-      const summary = normalizeSalesAccessoryPendingSummary(options.summary || state.salesAccessoryPendingSummary);
+      const summary = summarizeSalesAccessoryPendingItems(list);
       const renderBuckets = options.renderBuckets !== false;
       state.salesAccessoryPendingFinalize = list;
       state.salesAccessoryPendingSummary = summary;
@@ -20043,8 +20151,12 @@ window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
         customerName: String(request.customerName || 'Khách lẻ').trim() || 'Khách lẻ',
         customerPhone: String(request.customerPhone || '').trim(),
         note: String(request.note || '').trim(),
-        createdBy: String(request.createdBy || '').trim(),
+        createdBy: String(request.createdBy || request.createdById || request.createdByUserId || '').trim(),
         createdByName: String(request.createdByName || '').trim(),
+        createdByStaffCode: String(request.createdByStaffCode || request.staffCode || '').trim(),
+        staffId: String(request.staffId || '').trim(),
+        staffCode: String(request.staffCode || '').trim(),
+        staffName: String(request.staffName || '').trim(),
         warehouseRequestedBy: String(request.warehouseRequestedBy || '').trim(),
         warehouseRequestedByName: String(request.warehouseRequestedByName || '').trim(),
         createdAt: String(request.createdAt || '').trim(),
@@ -20168,8 +20280,11 @@ window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
       salesAccessoryReadyPopupRefreshInFlight = true;
       try {
         const data = await callApi('/internal/pos/sales/accessory-requests/ready-popup');
-        const request = data?.request ? normalizeSalesAccessoryReadyPopupRequest(data.request) : null;
-        const count = Math.max(0, Number(data?.count || (request ? 1 : 0)) || 0);
+        const rawRequest = data?.request ? normalizeSalesAccessoryReadyPopupRequest(data.request) : null;
+        const request = rawRequest && isSalesAccessoryRequestOwnedByCurrentActor(rawRequest) ? rawRequest : null;
+        const count = request
+          ? (canCurrentActorSeeAllSalesAccessoryRequests() ? Math.max(1, Number(data?.count || 1) || 1) : 1)
+          : 0;
         const signature = getSalesAccessoryReadyPopupPayloadSignature(request, count);
         salesAccessoryReadyPopupStableRounds = signature === salesAccessoryReadyPopupLastSignature
           ? (salesAccessoryReadyPopupStableRounds + 1)
@@ -20377,8 +20492,8 @@ window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
         if (loadSeq !== salesAccessoryPendingLoadSeq) {
           return getSalesAccessoryPendingCachedItems(state.salesRequestFilter, state.salesRequestQuery) || [];
         }
-        const allItems = Array.isArray(data.items) ? data.items : [];
-        const summary = normalizeSalesAccessoryPendingSummary(data.summary || null);
+        const allItems = filterSalesAccessoryRequestsForCurrentActor(Array.isArray(data.items) ? data.items : []);
+        const summary = summarizeSalesAccessoryPendingItems(allItems);
         syncSalesAccessoryPendingCache(allItems, summary, query);
         const items = getSalesAccessoryPendingCachedItems(filter, query) || [];
         const signature = getSalesAccessoryPendingQueueSignature(items, filter, query);
@@ -20402,6 +20517,9 @@ window.__TK_APP_VERSION__ = 'v20260501_2120_stock_request_live_cool_watch';
       setMsg(salesMsg, 'Đang mở phiếu chờ xử lý...', '');
       const data = await callApi(`/internal/pos/sales/accessory-requests/${encodeURIComponent(normalizedId)}`);
       const request = data.request || data || {};
+      if (!isSalesAccessoryRequestOwnedByCurrentActor(request)) {
+        throw new Error('Phiếu này thuộc nhân viên khác nên không được mở trên máy này.');
+      }
       const flow = normalizeSalesAccessoryFlow(request);
       const flowCopy = getSalesAccessoryModeCopy(flow.saleMode);
       const items = buildSalesAccessoryCartFromRequestItems(request.items);

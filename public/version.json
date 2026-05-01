@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2120_stock_request_live_cool_watch",
-  "updatedAt": "2026-05-01T14:20:00.000Z",
+  "version": "v20260501_2126_sales_request_owner_scope",
+  "updatedAt": "2026-05-01T14:26:00.000Z",
   "changedModules": [
+    "sales-accessory-request-owner-scope",
     "stock-accessory-request-live-cool-watch",
     "landscape-drawer-backdrop-clear-content",
     "sales-top-kpi-controls",
@@ -493,5 +494,5 @@
     "duplicate-refresh-collapse",
     "cooler-network-burst-control"
   ],
-  "label": "Kho tự nhận phiếu yêu cầu gần realtime, không cần bấm làm mới, có giảm tải khi máy yếu hoặc chạy nền"
+  "label": "Nhân viên bán chỉ nhìn thấy phiếu yêu cầu do chính mình tạo; quản lý/Chủ tịch vẫn xem tổng"
 }

@@ -138,3 +138,16 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Gift base price chip now reads `Giá gốc ... • Tặng 0đ`; sale price remains normalized to `0` by existing `normalizeSalesAccessoryEditorSalePrice()`.
 - Preserve behavior: same cart item structure, quantity stepper, `Bỏ chọn`, `Xong`, warehouse request flow, and `saleMode='gift_menu'` remain unchanged.
 - Verification marker/version: `v20260501_1944_sales_gift_editor_free_mode`.
+
+## 2026-05-01 — Staff-only sales request queue scope
+
+- Trigger: Chủ tịch yêu cầu “Nhân viên tạo phiếu chỉ nhìn thấy phiếu mình tạo”.
+- Scoped target: Sales/Bán accessory request queue and ready popup only; Stock/Kho queue is intentionally unchanged so warehouse can see all pending requests.
+- Added ownership helpers in `public/index.html`:
+  - `canCurrentActorSeeAllSalesAccessoryRequests()` lets manager/admin/ceo/chairman see all.
+  - staff-role accounts are scoped by `createdBy`, `createdByStaffCode`, `staffId/staffCode`, `warehouseRequestedBy`, seller/cashier/employee aliases, and matching creator/staff names as fallback.
+  - current active `state.salesAccessoryFlow.requestId` is allowed so a staff member never loses their own in-progress flow.
+- `syncSalesAccessoryPendingCache()`, `renderSalesAccessoryPendingFinalizeQueue()`, `loadSalesAccessoryPendingFinalizeQueue()`, warm cache, ready popup, and detail open now apply the same owner scope.
+- Summaries/count chips are recomputed after filtering so staff does not see totals from other employees.
+- Preserve: checkout payload, warehouse confirm, stock request queue, and realtime timer behavior unchanged.
+- Verification marker/version: `v20260501_2126_sales_request_owner_scope`.
