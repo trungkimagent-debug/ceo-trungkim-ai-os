@@ -98,3 +98,10 @@ Last reviewed: 2026-05-01.
 - User asked Nợ KH to be more compact after seeing the debt screen.
 - Reduced header/filter/search/summary vertical spacing and changed customer debt cards from 6 label rows to 4 compact rows.
 - Keep white/orange Quyết toán reference style; no API changes.
+
+
+## 2026-05-01 — Dense top cleanup
+
+- After screenshot review, the top area still had too much blank space.
+- Hidden the inactive 2x2 filter block and tightened title/search/orange summary spacing.
+- Keep compact settlement cards and all `customerDebt*` IDs unchanged.

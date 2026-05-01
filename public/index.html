@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1217_customer_debt_compact_settlement';
+window.__TK_APP_VERSION__ = 'v20260501_1230_customer_debt_dense_top';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -4858,9 +4858,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1217_customer_debt_compact_settlement';
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 12px 18px 10px;
+      padding: 11px 18px 8px;
       background: #ffffff;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 0;
     }
 
     .customer-settlement-titlebar h3 {
@@ -4900,7 +4900,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1217_customer_debt_compact_settlement';
     }
 
     .customer-settlement-filters {
-      display: grid;
+      display: none;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
       padding: 0 16px 10px;
@@ -4923,9 +4923,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1217_customer_debt_compact_settlement';
 
     .customer-settlement-search-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 52px;
+      grid-template-columns: minmax(0, 1fr) 50px;
       gap: 10px;
-      padding: 8px 16px 14px;
+      padding: 6px 14px 10px;
       background: #ffffff;
       border-bottom: 1px solid #e5e7eb;
     }
@@ -4967,8 +4967,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1217_customer_debt_compact_settlement';
     .customer-settlement-summary-bar {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      min-height: 68px;
-      padding: 12px 16px;
+      min-height: 60px;
+      padding: 9px 14px;
       background: linear-gradient(90deg, #ffa600 0%, #f59b00 46%, #e08300 100%);
       color: #ffffff;
       box-shadow: 0 12px 26px rgba(245, 158, 11, 0.18);
@@ -5025,10 +5025,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1217_customer_debt_compact_settlement';
     .customer-settlement-card {
       position: relative;
       display: grid;
-      gap: 8px;
-      width: calc(100% - 32px);
-      margin: 0 16px;
-      padding: 12px 14px;
+      gap: 7px;
+      width: calc(100% - 28px);
+      margin: 0 14px;
+      padding: 10px 12px;
       border: 1px solid #e6e9ee;
       border-radius: 13px;
       background: #ffffff;
@@ -5147,14 +5147,14 @@ window.__TK_APP_VERSION__ = 'v20260501_1217_customer_debt_compact_settlement';
     @media (max-width: 640px) {
       #screen-customer.customer-settlement-screen { margin-inline: -14px; }
       .customer-settlement-shell { min-height: calc(100vh - 122px); }
-      .customer-settlement-titlebar { padding: 10px 18px 8px; }
+      .customer-settlement-titlebar { padding: 10px 18px 7px; }
       .customer-settlement-titlebar h3 { font-size: 19px; }
       .customer-settlement-icon-btn { width: 42px; height: 42px; }
-      .customer-settlement-filters { gap: 8px; padding: 0 14px 8px; }
+      .customer-settlement-filters { display: none; gap: 8px; padding: 0 14px 8px; }
       .customer-settlement-filters select { height: 40px; font-size: 13px; }
-      .customer-settlement-search-row { grid-template-columns: minmax(0, 1fr) 48px; gap: 8px; padding: 8px 14px 12px; }
-      .customer-settlement-summary-bar { min-height: 64px; padding: 10px 14px; }
-      .customer-settlement-card { width: calc(100% - 28px); margin-inline: 14px; padding: 10px 12px; }
+      .customer-settlement-search-row { grid-template-columns: minmax(0, 1fr) 48px; gap: 8px; padding: 6px 14px 9px; }
+      .customer-settlement-summary-bar { min-height: 58px; padding: 8px 14px; }
+      .customer-settlement-card { width: calc(100% - 24px); margin-inline: 12px; padding: 9px 11px; }
       .customer-settlement-download { width: 48px; height: 42px; }
       .customer-settlement-row { grid-template-columns: minmax(54px, 0.64fr) minmax(0, 1.58fr) minmax(78px, 0.95fr); }
       .customer-settlement-row-top { grid-template-columns: 22px minmax(0, 1fr) minmax(86px, 0.92fr); }
