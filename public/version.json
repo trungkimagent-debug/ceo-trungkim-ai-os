@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1918_cold_boot_splash",
-  "updatedAt": "2026-05-01T12:18:00.000Z",
+  "version": "v20260501_1921_fast_cool_runtime",
+  "updatedAt": "2026-05-01T12:21:47.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -434,7 +434,12 @@
     "stock-audio-5min-reminders",
     "index.html",
     "app-cold-boot-dark-fallback",
-    "scanner-script-defer"
+    "scanner-script-defer",
+    "runtime-polling-cooldown",
+    "api-snapshot-instant-render",
+    "home-rank-cache-visible-refresh",
+    "idle-cache-cleanup",
+    "tab-scroll-jank-fix"
   ],
-  "label": "Chống trắng màn hình khi mở lại app sau khi tắt nền"
+  "label": "Tối ưu nhẹ máy: dữ liệu hiện tức thời, giảm polling nền và giảm giật khi chuyển tab"
 }

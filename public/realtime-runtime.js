@@ -115,6 +115,19 @@
     emit("tk:legacy-cache-cleanup-done", { pageId: pageId, version: versionTag });
   }
 
+  function scheduleIdleCleanupLegacyBrowserCache(pageId, targetVersion) {
+    var run = function () {
+      cleanupLegacyBrowserCache(pageId, targetVersion).catch(function () {});
+    };
+    try {
+      if ("requestIdleCallback" in window && typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(run, { timeout: 5000 });
+        return;
+      }
+    } catch (_) {}
+    setTimeout(run, 2500);
+  }
+
   function toBoolean(v, defaultValue) {
     if (v === undefined || v === null) return !!defaultValue;
     if (typeof v === "boolean") return v;
@@ -415,7 +428,7 @@
       writeVersion(pageId, currentVersion);
     }
 
-    cleanupLegacyBrowserCache(pageId, currentVersion || storedVersion).catch(function () {});
+    scheduleIdleCleanupLegacyBrowserCache(pageId, currentVersion || storedVersion);
 
     var checkMs = Math.max(3000, Number(config.checkMs || 15000));
     var enabled = toBoolean(config.enabled, true);

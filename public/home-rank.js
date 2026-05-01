@@ -24,7 +24,9 @@ const PUNCH_DUPLICATE_WINDOW_MS = 2 * 60 * 1000;
 const LOC_EXPIRE_MS = 60 * 60 * 1000;
 const DAILY_AUTO_OUT_HOUR = 22;
 const DAILY_AUTO_OUT_MINUTE = 0;
-const AUTO_REFRESH_MS = 30_000;
+const AUTO_REFRESH_MS = 60_000;
+const HOME_RANK_CACHE_KEY = "tk_home_rank_rows_v2";
+const HOME_RANK_CACHE_MAX_AGE_MS = 5 * 60 * 1000;
 
 const HOME_RANK_HTML = `
   <div class="home-rank-shell">
@@ -241,6 +243,7 @@ const HOME_RANK_STYLE = `
 
 let styleInjected = false;
 let refreshTimerId = null;
+let visibilityRefreshBound = false;
 let pillMeasureEl = null;
 let lastValuePadPx = 120;
 
@@ -369,6 +372,32 @@ function renderRank(listEl, rows = []) {
       if (label) label.classList.toggle("is-hidden", pct < 10);
     }
   });
+}
+
+function readCachedHomeRankRows() {
+  try {
+    const raw = sessionStorage.getItem(HOME_RANK_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const savedAt = Number(parsed?.savedAt || 0);
+    if (!savedAt || (Date.now() - savedAt) > HOME_RANK_CACHE_MAX_AGE_MS) return null;
+    return Array.isArray(parsed?.rows) ? parsed.rows : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedHomeRankRows(rows = []) {
+  try {
+    if (!Array.isArray(rows) || !rows.length) return;
+    sessionStorage.setItem(HOME_RANK_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), rows }));
+  } catch {}
+}
+
+function isHomeRankVisible(host) {
+  if (!host || document.visibilityState === "hidden") return false;
+  const screen = host.closest(".screen");
+  return !screen || screen.classList.contains("active");
 }
 
 function computeRowStates(rows, punchesSnap, worktimeSnap) {
@@ -518,6 +547,7 @@ async function loadHomeRank(host) {
 
   computeRowStates(rows, punchesSnap, worktimeSnap);
   renderRank(listEl, rows);
+  writeCachedHomeRankRows(rows);
 }
 
 export async function mountHomeRank(host) {
@@ -525,8 +555,15 @@ export async function mountHomeRank(host) {
   ensureStyle();
   host.innerHTML = HOME_RANK_HTML;
 
+  const cachedRows = readCachedHomeRankRows();
+  if (cachedRows && cachedRows.length) {
+    const listEl = host.querySelector("#homeRankList");
+    renderRank(listEl, cachedRows);
+  }
+
   const refresh = async () => {
     try {
+      if (!isHomeRankVisible(host)) return;
       await loadHomeRank(host);
     } catch (error) {
       const listEl = host.querySelector("#homeRankList");
@@ -545,4 +582,14 @@ export async function mountHomeRank(host) {
       console.error("Home Rank refresh error:", error);
     });
   }, AUTO_REFRESH_MS);
+
+  if (!visibilityRefreshBound) {
+    visibilityRefreshBound = true;
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "visible") return;
+      refresh().catch((error) => {
+        console.error("Home Rank visibility refresh error:", error);
+      });
+    }, { passive: true });
+  }
 }

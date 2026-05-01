@@ -51,11 +51,11 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
+window.__TK_APP_VERSION__ = 'v20260501_1921_fast_cool_runtime';
     window.__TK_RT_ROLLOUT__ = {
-      enabled: true,
+      enabled: false,
       pageId: 'index',
-      checkMs: 30000,
+      checkMs: 120000,
       forceReloadOnVersionChange: false,
       enableModuleImport: false,
       versionUrl: './version.json',
@@ -16440,7 +16440,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
       CACHE_BUST_APPLIED_STORAGE_KEY,
     ];
     const APP_UPDATE_VERSION_URL = './version.json';
-    const APP_UPDATE_CHECK_MS = 30000;
+    const APP_UPDATE_CHECK_MS = 60000;
+    const API_SNAPSHOT_PREFIX = 'tk_api_snapshot_v1:';
+    const API_SNAPSHOT_DEFAULT_MAX_AGE_MS = 5 * 60 * 1000;
     const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
@@ -22607,7 +22609,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
         clearSalesAccessoryCatalogWarmTimer();
       }
       syncSalesAccessoryReadyPopupWatch({ immediate: false });
-      document.getElementById(`screen-${nextName}`)?.scrollTo({ top: 0, behavior: 'smooth' });
+      const activeScreenEl = document.getElementById(`screen-${nextName}`);
+      if (activeScreenEl && Number(activeScreenEl.scrollTop || 0) > 8) {
+        activeScreenEl.scrollTo({ top: 0, behavior: 'auto' });
+      }
       if (window.parent && window.parent !== window) {
         window.parent.postMessage({ type: 'thkd-pos-screen', screen: nextName }, window.location.origin);
       }
@@ -25120,6 +25125,43 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
     window.visualViewport?.addEventListener('resize', syncHomeLayoutVars);
     syncHomeLayoutVars();
 
+    function getApiSnapshotKey(path = '') {
+      return `${API_SNAPSHOT_PREFIX}${String(path || '').trim()}`;
+    }
+
+    function readApiSnapshot(path = '', maxAgeMs = API_SNAPSHOT_DEFAULT_MAX_AGE_MS) {
+      const key = getApiSnapshotKey(path);
+      if (!key || key === API_SNAPSHOT_PREFIX) return null;
+      try {
+        const raw = sessionStorage.getItem(key);
+        if (!raw) return null;
+        const payload = JSON.parse(raw);
+        const savedAt = Number(payload?.savedAt || 0);
+        const ttl = Math.max(1000, Number(maxAgeMs || API_SNAPSHOT_DEFAULT_MAX_AGE_MS) || API_SNAPSHOT_DEFAULT_MAX_AGE_MS);
+        if (!savedAt || (Date.now() - savedAt) > ttl) return null;
+        return payload?.data && typeof payload.data === 'object' ? payload.data : null;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function writeApiSnapshot(path = '', data = null) {
+      if (!data || typeof data !== 'object') return;
+      const key = getApiSnapshotKey(path);
+      if (!key || key === API_SNAPSHOT_PREFIX) return;
+      try {
+        sessionStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), data }));
+      } catch (_) {}
+    }
+
+    function renderApiSnapshot(path = '', renderFn, maxAgeMs = API_SNAPSHOT_DEFAULT_MAX_AGE_MS) {
+      if (typeof renderFn !== 'function') return null;
+      const cached = readApiSnapshot(path, maxAgeMs);
+      if (!cached) return null;
+      try { renderFn(cached, { fromSnapshot: true }); } catch (_) {}
+      return cached;
+    }
+
     async function callApi(path, options = {}) {
       const sessionToken = (state.sessionToken || '').trim();
       const key = (state.internalKey || '').trim();
@@ -25154,6 +25196,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
         throw error;
       }
       if (data && typeof data === 'object' && data.actor) applyInternalActor(data.actor);
+      const method = String(options.method || 'GET').trim().toUpperCase();
+      if (method === 'GET' && options.cacheSnapshot !== false && Number(options.cacheTtlMs || 0) > 0) {
+        writeApiSnapshot(path, data);
+      }
       return data;
     }
 
@@ -25864,7 +25910,17 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
       state.supplierDebtLoading = true;
       if (!options.silent) setMsg(supplierScreenMsg, 'Đang tải nợ NCC...', '');
       try {
-        const data = await callApi('/internal/pos/supplier-debts/overview');
+        const path = '/internal/pos/supplier-debts/overview';
+        renderApiSnapshot(path, (snapshot) => {
+          state.supplierDebtSummary = snapshot.summary || {};
+          state.supplierDebtItems = Array.isArray(snapshot.topSuppliers) ? snapshot.topSuppliers : [];
+          state.supplierDebtActivities = Array.isArray(snapshot.recentActivities) ? snapshot.recentActivities : [];
+          state.supplierDebtFetchedAt = snapshot.fetchedAt || '';
+          renderSupplierDebtSummary(state.supplierDebtSummary, state.supplierDebtFetchedAt);
+          renderSupplierDebtList(state.supplierDebtItems);
+          renderSupplierDebtActivities(state.supplierDebtActivities);
+        });
+        const data = await callApi(path, { cacheTtlMs: API_SNAPSHOT_DEFAULT_MAX_AGE_MS });
         state.supplierDebtSummary = data.summary || {};
         state.supplierDebtItems = Array.isArray(data.topSuppliers) ? data.topSuppliers : [];
         state.supplierDebtActivities = Array.isArray(data.recentActivities) ? data.recentActivities : [];
@@ -26690,7 +26746,16 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
       }
       if (!options.silent) setMsg(customerScreenMsg, 'Đang tải công nợ khách...', '');
       try {
-        const data = await callApi('/internal/pos/customer-debts/overview');
+        const path = '/internal/pos/customer-debts/overview';
+        renderApiSnapshot(path, (snapshot) => {
+          state.customerDebtSummary = snapshot?.summary || {};
+          state.customerDebtItems = (Array.isArray(snapshot?.items) ? snapshot.items : []).map((item) => normalizeCustomerDebtItem(item)).filter((item) => item.id);
+          state.customerDebtFetchedAt = snapshot?.fetchedAt || new Date().toISOString();
+          renderCustomerDebtSummary(state.customerDebtSummary, state.customerDebtFetchedAt);
+          renderCustomerDebtList(state.customerDebtItems);
+          if (options.preserveActive && state.customerDebtActiveId) renderCustomerDebtDetail();
+        });
+        const data = await callApi(path, { cacheTtlMs: API_SNAPSHOT_DEFAULT_MAX_AGE_MS });
         state.customerDebtSummary = data?.summary || {};
         state.customerDebtItems = (Array.isArray(data?.items) ? data.items : []).map((item) => normalizeCustomerDebtItem(item)).filter((item) => item.id);
         state.customerDebtFetchedAt = data?.fetchedAt || new Date().toISOString();
@@ -27128,13 +27193,23 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
     }
 
     async function loadSupplierReturnSources(options = {}) {
-      const data = await callApi('/internal/pos/supplier-returns/sources');
+      const path = '/internal/pos/supplier-returns/sources';
+      renderApiSnapshot(path, (snapshot) => {
+        state.supplierReturnSourceReceipts = Array.isArray(snapshot.items) ? snapshot.items : [];
+        renderSupplierReturnSourceList(state.supplierReturnSourceReceipts);
+      });
+      const data = await callApi(path, { cacheTtlMs: API_SNAPSHOT_DEFAULT_MAX_AGE_MS });
       state.supplierReturnSourceReceipts = Array.isArray(data.items) ? data.items : [];
       renderSupplierReturnSourceList(state.supplierReturnSourceReceipts);
     }
 
     async function loadRecentSupplierReturnItems(options = {}) {
-      const data = await callApi('/internal/pos/supplier-returns/recent');
+      const path = '/internal/pos/supplier-returns/recent';
+      renderApiSnapshot(path, (snapshot) => {
+        state.supplierReturnRecent = Array.isArray(snapshot.items) ? snapshot.items : [];
+        renderRecentSupplierReturns(state.supplierReturnRecent);
+      });
+      const data = await callApi(path, { cacheTtlMs: API_SNAPSHOT_DEFAULT_MAX_AGE_MS });
       state.supplierReturnRecent = Array.isArray(data.items) ? data.items : [];
       renderRecentSupplierReturns(state.supplierReturnRecent);
     }
@@ -27793,7 +27868,14 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
     };
 
     async function loadDashboard() {
-      const data = await callApi('/internal/pos/dashboard');
+      const path = '/internal/pos/dashboard';
+      renderApiSnapshot(path, (snapshot) => {
+        renderDashboard(snapshot.summary || {});
+        state.recentOrders = snapshot.recentOrders || [];
+        renderRecentOrders(state.recentOrders);
+        if (!state.printPreviewOrder && state.recentOrders.length) renderPrintPreview(state.recentOrders[0]);
+      });
+      const data = await callApi(path, { cacheTtlMs: API_SNAPSHOT_DEFAULT_MAX_AGE_MS });
       renderDashboard(data.summary || {});
       state.recentOrders = data.recentOrders || [];
       renderRecentOrders(state.recentOrders);
@@ -27803,20 +27885,33 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
     }
 
     async function loadRecentPurchases() {
-      const data = await callApi('/internal/pos/purchase/recent');
+      const path = '/internal/pos/purchase/recent';
+      renderApiSnapshot(path, (snapshot) => {
+        state.recentPurchases = snapshot.items || [];
+        renderRecentPurchases(state.recentPurchases, { updateHome: true });
+      });
+      const data = await callApi(path, { cacheTtlMs: API_SNAPSHOT_DEFAULT_MAX_AGE_MS });
       state.recentPurchases = data.items || [];
       renderRecentPurchases(state.recentPurchases, { updateHome: true });
     }
 
     async function loadStockSummary() {
-      const data = await callApi('/internal/pos/stock/summary');
+      const path = '/internal/pos/stock/summary';
+      renderApiSnapshot(path, (snapshot) => renderStockSummary(snapshot.summary || {}));
+      const data = await callApi(path, { cacheTtlMs: API_SNAPSHOT_DEFAULT_MAX_AGE_MS });
       renderStockSummary(data.summary || {});
       return data.summary || {};
     }
 
     async function searchStockImeis(query = '', options = {}) {
       if (!options.silent) stockImeiListEl.innerHTML = '<div class="empty">Đang tải tồn kho IMEI...</div>';
-      const data = await callApi(`/internal/pos/stock/imei?query=${encodeURIComponent(query)}`);
+      const path = `/internal/pos/stock/imei?query=${encodeURIComponent(query)}`;
+      renderApiSnapshot(path, (snapshot) => {
+        state.stockImeis = snapshot.items || [];
+        state.stockImeiMeta = snapshot.meta || null;
+        renderStockImeis(state.stockImeis);
+      }, 2 * 60 * 1000);
+      const data = await callApi(path, { cacheTtlMs: 2 * 60 * 1000 });
       state.stockImeis = data.items || [];
       state.stockImeiMeta = data.meta || null;
       renderStockImeis(state.stockImeis);
@@ -27825,7 +27920,13 @@ window.__TK_APP_VERSION__ = 'v20260501_1918_cold_boot_splash';
 
     async function searchStockAccessories(query = '', options = {}) {
       if (!options.silent) stockAccessoryListEl.innerHTML = '<div class="empty">Đang tải tồn kho phụ kiện...</div>';
-      const data = await callApi(`/internal/pos/stock/accessories?query=${encodeURIComponent(query)}`);
+      const path = `/internal/pos/stock/accessories?query=${encodeURIComponent(query)}`;
+      renderApiSnapshot(path, (snapshot) => {
+        state.stockAccessories = snapshot.items || [];
+        state.stockAccessoryMeta = snapshot.meta || null;
+        renderStockAccessories(state.stockAccessories);
+      }, 2 * 60 * 1000);
+      const data = await callApi(path, { cacheTtlMs: 2 * 60 * 1000 });
       state.stockAccessories = data.items || [];
       state.stockAccessoryMeta = data.meta || null;
       renderStockAccessories(state.stockAccessories);
