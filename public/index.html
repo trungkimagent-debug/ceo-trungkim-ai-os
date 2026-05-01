@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
+window.__TK_APP_VERSION__ = 'v20260501_2238_sales_quick_main_tab';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -13851,7 +13851,42 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
     /* Pin the whole Sales screen to viewport while the gift/accessory popup is open.
        Some mobile shells make fixed children relative to the screen panel; pinning the
        parent removes the black top gap from the hidden app shell. */
+    #screen-quick.sales-quick-screen {
+      align-content: start;
+      padding-top: 8px;
+    }
+
+    .sales-quick-main-panel {
+      display: grid;
+      gap: 12px;
+      background: linear-gradient(145deg, rgba(15,23,42,0.94), rgba(3,7,18,0.98));
+      border: 1px solid rgba(250,204,21,0.22);
+      box-shadow: 0 18px 42px rgba(0,0,0,0.28);
+    }
+
+    .sales-quick-main-panel .section-title h3 {
+      color: #fef3c7;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sales-quick-open-btn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 18px;
+      font-weight: 900;
+    }
+
+    .sales-quick-note {
+      margin: 0;
+      color: rgba(248,250,252,0.68);
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(250,204,21,0.16);
+    }
+
     body.sales-accessory-popup-shell-hidden #screen-sales {
+      display: grid !important;
       position: fixed !important;
       inset: 0 !important;
       width: 100vw !important;
@@ -15475,8 +15510,8 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
         <h2>Bấm ít, ra việc nhanh.</h2>
         <p>Style gọn, icon nhiều, ưu tiên thao tác một tay.</p>
         <div class="hero-actions">
-          <div class="cta-card" data-go="sales">
-            <strong><i class="fa-solid fa-cart-shopping"></i> Bán nhanh</strong>
+          <div class="cta-card" data-go="quick">
+            <strong><i class="fa-solid fa-bolt"></i> Bán nhanh</strong>
             <span>Đơn</span>
           </div>
           <div class="cta-card" data-go="purchase">
@@ -15543,6 +15578,20 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="screen-quick" class="screen sales-quick-screen">
+      <div class="panel sales-quick-main-panel">
+        <div class="section-title">
+          <div>
+            <h3><i class="fa-solid fa-bolt"></i> Bán nhanh</h3>
+            <p>Tab riêng ở app chính: mở danh sách sản phẩm không IMEI, chọn số lượng rồi gửi kho xuất hàng.</p>
+          </div>
+          <span class="tag">Quick</span>
+        </div>
+        <button id="quickSalesOpenBtn" type="button" class="btn btn-primary sales-quick-open-btn"><i class="fa-solid fa-bolt"></i> Mở Bán nhanh</button>
+        <div class="empty sales-quick-note">Bấm tab này sẽ mở thẳng màn chọn sản phẩm full màn. Nếu đã đóng, bấm nút trên để mở lại.</div>
       </div>
     </section>
 
@@ -16907,6 +16956,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
     <button data-screen="posgoc"><i class="fa-solid fa-screwdriver-wrench"></i><span>POS</span></button>
     <button data-screen="thumay"><i class="fa-solid fa-mobile-screen-button"></i><span>Thu máy</span></button>
     <button data-screen="sales"><i class="fa-solid fa-cart-shopping"></i><span>Bán</span></button>
+    <button data-screen="quick"><i class="fa-solid fa-bolt"></i><span>Bán nhanh</span></button>
     <button data-screen="purchase"><i class="fa-solid fa-box-open"></i><span>Nhập</span></button>
     <button data-screen="stock"><i class="fa-solid fa-boxes-stacked"></i><span>Kho</span></button>
     <button data-screen="star"><i class="fa-solid fa-star"></i><span>Star</span></button>
@@ -16958,13 +17008,13 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
     const BATTERY_SAVER_MEMORY_GB = 4;
     const UI_INPUT_DEBOUNCE_MS = 90;
     const UI_INPUT_DEBOUNCE_BATTERY_MS = 160;
-    const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
+    const POS_SCREEN_KEYS = ['home', 'sales', 'quick', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
       ceo: [...POS_SCREEN_KEYS],
       admin: [...POS_SCREEN_KEYS],
-      manager: ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'star'],
-      staff: ['home', 'sales', 'stock', 'print', 'posgoc'],
+      manager: ['home', 'sales', 'quick', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'star'],
+      staff: ['home', 'sales', 'quick', 'stock', 'print', 'posgoc'],
     };
     const ALLOWED_SCREENS = new Set(POS_SCREEN_KEYS);
     const urlParams = new URLSearchParams(window.location.search);
@@ -17003,6 +17053,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
       salesMode: 'menu',
       salesFlowTicketCode: '',
       salesFlowTicketMode: '',
+      salesQuickMainTabDismissed: false,
       salesRequestFilter: 'waiting',
       salesRequestQuery: '',
       salesRequestFilterTimer: 0,
@@ -21440,7 +21491,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
       setMsg(salesMsg, copy.createdMsg(state.salesAccessoryFlow.requestCode), 'ok');
     }
 
-    async function startSalesAccessoryPopupFlow() {
+    async function startSalesAccessoryPopupFlow(options = {}) {
       const createSeq = ++salesAccessoryPopupCreateSeq;
       const saleMode = normalizeSalesAccessorySaleMode(state.salesFlowTicketMode);
       const copy = getSalesAccessoryModeCopy(saleMode);
@@ -21457,7 +21508,8 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
       renderSalesFlowTicketBadge();
       setSalesScreenMode('accessory');
       renderCart();
-      openScreen('sales');
+      const hostScreen = String(options.hostScreen || (saleMode === 'quick_menu' && state.activeScreen === 'quick' ? 'quick' : 'sales')).trim() || 'sales';
+      if (state.activeScreen !== hostScreen) openScreen(hostScreen);
       if (salesAccessoryPopupSearchInput) salesAccessoryPopupSearchInput.value = '';
       loadSalesAccessoryCatalog('').catch((error) => {
         setMsg(salesMsg, error.message || String(error), 'error');
@@ -22662,6 +22714,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
         print: 'Thu hộ tiền góp Realtime',
         posgoc: 'POS sửa máy app chính',
         sales: 'Bán hàng Realtime',
+        quick: 'Bán nhanh app chính',
         purchase: 'Nhập hàng Realtime',
         stock: 'Tồn kho Realtime',
         returns: 'Trả hàng nhập Realtime',
@@ -22696,6 +22749,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
         posgoc: 'POS',
         thumay: 'Thu máy',
         sales: 'Bán',
+        quick: 'Bán nhanh',
         purchase: 'Nhập',
         stock: 'Kho',
         star: 'Star',
@@ -23265,6 +23319,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
       const role = String(actor?.role || '').trim().toLowerCase();
       const merged = new Set((Array.isArray(screens) ? screens : []).map((screen) => String(screen || '').trim().toLowerCase()).filter(Boolean));
       if (merged.has('print')) merged.add('posgoc');
+      if (merged.has('sales')) merged.add('quick');
       if (['chairman', 'ceo', 'admin'].includes(role)) {
         POS_SCREEN_KEYS.forEach((screen) => merged.add(screen));
       }
@@ -23682,6 +23737,16 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
         clearStockAutoRefreshTimer();
         syncStockAccessoryRequestBackgroundWatch();
       }
+      if (nextName === 'quick') {
+        renderSalesAccessoryFlow();
+        syncSalesAccessoryFlowRealtimeWatch();
+        if (!state.salesAccessoryPopupOpen && !state.salesQuickMainTabDismissed) {
+          window.setTimeout(() => {
+            if (state.activeScreen !== 'quick' || state.salesAccessoryPopupOpen || state.salesQuickMainTabDismissed) return;
+            openSalesQuickMainTab().catch((error) => setMsg(salesMsg, error.message || String(error), 'error'));
+          }, 60);
+        }
+      }
       if (nextName === 'sales') {
         renderSalesAccessoryFlow();
         syncSalesAccessoryFlowRealtimeWatch();
@@ -23689,7 +23754,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
           loadSalesAccessoryPendingFinalizeQueue({ silent: true, preserveFocus: true }).catch(() => {});
           if (!state.salesAccessoryPopupOpen) scheduleSalesAccessoryCatalogWarm(1200);
         }, 160);
-      } else {
+      } else if (nextName !== 'quick') {
         stopSalesAccessoryFlowRealtimeWatch();
         clearSalesAccessoryPendingAutoRefreshTimer();
         clearSalesAccessoryPendingWarmTimer();
@@ -26205,6 +26270,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
     }
 
     navButtons.forEach((button) => button.addEventListener('click', () => {
+      if (String(button.dataset.screen || '').trim() === 'quick') state.salesQuickMainTabDismissed = false;
       const targetHref = String(button.dataset.href || '').trim();
       if (targetHref) {
         closeLandscapeNavDrawer({ sync: false });
@@ -26213,7 +26279,10 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
       }
       openScreen(button.dataset.screen);
     }));
-    goButtons.forEach(button => button.addEventListener('click', () => openScreen(button.dataset.go)));
+    goButtons.forEach(button => button.addEventListener('click', () => {
+      if (String(button.dataset.go || '').trim() === 'quick') state.salesQuickMainTabDismissed = false;
+      openScreen(button.dataset.go);
+    }));
     topbarLogoBtn?.addEventListener('click', () => toggleLandscapeNavDrawer());
     topbarLogoBtn?.addEventListener('keydown', (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -31185,6 +31254,8 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
     });
 
     async function closeSalesQuickPopupToQueue() {
+      const returnScreen = state.activeScreen === 'quick' ? 'quick' : 'sales';
+      state.salesQuickMainTabDismissed = returnScreen === 'quick';
       state.cart = [];
       state.salesAccessoryCatalog = [];
       state.salesAccessoryPopupOpen = false;
@@ -31195,10 +31266,25 @@ window.__TK_APP_VERSION__ = 'v20260501_2234_sales_quick_menu_non_imei';
       resetSalesFlowTicket();
       setSalesScreenMode('menu');
       renderCart();
-      openScreen('sales');
+      openScreen(returnScreen);
       await loadSalesAccessoryPendingFinalizeQueue({ silent: true, filter: 'waiting', preserveFocus: true }).catch(() => {});
       setMsg(salesMsg, 'Đã đóng Bán nhanh. Danh sách phiếu tạm đang hiển thị bên dưới.', 'ok');
     }
+
+    async function openSalesQuickMainTab() {
+      state.salesQuickMainTabDismissed = false;
+      if (state.salesAccessoryPopupOpen && isSalesAccessoryQuickMode()) {
+        syncSalesAccessoryPopupUi();
+        return;
+      }
+      resetSalesFlowTicket();
+      state.salesFlowTicketMode = 'quick_menu';
+      await startSalesAccessoryPopupFlow({ hostScreen: 'quick' });
+    }
+
+    document.getElementById('quickSalesOpenBtn')?.addEventListener('click', () => {
+      openSalesQuickMainTab().catch((error) => setMsg(salesMsg, error.message || String(error), 'error'));
+    });
 
     function closeSalesProductPicker() {
       state.salesProductPickerOpen = false;

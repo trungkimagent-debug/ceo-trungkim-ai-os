@@ -1,7 +1,8 @@
 {
-  "version": "v20260501_2234_sales_quick_menu_non_imei",
-  "updatedAt": "2026-05-01T15:34:00.000Z",
+  "version": "v20260501_2238_sales_quick_main_tab",
+  "updatedAt": "2026-05-01T15:38:44.000Z",
   "changedModules": [
+    "sales-quick-main-app-tab",
     "sales-quick-menu-non-imei",
     "sales-product-first-picker",
     "popup-pin-screen-full-viewport",

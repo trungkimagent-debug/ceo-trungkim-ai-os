@@ -220,3 +220,12 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Added `exchange_menu` as an accessory-style sale mode for “Đổi phụ kiện” labels and receipt/history copy.
 - Preserve: cart structure, warehouse request endpoint, pending queue, full-screen/no-vertical-scroll popup behavior, and production artifact count.
 - Verification marker/version: `v20260501_2216_sales_product_first_picker`.
+## 2026-05-01 — Sales quick as main app tab
+
+- Trigger: Chủ tịch clarified “thêm menu và tạo tap ở app chính”, not only inside the Sales/Bán menu.
+- Added top-level app screen `#screen-quick` and bottom nav button `data-screen="quick"` labeled `Bán nhanh`, while keeping the existing Sales menu item.
+- `Bán nhanh` main tab auto-opens the existing full-screen non-IMEI/accessory picker in `quick_menu` mode; closing it returns to the new quick tab with a reopen button instead of forcing the Sales tab.
+- Permission model updated: `quick` is in `POS_SCREEN_KEYS`, default manager/staff screens, labels/slogan, and any account allowed `sales` also receives `quick`.
+- Preserve: checkout payload, warehouse request endpoints, cart structure, stock queue, and existing Sales tab flows unchanged.
+- Verification marker/version: `v20260501_2238_sales_quick_main_tab`.
+

@@ -29,6 +29,7 @@ Generated after production incident on 2026-05-01. Treat this as the baseline be
 | `posgoc` | POS | `#screen-posgoc`, `pos-goc*.js/html/css`, `pos*.js/html` |
 | `thumay` | Thu máy | `#screen-thumay`, `thumay*.js/html`, `legacy-core/thumay-repo.js` |
 | `sales` | Bán | `#screen-sales` inside `index.html` |
+| `quick` | Bán nhanh | `#screen-quick` main tab; opens Sales `quick_menu` full-screen non-IMEI picker hosted by `#screen-sales` popup |
 | `purchase` | Nhập | `#screen-purchase` inside `index.html` |
 | `stock` | Kho | `#screen-stock` inside `index.html` |
 | `star` | Star | `#screen-star`, dynamic import `./star-native.js`, `star-*` files |
