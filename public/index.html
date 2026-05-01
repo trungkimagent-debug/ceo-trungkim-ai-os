@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1733_customer_debt_type_filter';
+window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5761,6 +5761,211 @@ window.__TK_APP_VERSION__ = 'v20260501_1733_customer_debt_type_filter';
       #screen-customer .customer-settlement-summary-bar > div { min-height: 58px; border-radius: 17px; }
       #screen-customer .customer-settlement-card { width: calc(100% - 16px); margin-inline: 8px; padding: 10px; border-radius: 17px; }
       #screen-customer .customer-settlement-list { gap: 8px; padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); }
+    }
+
+
+    /* Nợ KH • executive header polish: calmer, cleaner, less "game dashboard" */
+    .topbar[data-screen="customer"] {
+      margin: calc(7px + env(safe-area-inset-top, 0px)) 8px 5px;
+      padding: 5px 6px;
+      border-radius: 19px;
+      border: 1px solid rgba(245, 198, 96, 0.18);
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.055), rgba(255,255,255,0) 34%),
+        linear-gradient(180deg, rgba(17,17,17,0.94), rgba(7,7,7,0.94));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), 0 12px 34px rgba(0,0,0,.34);
+      backdrop-filter: blur(18px) saturate(1.08);
+      -webkit-backdrop-filter: blur(18px) saturate(1.08);
+      overflow: hidden;
+    }
+
+    .topbar[data-screen="customer"] .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 198, 96, 0.34);
+      box-shadow: 0 0 0 3px rgba(245,198,96,.055), 0 10px 24px rgba(0,0,0,.38);
+    }
+
+    .topbar[data-screen="customer"] .brand-logo-trigger::after {
+      right: -3px;
+      bottom: -3px;
+      width: 17px;
+      height: 17px;
+      background: linear-gradient(135deg, #ffe39a, #d69523);
+      border-color: rgba(8,8,8,.55);
+      box-shadow: 0 6px 14px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.42);
+    }
+
+    .topbar[data-screen="customer"] .brand-name {
+      font-size: clamp(11.6px, 3.14vw, 13.6px);
+      letter-spacing: .012em;
+      color: #fff4d3;
+      text-shadow: none;
+    }
+
+    .topbar[data-screen="customer"] .brand-slogan {
+      margin-top: 1px;
+      font-size: clamp(9px, 2.35vw, 10.2px);
+      color: rgba(255, 231, 170, 0.58);
+      letter-spacing: 0;
+      font-weight: 750;
+      opacity: 1;
+    }
+
+    .topbar[data-screen="customer"] .user-shell {
+      height: 36px;
+      border-radius: 14px;
+      border-color: rgba(245, 198, 96, 0.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+    }
+
+    .topbar[data-screen="customer"] .chairman-satellite-btn {
+      width: 36px;
+      color: #d9e7ff;
+      background: linear-gradient(180deg, rgba(42, 86, 165, 0.34), rgba(16, 29, 58, 0.30));
+      box-shadow: inset 0 1px 0 rgba(191,219,254,0.16);
+    }
+
+    .topbar[data-screen="customer"] .staff-name-btn {
+      color: #fff2c4;
+      background: linear-gradient(180deg, rgba(245,198,96,.12), rgba(245,198,96,.04));
+      letter-spacing: .012em;
+    }
+
+    .topbar[data-screen="customer"] .logout-btn {
+      width: 34px;
+      color: rgba(255, 209, 209, 0.88);
+      background: linear-gradient(180deg, rgba(148, 44, 64, 0.30), rgba(64, 16, 26, 0.22));
+    }
+
+    #screen-customer .customer-settlement-summary-hero {
+      padding: 8px 9px 5px;
+      gap: 9px;
+    }
+
+    #screen-customer .customer-settlement-summary-hero > div {
+      min-height: 58px;
+      border-radius: 20px;
+      border-color: rgba(245, 198, 96, 0.18);
+      background:
+        linear-gradient(120deg, rgba(255,255,255,.05), rgba(255,255,255,0) 40%),
+        linear-gradient(180deg, rgba(20,19,17,.82), rgba(9,9,9,.82));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.065), 0 10px 24px rgba(0,0,0,.28);
+    }
+
+    #screen-customer .customer-settlement-summary-hero > div::before {
+      top: 11px;
+      bottom: 11px;
+      width: 3px;
+      opacity: .88;
+      box-shadow: 0 0 12px rgba(245,198,96,.22);
+    }
+
+    #screen-customer .customer-settlement-summary-hero span {
+      color: rgba(255, 247, 223, 0.50);
+      font-size: 8.6px;
+      letter-spacing: .085em;
+    }
+
+    #screen-customer .customer-settlement-summary-hero strong {
+      font-size: clamp(15px, 4.15vw, 18px);
+      letter-spacing: -.035em;
+    }
+
+    #screen-customer .customer-settlement-titlebar {
+      padding: 5px 11px 4px;
+      align-items: center;
+    }
+
+    #screen-customer .customer-settlement-titlebar h3 {
+      color: rgba(255, 247, 223, 0.64);
+      font-size: 11px;
+      letter-spacing: .06em;
+    }
+
+    #screen-customer .customer-settlement-titlebar h3::after {
+      padding: 2px 6px;
+      border-color: rgba(245, 198, 96, 0.18);
+      background: rgba(245, 198, 96, 0.055);
+      color: rgba(255, 231, 170, 0.68);
+      box-shadow: none;
+    }
+
+    #screen-customer .customer-settlement-actions { gap: 7px; }
+
+    #screen-customer .customer-settlement-icon-btn,
+    #screen-customer .customer-settlement-download {
+      border-color: rgba(245, 198, 96, 0.18);
+      background: linear-gradient(180deg, rgba(24,23,21,.76), rgba(10,10,10,.76));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 8px 18px rgba(0,0,0,.24);
+    }
+
+    #screen-customer .customer-settlement-icon-btn.primary {
+      background: linear-gradient(135deg, #f9d77e 0%, #d69a2d 54%, #8f5614 100%);
+      box-shadow: 0 10px 20px rgba(218,156,48,.18), inset 0 1px 0 rgba(255,255,255,.36);
+    }
+
+    #screen-customer .customer-settlement-search-row {
+      padding: 4px 9px 9px;
+    }
+
+    #screen-customer .customer-settlement-search {
+      height: 42px;
+      border-radius: 16px;
+      border-color: rgba(245, 198, 96, 0.18);
+      background: rgba(8, 8, 8, 0.56);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.052), 0 9px 22px rgba(0,0,0,.25);
+    }
+
+    @media (max-width: 640px) {
+      .topbar[data-screen="customer"] {
+        margin: calc(5px + env(safe-area-inset-top, 0px)) 7px 5px;
+        padding: 5px 6px;
+        border-radius: 18px;
+      }
+
+      .topbar[data-screen="customer"] .brand-left {
+        gap: 7px;
+        padding-right: 4px;
+      }
+
+      .topbar[data-screen="customer"] .brand-logo {
+        width: 37px;
+        height: 37px;
+      }
+
+      .topbar[data-screen="customer"] .brand-name {
+        font-size: clamp(11px, 3.08vw, 12.6px);
+      }
+
+      .topbar[data-screen="customer"] .brand-slogan {
+        font-size: clamp(8.7px, 2.28vw, 9.7px);
+      }
+
+      .topbar[data-screen="customer"] .user-right {
+        max-width: min(32vw, 160px);
+      }
+
+      .topbar[data-screen="customer"] .user-shell { height: 34px; }
+      .topbar[data-screen="customer"] .chairman-satellite-btn { width: 34px; }
+      .topbar[data-screen="customer"] .staff-name-btn { max-width: min(21vw, 102px); padding-inline: 7px; }
+      .topbar[data-screen="customer"] .logout-btn { width: 32px; }
+
+      #screen-customer .customer-settlement-summary-hero {
+        padding: 7px 8px 5px;
+        gap: 8px;
+      }
+
+      #screen-customer .customer-settlement-summary-hero > div {
+        min-height: 54px;
+        border-radius: 18px;
+        padding: 8px 9px 8px 12px;
+      }
+
+      #screen-customer .customer-settlement-titlebar { padding: 4px 10px 4px; }
+      #screen-customer .customer-settlement-search { height: 41px; }
     }
 
     .supplier-debt-open,

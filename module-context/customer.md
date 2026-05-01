@@ -188,3 +188,9 @@ Last reviewed: 2026-05-01.
 - Added `#customerDebtTypeFilter` inside the search field with options `Tất cả`, `NCH`, `Credit`.
 - Normalization now derives `debtKinds` / `debtKindCodes` from debt entry names (`NCH`, `FE Credit`/`Credit`) and `getFilteredCustomerDebtItems()` filters by `state.customerDebtTypeFilter` without changing API payloads.
 - List rows render source chips instead of plain `NCH • FE Credit` text so the debt sources are visually separated.
+
+## 2026-05-01 — Executive header polish after screenshot criticism
+
+- User said the top area looked low-class/"kém sang" in the dark luxury Nợ KH screenshot.
+- Added scoped CSS polish for `.topbar[data-screen="customer"]` plus `#screen-customer .customer-settlement-summary-hero/titlebar/search`: calmer glass header, smaller circular logo, less garish employee/action buttons, lower glow, tighter premium KPI cards.
+- Scope is visual-only for Nợ KH active topbar and customer debt header area; no IDs, APIs, navigation handlers, or other screen logic changed.
