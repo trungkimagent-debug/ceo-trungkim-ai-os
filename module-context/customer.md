@@ -145,9 +145,3 @@ Last reviewed: 2026-05-01.
 - User corrected that phone screens are small and the Nợ KH detail popup must not feel desktop-sized.
 - Mobile CSS now makes `#customerDebtDetailModal` nearly full-width, trims card padding/gaps/radii, changes summary from 2+1 stacked cards to 3 compact columns, compresses detail rows, and puts amount + note fields on one row with 32px action buttons.
 - Scope remains CSS-only for Nợ KH detail/pay form plus version; no API/ID changes.
-
-## 2026-05-01 — Keyboard gap fix for mobile pay form
-
-- Screenshot showed a large gray overlay gap between `Thu tiền` pay card and the phone keyboard when amount/note input is focused.
-- Added scoped `customer-keyboard-open` state for `#customerDebtDetailModal`: on pay-field focus, modal anchors to bottom above visual keyboard, uses `visualViewport` to set `--tk-customer-keyboard-bottom`, hides summary/detail clutter while typing, and keeps only the compact pay card near keyboard.
-- JS listeners are scoped to `customerDebtPayAmount`/`customerDebtPayNote`; close/blur clears keyboard mode. No API or cross-tab changes.
