@@ -37,6 +37,16 @@ Generated after production incident on 2026-05-01. Treat this as the baseline be
 | `customer` | Nợ | `#screen-customer` inside `index.html` |
 | `team` | NV | `#screen-team` inside `index.html` |
 
+## Per-module reading/context rule
+
+Before modifying any requested tab/screen:
+
+1. Read the entire relevant section/module file(s) for that tab, not just a snippet.
+2. Identify dependencies, state variables, event handlers, API calls, dynamic imports, and shared CSS touched by that tab.
+3. Save a concise module note under `module-context/<screen>.md` with boundaries, key functions/selectors, safe edit points, and verification checks.
+4. On future edits to that tab, read its `module-context/<screen>.md` first, then only reopen source ranges needed to verify current code.
+5. Do not apply this context to unrelated tabs unless explicitly requested.
+
 ## Fast scoped deploy rule
 
 - "Deploy phần đó thôi" means: change only the requested tab/module files and avoid touching unrelated code.
