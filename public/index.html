@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
+window.__TK_APP_VERSION__ = 'v20260501_1733_customer_debt_type_filter';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -4807,6 +4807,66 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
       font-weight: 500;
     }
 
+    .customer-debt-type-filter {
+      height: 30px;
+      max-width: 96px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(245, 158, 11, 0.26);
+      border-radius: 999px;
+      background: linear-gradient(135deg, #fff7ed, #fef3c7);
+      color: #92400e;
+      padding: 0 25px 0 10px;
+      font-size: 11px;
+      font-weight: 900;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image:
+        linear-gradient(135deg, #fff7ed, #fef3c7),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2392400e' d='M1 0l4 4 4-4 1 1-5 5-5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat, no-repeat;
+      background-position: center, right 9px center;
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.14), inset 0 1px 0 rgba(255,255,255,0.72);
+    }
+
+    .customer-debt-type-filter:focus {
+      border-color: #f5c660;
+      box-shadow: 0 0 0 3px rgba(245, 198, 96, 0.14), 0 8px 18px rgba(245, 158, 11, 0.16);
+    }
+
+    .customer-debt-kind-tags {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .customer-debt-kind-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      max-width: 82px;
+      height: 20px;
+      padding: 0 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.18);
+      background: rgba(245, 158, 11, 0.08);
+      color: #92400e;
+      font-size: 10.5px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .customer-debt-kind-chip.credit {
+      border-color: rgba(99, 102, 241, 0.22);
+      background: rgba(99, 102, 241, 0.10);
+      color: #4f46e5;
+    }
+
     .customer-settlement-download {
       width: 44px;
       height: 42px;
@@ -5014,6 +5074,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
       .customer-settlement-filters { display: none; gap: 8px; padding: 0 14px 8px; }
       .customer-settlement-filters select { height: 40px; font-size: 13px; }
       .customer-settlement-search-row { grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; padding: 8px 10px 9px; }
+      .customer-debt-type-filter { max-width: 82px; height: 28px; padding-left: 8px; padding-right: 22px; font-size: 10px; }
       .customer-settlement-summary-bar { gap: 8px; padding: 0 8px 8px; }
       .customer-settlement-summary-bar > div { min-height: 50px; padding: 8px 8px 8px 11px; border-radius: 15px; }
       .customer-settlement-summary-bar span { font-size: 9px; }
@@ -5481,6 +5542,28 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
       color: rgba(255, 247, 223, 0.42);
     }
 
+    #screen-customer .customer-debt-type-filter {
+      border-color: rgba(245, 198, 96, 0.28);
+      background-image:
+        linear-gradient(135deg, rgba(255, 227, 154, 0.96), rgba(181, 108, 16, 0.96)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2315100a' d='M1 0l4 4 4-4 1 1-5 5-5-5z'/%3E%3C/svg%3E");
+      color: #15100a;
+      box-shadow: 0 8px 18px rgba(218, 156, 48, 0.20), inset 0 1px 0 rgba(255,255,255,0.38);
+    }
+
+    #screen-customer .customer-debt-kind-chip {
+      border-color: rgba(245, 198, 96, 0.28);
+      background: rgba(245, 198, 96, 0.11);
+      color: #f8d56b;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    #screen-customer .customer-debt-kind-chip.credit {
+      border-color: rgba(111, 241, 209, 0.24);
+      background: rgba(111, 241, 209, 0.09);
+      color: #6ff1d1;
+    }
+
     #screen-customer .customer-settlement-summary-bar {
       padding: 12px 10px 6px;
     }
@@ -5673,6 +5756,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
       #screen-customer .customer-settlement-titlebar h3 { font-size: 11px; }
       #screen-customer .customer-settlement-titlebar h3::after { font-size: 7px; padding: 2px 6px; margin-left: 5px; }
       #screen-customer .customer-settlement-search-row { padding: 4px 9px 9px; }
+      #screen-customer .customer-debt-type-filter { max-width: 78px; height: 28px; font-size: 9.5px; }
       #screen-customer .customer-settlement-summary-bar { padding: 11px 8px 6px; }
       #screen-customer .customer-settlement-summary-bar > div { min-height: 58px; border-radius: 17px; }
       #screen-customer .customer-settlement-card { width: calc(100% - 16px); margin-inline: 8px; padding: 10px; border-radius: 17px; }
@@ -14157,10 +14241,15 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
         </div>
 
         <div class="customer-settlement-search-row">
-          <label class="customer-settlement-search">
+          <div class="customer-settlement-search" role="search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input id="customerDebtSearch" type="search" placeholder="" autocomplete="off" />
-          </label>
+            <input id="customerDebtSearch" type="search" placeholder="" autocomplete="off" aria-label="Tìm khách hoặc mã đơn" />
+            <select id="customerDebtTypeFilter" class="customer-debt-type-filter" aria-label="Lọc loại công nợ">
+              <option value="all">Tất cả</option>
+              <option value="nch">NCH</option>
+              <option value="credit">Credit</option>
+            </select>
+          </div>
           <button id="customerDebtExportBtn" class="customer-settlement-download" type="button" aria-label="Xuất dữ liệu"><i class="fa-solid fa-download"></i></button>
         </div>
 
@@ -14822,6 +14911,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
       customerDebtSummary: null,
       customerDebtQuery: '',
       customerDebtStatusFilter: 'unpaid',
+      customerDebtTypeFilter: 'all',
       customerDebtFetchedAt: '',
       customerDebtLoading: false,
       customerDebtActiveId: '',
@@ -15524,6 +15614,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
     const customerDebtPaidEl = document.getElementById('customerDebtPaid');
     const customerDebtListMetaTopEl = document.getElementById('customerDebtListMetaTop');
     const customerDebtSearchInput = document.getElementById('customerDebtSearch');
+    const customerDebtTypeFilterSelect = document.getElementById('customerDebtTypeFilter');
     const customerDebtRefreshBtn = document.getElementById('customerDebtRefreshBtn');
     const customerDebtFilterBtns = Array.from(document.querySelectorAll('[data-customer-debt-filter]'));
     const customerDebtListTitleEl = document.getElementById('customerDebtListTitle');
@@ -24157,13 +24248,49 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
       return tokens.map((token) => token.charAt(0).toUpperCase()).join('');
     }
 
+    function getCustomerDebtKindCode(name = '') {
+      const raw = String(name || '').trim();
+      const text = normalizeSearch(raw);
+      if (!text) return '';
+      if (text.includes('credit') || text.includes('fe credit') || text.includes('fecredit')) return 'credit';
+      if (text.includes('nch')) return 'nch';
+      return 'other';
+    }
+
+    function getCustomerDebtKindLabel(code = '', fallback = '') {
+      if (code === 'credit') return 'Credit';
+      if (code === 'nch') return 'NCH';
+      return String(fallback || 'Khác').trim() || 'Khác';
+    }
+
+    function buildCustomerDebtKindTagsHtml(item = {}) {
+      const entries = Array.isArray(item.debtKinds) ? item.debtKinds : [];
+      const source = entries.length ? entries : (item.debtNames || []).map((name) => ({ code: getCustomerDebtKindCode(name), label: name }));
+      const chips = source
+        .filter((entry) => String(entry?.label || '').trim())
+        .slice(0, 3)
+        .map((entry) => {
+          const code = String(entry?.code || 'other').trim() || 'other';
+          const label = getCustomerDebtKindLabel(code, entry?.label);
+          return `<span class="customer-debt-kind-chip ${escapeHtml(code)}">${escapeHtml(label)}</span>`;
+        })
+        .join('');
+      return chips || `<span class="customer-debt-kind-chip other">${escapeHtml(item.note || item.orderCode || 'Khoản nợ')}</span>`;
+    }
+
     function normalizeCustomerDebtItem(item = {}) {
       const amount = Math.max(0, Number(item.amount || 0) || 0);
       const originalAmount = Math.max(amount, Number(item.originalAmount || 0) || 0);
       const paidAmount = Math.max(0, Number(item.paidAmount || Math.max(originalAmount - amount, 0)) || 0);
       const status = String(item.status || (amount > 0 ? 'unpaid' : 'paid')).trim().toLowerCase() === 'paid' ? 'paid' : 'unpaid';
       const debtEntries = Array.isArray(item.debtEntries) ? item.debtEntries : [];
-      const debtNames = Array.from(new Set(debtEntries.map((entry) => String(entry?.name || '').trim()).filter(Boolean)));
+      const fallbackDebtName = String(item.debtName || item.debtType || item.paymentMethodLabel || '').trim();
+      const debtNames = Array.from(new Set([
+        ...debtEntries.map((entry) => String(entry?.name || entry?.type || '').trim()).filter(Boolean),
+        fallbackDebtName,
+      ].filter(Boolean)));
+      const debtKinds = debtNames.map((name) => ({ code: getCustomerDebtKindCode(name), label: getCustomerDebtKindLabel(getCustomerDebtKindCode(name), name) }));
+      const debtKindCodes = Array.from(new Set(debtKinds.map((entry) => entry.code).filter(Boolean)));
       const customerName = String(item.debtCustomerName || item.customerName || '').trim() || 'Khách chưa rõ';
       const customerPhone = String(item.customerPhone || '').trim();
       const orderCode = String(item.orderCode || '').trim();
@@ -24182,6 +24309,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
         status,
         debtEntries,
         debtNames,
+        debtKinds,
+        debtKindCodes,
         customerName,
         customerPhone,
         orderCode,
@@ -24190,7 +24319,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
         ageDays,
         overdueDays,
         isOverdue,
-        searchText: normalizeSearch([customerName, customerPhone, orderCode, debtNames.join(' '), item.paymentMethodLabel || '', item.note || ''].join(' ')),
+        searchText: normalizeSearch([customerName, customerPhone, orderCode, debtNames.join(' '), debtKinds.map((entry) => entry.label).join(' '), item.paymentMethodLabel || '', item.note || ''].join(' ')),
       };
     }
 
@@ -24212,7 +24341,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
       const customerPhone = escapeHtml(item.customerPhone || 'KH');
       const orderCode = escapeHtml(item.orderCode || item.id || '--');
       const updatedAt = formatCustomerDebtDateTime(item.updatedAt || item.createdAt || item.dueDate || '');
-      const debtPreview = item.debtNames?.length ? escapeHtml(item.debtNames.slice(0, 2).join(' • ')) : escapeHtml(item.note || orderCode);
+      const debtPreview = buildCustomerDebtKindTagsHtml(item);
       const statusText = item.status === 'paid' ? 'Xong' : (item.isOverdue ? `QH ${item.overdueDays} ngày` : 'Nợ mở');
       const paidAmount = Math.max(0, Number(item.paidAmount || 0) || 0);
       const originalAmount = Math.max(Number(item.originalAmount || 0) || 0, paidAmount + Math.max(0, Number(item.amount || 0) || 0));
@@ -24225,7 +24354,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
           </div>
           <div class="customer-settlement-row">
             <span class="customer-settlement-label">Chi tiết</span>
-            <span class="customer-settlement-value">${debtPreview}</span>
+            <span class="customer-settlement-value customer-debt-kind-tags">${debtPreview}</span>
             <span class="customer-settlement-note">${customerPhone}</span>
           </div>
           <div class="customer-settlement-row">
@@ -24285,8 +24414,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
     function getFilteredCustomerDebtItems(items = state.customerDebtItems || []) {
       const query = normalizeSearch(state.customerDebtQuery || '');
       const filter = String(state.customerDebtStatusFilter || 'unpaid').trim().toLowerCase();
+      const typeFilter = String(state.customerDebtTypeFilter || 'all').trim().toLowerCase();
       return (Array.isArray(items) ? items : []).filter((item) => {
         if (query && !item.searchText.includes(query)) return false;
+        if (typeFilter !== 'all' && !(item.debtKindCodes || []).includes(typeFilter)) return false;
         if (filter === 'paid') return item.status === 'paid';
         if (filter === 'overdue') return item.isOverdue;
         if (filter === 'unpaid') return item.status !== 'paid';
@@ -24325,10 +24456,12 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
       const filtered = getFilteredCustomerDebtItems(items);
       const total = filtered.reduce((sum, item) => sum + Math.max(0, Number(item.amount || 0) || 0), 0);
       const filter = String(state.customerDebtStatusFilter || 'unpaid').trim().toLowerCase();
+      const typeFilter = String(state.customerDebtTypeFilter || 'all').trim().toLowerCase();
+      const typeLabel = typeFilter === 'nch' ? 'NCH' : typeFilter === 'credit' ? 'Credit' : 'Tất cả';
       if (customerDebtListTitleEl) {
         customerDebtListTitleEl.textContent = filter === 'overdue' ? 'Nợ quá hẹn' : filter === 'paid' ? 'Lịch sử thu nợ' : filter === 'all' ? 'Tất cả công nợ' : 'Nợ cần thu';
       }
-      if (customerDebtListMetaEl) customerDebtListMetaEl.textContent = `${filtered.length} khách • ${money(total)}`;
+      if (customerDebtListMetaEl) customerDebtListMetaEl.textContent = `${typeLabel} • ${filtered.length} khách • ${money(total)}`;
       customerDebtFilterBtns.forEach((button) => button.classList.toggle('active', button.dataset.customerDebtFilter === filter));
       if (!customerDebtListEl) return;
       if (!filtered.length) {
@@ -26706,6 +26839,11 @@ window.__TK_APP_VERSION__ = 'v20260501_1724_logo_side_nav_drawer';
 
     customerDebtSearchInput?.addEventListener('input', () => {
       state.customerDebtQuery = customerDebtSearchInput.value.trim();
+      renderCustomerDebtList(state.customerDebtItems || []);
+    });
+
+    customerDebtTypeFilterSelect?.addEventListener('change', () => {
+      state.customerDebtTypeFilter = String(customerDebtTypeFilterSelect.value || 'all').trim().toLowerCase() || 'all';
       renderCustomerDebtList(state.customerDebtItems || []);
     });
 

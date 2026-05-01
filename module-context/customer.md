@@ -181,3 +181,10 @@ Last reviewed: 2026-05-01.
 - User objected that `ĐÃ THU` / `CÒN NỢ` should be above the moon/briefcase action row and that raw title `Nợ KH` looked bad.
 - Reordered only `#screen-customer` DOM so summary KPI cards render first, above the title/actions/search.
 - Changed visible title copy from `Nợ KH` to compact `Công nợ khách hàng` with a smaller Realtime badge; kept all KPI IDs (`customerDebtPaid`, `customerDebtTotal`) and action IDs unchanged.
+
+## 2026-05-01 — NCH / Credit input-side filter
+
+- User pointed at mixed `NCH • FE Credit` rows and requested a selector inside the search input on the right to choose which debt source to view.
+- Added `#customerDebtTypeFilter` inside the search field with options `Tất cả`, `NCH`, `Credit`.
+- Normalization now derives `debtKinds` / `debtKindCodes` from debt entry names (`NCH`, `FE Credit`/`Credit`) and `getFilteredCustomerDebtItems()` filters by `state.customerDebtTypeFilter` without changing API payloads.
+- List rows render source chips instead of plain `NCH • FE Credit` text so the debt sources are visually separated.
