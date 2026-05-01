@@ -1,7 +1,10 @@
 {
-  "version": "v20260501_1408_customer_debt_pay_form_fix",
-  "updatedAt": "2026-05-01T14:08:00+0700",
+  "version": "v20260501_1418_customer_debt_mobile_fit",
+  "updatedAt": "2026-05-01T14:18:00+0700",
   "changedModules": [
+    "customer-debt-detail-summary-3col-mobile",
+    "customer-debt-pay-form-mobile-one-row",
+    "customer-debt-detail-mobile-fit",
     "customer-debt-detail-popup-input-frame-fix",
     "customer-debt-pay-form-visible-compact",
     "customer-debt-remove-obsolete-detail-css",

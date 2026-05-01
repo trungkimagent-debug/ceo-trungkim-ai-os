@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1408_customer_debt_pay_form_fix';
+window.__TK_APP_VERSION__ = 'v20260501_1418_customer_debt_mobile_fit';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5262,30 +5262,73 @@ window.__TK_APP_VERSION__ = 'v20260501_1408_customer_debt_pay_form_fix';
     }
 
     @media (max-width: 640px) {
-      #customerDebtDetailModal.open { padding: 6px; }
+      #customerDebtDetailModal.open {
+        padding: 4px;
+        align-items: stretch;
+      }
       #customerDebtDetailModal .customer-settlement-detail-card {
-        width: calc(100vw - 16px);
-        max-width: calc(100vw - 16px);
-        max-height: calc(100vh - 20px);
-        padding: 10px;
-        gap: 8px;
-        border-radius: 20px;
+        width: calc(100vw - 8px);
+        max-width: calc(100vw - 8px);
+        max-height: calc(100dvh - 8px);
+        margin: auto 0;
+        padding: 7px;
+        gap: 5px;
+        border-radius: 16px;
       }
-      .customer-settlement-detail-head { grid-template-columns: 34px minmax(0, 1fr) 34px; }
-      .customer-settlement-detail-back { width: 34px; height: 34px; border-radius: 11px; }
-      .customer-settlement-detail-title strong { font-size: 17px; }
-      .customer-settlement-detail-stat { min-height: 60px; padding: 8px; }
-      .customer-settlement-detail-stat.due { min-height: 50px; }
-      .customer-settlement-detail-stat strong { font-size: 16px; }
-      .customer-settlement-detail-item { padding: 8px; }
+      .customer-settlement-detail-head {
+        grid-template-columns: 30px minmax(0, 1fr) 30px;
+        gap: 5px;
+        padding: 1px 1px 0;
+      }
+      .customer-settlement-detail-back { width: 30px; height: 30px; border-radius: 9px; }
+      .customer-settlement-detail-title { gap: 1px; }
+      .customer-settlement-detail-title strong { font-size: 16px; line-height: 1.05; }
+      .customer-settlement-detail-title span { font-size: 9px; }
+      .customer-settlement-detail-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+      }
+      .customer-settlement-detail-stat,
+      .customer-settlement-detail-stat.due {
+        grid-column: auto;
+        min-height: 48px;
+        padding: 6px;
+        gap: 3px;
+        border-radius: 11px;
+      }
+      .customer-settlement-detail-stat small { gap: 4px; font-size: 8.5px; letter-spacing: .035em; }
+      .customer-settlement-detail-stat strong { font-size: 13px; line-height: 1; }
+      .customer-settlement-detail-stat span { font-size: 8.5px; }
+      .customer-settlement-detail-list { gap: 5px; }
+      .customer-settlement-detail-item { padding: 6px; gap: 4px; border-radius: 11px; }
       .customer-settlement-detail-item .customer-settlement-row {
-        grid-template-columns: minmax(54px, .62fr) minmax(0, 1.45fr) minmax(80px, .95fr);
+        grid-template-columns: minmax(46px, .58fr) minmax(0, 1.35fr) minmax(68px, .8fr);
+        min-height: 17px;
+        gap: 5px;
       }
-      .customer-settlement-pay-card { padding: 8px; gap: 6px; }
-      #customerDebtDetailModal .customer-settlement-pay-fields input { height: 34px; min-height: 34px; }
-      #customerDebtDetailModal .customer-settlement-pay-fields textarea { height: 36px; min-height: 36px; max-height: 36px; }
-      .customer-settlement-pay-actions { gap: 6px; }
-      .customer-settlement-pay-actions .btn { min-height: 36px; font-size: 11px; }
+      .customer-settlement-detail-item .customer-settlement-row-top {
+        grid-template-columns: 18px minmax(0, 1fr) minmax(70px, .72fr);
+      }
+      .customer-settlement-detail-item .customer-settlement-check { width: 16px; height: 16px; font-size: 8px; }
+      .customer-settlement-detail-item .customer-settlement-label { font-size: 9.5px; }
+      .customer-settlement-detail-item .customer-settlement-value { font-size: 10.5px; }
+      .customer-settlement-detail-item .customer-settlement-value.strong { font-size: 12px; }
+      .customer-settlement-detail-item .customer-settlement-money { font-size: 10.5px; }
+      .customer-settlement-detail-item .customer-settlement-date,
+      .customer-settlement-detail-item .customer-settlement-status { font-size: 8.5px; }
+      .customer-settlement-pay-card { padding: 6px; gap: 5px; border-radius: 11px; }
+      .customer-settlement-pay-head strong { font-size: 13px; gap: 5px; }
+      .customer-settlement-pay-fields {
+        grid-template-columns: .88fr 1.12fr;
+        gap: 5px;
+        align-items: end;
+      }
+      .customer-settlement-pay-fields label { gap: 3px; font-size: 9px; }
+      #customerDebtDetailModal .customer-settlement-pay-fields input { height: 30px; min-height: 30px; padding: 5px 8px; font-size: 12px; border-radius: 9px; }
+      #customerDebtDetailModal .customer-settlement-pay-fields textarea { height: 30px; min-height: 30px; max-height: 30px; padding: 6px 8px; font-size: 11px; border-radius: 9px; }
+      .customer-settlement-pay-actions { gap: 5px; grid-template-columns: .68fr .68fr 1fr; }
+      .customer-settlement-pay-actions .btn { min-height: 32px; border-radius: 10px; font-size: 10px; padding: 0 5px; gap: 4px; }
+      #customerDebtDetailMsg { margin: 0; font-size: 10px; line-height: 1.25; }
     }
 
     .supplier-debt-open,

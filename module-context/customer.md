@@ -139,3 +139,9 @@ Last reviewed: 2026-05-01.
 - Screenshot showed `Thu tiền` area looked blank because amount/note controls were too subtle and too tall.
 - Scoped CSS to `#customerDebtDetailModal .customer-settlement-pay-fields input/textarea` with stronger specificity and visible light-gray frames, dark text, compact heights, focus ring, and mobile compact overrides.
 - Only touched Nợ KH detail pay-form presentation plus app version; preserved all `customerDebt*` IDs, payment/reminder API flow, and unrelated tabs.
+
+## 2026-05-01 — Mobile-first detail fit correction
+
+- User corrected that phone screens are small and the Nợ KH detail popup must not feel desktop-sized.
+- Mobile CSS now makes `#customerDebtDetailModal` nearly full-width, trims card padding/gaps/radii, changes summary from 2+1 stacked cards to 3 compact columns, compresses detail rows, and puts amount + note fields on one row with 32px action buttons.
+- Scope remains CSS-only for Nợ KH detail/pay form plus version; no API/ID changes.
