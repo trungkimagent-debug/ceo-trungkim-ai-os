@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1438_customer_debt_tap_restore';
+window.__TK_APP_VERSION__ = 'v20260501_1641_customer_debt_stat_cards';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -4816,18 +4816,41 @@ window.__TK_APP_VERSION__ = 'v20260501_1438_customer_debt_tap_restore';
     .customer-settlement-summary-bar {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      min-height: 54px;
-      padding: 7px 12px;
-      background: linear-gradient(90deg, #ffa600 0%, #f59b00 46%, #e08300 100%);
-      color: #ffffff;
-      box-shadow: 0 12px 26px rgba(245, 158, 11, 0.18);
+      gap: 8px;
+      padding: 8px 12px 9px;
+      background: #f4f5f7;
+      color: #111827;
+      border-top: 1px solid #eef1f5;
     }
 
     .customer-settlement-summary-bar > div {
+      position: relative;
       display: grid;
       align-content: center;
       gap: 4px;
       min-width: 0;
+      min-height: 50px;
+      padding: 8px 10px 8px 12px;
+      border: 1px solid #e6e9ee;
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.045);
+      overflow: hidden;
+    }
+
+    .customer-settlement-summary-bar > div::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      border-radius: 999px;
+      background: #65d6bd;
+    }
+
+    .customer-settlement-summary-bar > div:last-child::before {
+      background: #f59e0b;
     }
 
     .customer-settlement-summary-bar > div:last-child {
@@ -4835,25 +4858,33 @@ window.__TK_APP_VERSION__ = 'v20260501_1438_customer_debt_tap_restore';
     }
 
     .customer-settlement-summary-bar span {
-      color: rgba(255,255,255,0.72);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      color: #8b95a5;
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
     }
 
     .customer-settlement-summary-bar strong {
       font-family: var(--font-num);
-      color: #ffffff;
-      font-size: 19px;
-      font-weight: 800;
-      line-height: 1.1;
+      color: #111827;
+      font-size: 17px;
+      font-weight: 850;
+      line-height: 1.08;
       white-space: nowrap;
+    }
+
+    .customer-settlement-summary-bar > div:first-child strong {
+      color: #10a989;
+    }
+
+    .customer-settlement-summary-bar > div:last-child strong {
+      color: #d97706;
     }
 
     .customer-settlement-list {
       display: grid;
       gap: 8px;
-      padding: 0 0 10px;
+      padding: 0 0 calc(96px + env(safe-area-inset-bottom, 0px));
       background: #f4f5f7;
     }
 
@@ -4980,7 +5011,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1438_customer_debt_tap_restore';
       .customer-settlement-filters { display: none; gap: 8px; padding: 0 14px 8px; }
       .customer-settlement-filters select { height: 40px; font-size: 13px; }
       .customer-settlement-search-row { grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; padding: 5px 12px 8px; }
-      .customer-settlement-summary-bar { min-height: 52px; padding: 7px 12px; }
+      .customer-settlement-summary-bar { gap: 8px; padding: 8px 10px 9px; }
+      .customer-settlement-summary-bar > div { min-height: 48px; padding: 7px 8px 7px 10px; border-radius: 13px; }
+      .customer-settlement-summary-bar span { font-size: 9px; }
+      .customer-settlement-summary-bar strong { font-size: 15px; }
       .customer-settlement-card { width: calc(100% - 20px); margin-inline: 10px; padding: 8px 10px; }
       .customer-settlement-download { width: 44px; height: 40px; }
       .customer-settlement-row { grid-template-columns: minmax(54px, 0.64fr) minmax(0, 1.58fr) minmax(78px, 0.95fr); }

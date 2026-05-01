@@ -151,3 +151,9 @@ Last reviewed: 2026-05-01.
 - User reported the pay controls could not be tapped after the keyboard-gap fix.
 - Reverted the `customer-keyboard-open` visualViewport focus reflow because changing/hiding modal sections during focus can cancel touch/focus on mobile browsers.
 - Restored the stable mobile-fit layout so amount/note fields are tappable; future keyboard handling must not mutate layout during the first focus event.
+
+## 2026-05-01 — Remove floating yellow summary slab
+
+- User screenshot criticized the Nợ KH yellow summary strip as a floating low-quality bar.
+- Replaced the full-width orange/yellow banner with two compact white stat cards using subtle left accent rails (green collected, amber remaining debt).
+- Added bottom safe padding to the Nợ KH list so fixed bottom nav no longer visually cuts through the final cards.
