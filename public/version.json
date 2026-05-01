@@ -1,7 +1,10 @@
 {
-  "version": "v20260501_1907_customer_debt_visible_top_controls",
-  "updatedAt": "2026-05-01T19:07:00+0700",
+  "version": "v20260501_1919_purchase_sync_debt_ui",
+  "updatedAt": "2026-05-01T19:19:00+0700",
   "changedModules": [
+    "purchase-dark-gold-list-modal",
+    "purchase-top-kpi-controls",
+    "purchase-sync-debt-ui",
     "customer-debt-single-top-control-row",
     "customer-debt-visible-top-controls",
     "customer-debt-chart-below-controls",

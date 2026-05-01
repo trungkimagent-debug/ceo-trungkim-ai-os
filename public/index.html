@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1907_customer_debt_visible_top_controls';
+window.__TK_APP_VERSION__ = 'v20260501_1919_purchase_sync_debt_ui';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5994,6 +5994,273 @@ window.__TK_APP_VERSION__ = 'v20260501_1907_customer_debt_visible_top_controls';
       #screen-customer .customer-settlement-search { height: 41px; }
     }
 
+
+
+
+
+    /* Nhập • sync visual language with Nợ KH dark/gold dashboard */
+    #screen-purchase.purchase-debt-sync-screen {
+      --purchase-sync-gold: #f5c660;
+      --purchase-sync-gold-2: #d69a2d;
+      --purchase-sync-text: #fff7df;
+      --purchase-sync-muted: rgba(255, 247, 223, 0.58);
+      --purchase-sync-border: rgba(245, 198, 96, 0.20);
+      --purchase-sync-panel: rgba(13, 13, 13, 0.74);
+      position: relative;
+      overflow: auto;
+      padding: 0 9px 92px;
+      background:
+        radial-gradient(circle at 16% -8%, rgba(245, 198, 96, 0.18), transparent 31%),
+        radial-gradient(circle at 92% 6%, rgba(255, 231, 170, 0.10), transparent 34%),
+        linear-gradient(180deg, #090909 0%, #11100e 42%, #050505 100%);
+      color: var(--purchase-sync-text);
+      border-radius: 0;
+    }
+
+    #screen-purchase.purchase-debt-sync-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.022) 0 1px, transparent 1px 72px);
+      opacity: .62;
+    }
+
+    #screen-purchase .purchase-debt-summary-bar {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      padding: 8px 0 5px;
+    }
+
+    #screen-purchase .purchase-debt-summary-bar > div {
+      position: relative;
+      min-height: 58px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      padding: 9px 10px 9px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(245, 198, 96, 0.18);
+      background:
+        linear-gradient(120deg, rgba(255,255,255,.05), rgba(255,255,255,0) 42%),
+        linear-gradient(180deg, rgba(20,19,17,.84), rgba(9,9,9,.86));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.065), 0 10px 24px rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+
+    #screen-purchase .purchase-debt-summary-bar > div::before {
+      content: '';
+      position: absolute;
+      top: 11px;
+      bottom: 11px;
+      left: 0;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #fbe7a8, #d89422);
+      box-shadow: 0 0 12px rgba(245,198,96,.24);
+    }
+
+    #screen-purchase .purchase-debt-summary-bar span {
+      color: rgba(255, 247, 223, 0.50);
+      font-size: 8.6px;
+      font-weight: 850;
+      letter-spacing: .085em;
+    }
+
+    #screen-purchase .purchase-debt-summary-bar strong {
+      color: var(--purchase-sync-text);
+      font-family: var(--font-num);
+      font-size: clamp(15px, 4.15vw, 18px);
+      line-height: 1.05;
+      letter-spacing: -.035em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #screen-purchase .purchase-debt-top-controls {
+      position: relative;
+      z-index: 12;
+      display: grid !important;
+      grid-template-columns: 40px minmax(0, 1fr);
+      align-items: center;
+      gap: 7px;
+      padding: 4px 0 9px;
+      background: transparent;
+    }
+
+    #screen-purchase .purchase-debt-top-controls .toolbar-btn,
+    #screen-purchase .purchase-debt-top-controls .search-inline-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 15px;
+      border: 1px solid rgba(245, 198, 96, 0.22);
+      background: linear-gradient(180deg, rgba(24,23,21,.76), rgba(10,10,10,.76));
+      color: var(--purchase-sync-gold);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 8px 18px rgba(0,0,0,.24);
+    }
+
+    #screen-purchase .purchase-debt-top-controls .search-inline-btn {
+      background: linear-gradient(135deg, #f9d77e 0%, #d69a2d 54%, #8f5614 100%);
+      color: #15100a;
+    }
+
+    #screen-purchase .purchase-debt-top-controls .search-box {
+      height: 42px;
+      min-width: 0;
+      border-radius: 16px;
+      border: 1px solid rgba(245, 198, 96, 0.18);
+      background: rgba(8, 8, 8, 0.56);
+      color: rgba(255, 231, 170, 0.82);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.052), 0 9px 22px rgba(0,0,0,.25);
+    }
+
+    #screen-purchase .purchase-debt-top-controls .search-box input {
+      color: var(--purchase-sync-text);
+      font-weight: 700;
+    }
+
+    #screen-purchase .purchase-debt-top-controls .search-box input::placeholder {
+      color: rgba(255, 247, 223, 0.42);
+    }
+
+    #screen-purchase > .purchase-list-panel {
+      position: relative;
+      z-index: 1;
+      min-height: calc(100vh - 250px - var(--safe-bottom));
+      padding: 10px 10px 14px;
+      border-radius: 24px;
+      border: 1px solid var(--purchase-sync-border);
+      background:
+        radial-gradient(circle at top left, rgba(245, 198, 96, .10), transparent 38%),
+        linear-gradient(180deg, rgba(18,17,15,.82), rgba(7,7,7,.88));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.065), 0 16px 34px rgba(0,0,0,.32);
+      backdrop-filter: blur(16px);
+    }
+
+    #screen-purchase > .purchase-list-panel .section-title {
+      margin-bottom: 8px;
+      color: var(--purchase-sync-text);
+    }
+
+    #screen-purchase > .purchase-list-panel .section-title h3 {
+      color: rgba(255, 247, 223, 0.86);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+    }
+
+    #screen-purchase > .purchase-list-panel .section-title p {
+      color: var(--purchase-sync-muted);
+      font-size: 10px;
+    }
+
+    #screen-purchase #purchaseCount {
+      border-color: rgba(245, 198, 96, 0.24);
+      background: rgba(245, 198, 96, 0.10);
+      color: #f8d56b;
+    }
+
+    #screen-purchase #recentPurchases {
+      gap: 8px;
+      padding-bottom: 18px;
+    }
+
+    #screen-purchase #recentPurchases .ticket,
+    #screen-purchase #recentPurchases .list-item,
+    #screen-purchase #recentPurchases .purchase-card,
+    #screen-purchase #recentPurchases [data-receipt-id] {
+      border-radius: 18px;
+      border-color: rgba(245, 198, 96, 0.16);
+      background: linear-gradient(180deg, rgba(24,23,21,.82), rgba(10,10,10,.88));
+      color: var(--purchase-sync-text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 10px 22px rgba(0,0,0,.24);
+    }
+
+    #screen-purchase #recentPurchases .ticket-icon,
+    #screen-purchase #recentPurchases .purchase-card-badge {
+      border-color: rgba(245,198,96,.28);
+      background: rgba(245,198,96,.10);
+      color: #f8d56b;
+    }
+
+    #screen-purchase #recentPurchases .ticket-chip {
+      border-color: rgba(245, 198, 96, 0.16);
+      background: rgba(245, 198, 96, 0.07);
+      color: rgba(255,247,223,.70);
+    }
+
+    #screen-purchase #recentPurchases .empty {
+      border-radius: 18px;
+      border-color: rgba(245,198,96,.20);
+      background: rgba(10,10,10,.54);
+      color: rgba(255,247,223,.58);
+    }
+
+    #purchaseModal .modal-card {
+      border-color: rgba(245, 198, 96, 0.20);
+      background:
+        radial-gradient(circle at 14% -10%, rgba(245,198,96,.14), transparent 32%),
+        linear-gradient(180deg, rgba(15,14,13,.97), rgba(5,5,5,.98));
+      color: var(--purchase-sync-text, #fff7df);
+    }
+
+    #purchaseModal .purchase-entry-head,
+    #purchaseModal .purchase-entry-panel {
+      border-color: rgba(245, 198, 96, 0.16);
+      background: linear-gradient(180deg, rgba(18,17,15,.88), rgba(8,8,8,.90));
+    }
+
+    #purchaseModal .purchase-entry-caption,
+    #purchaseModal label,
+    #purchaseModal .purchase-total-row span,
+    #purchaseModal .purchase-total-meta {
+      color: rgba(255, 247, 223, 0.58);
+    }
+
+    #purchaseModal .search-box,
+    #purchaseModal input,
+    #purchaseModal textarea,
+    #purchaseModal select,
+    #purchaseModal .supplier-title-btn,
+    #purchaseModal .purchase-receipt-mode-note {
+      border-color: rgba(245, 198, 96, 0.18);
+      background: rgba(8, 8, 8, 0.58);
+      color: var(--purchase-sync-text, #fff7df);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    #purchaseModal input::placeholder,
+    #purchaseModal textarea::placeholder {
+      color: rgba(255,247,223,.38);
+    }
+
+    #purchaseModal .purchase-total-row strong,
+    #purchaseModal .purchase-entry-kpis .kpi strong {
+      color: #f8d56b;
+    }
+
+    #purchaseModal .btn-primary,
+    #purchaseModal .search-inline-btn {
+      background: linear-gradient(135deg, #f9d77e 0%, #d69a2d 54%, #8f5614 100%);
+      color: #15100a;
+      border-color: rgba(255, 229, 157, 0.62);
+    }
+
+    body.purchase-accessory-workspace #screen-purchase > .purchase-debt-summary-bar {
+      display: none !important;
+    }
+
+    @media (max-width: 640px) {
+      #screen-purchase.purchase-debt-sync-screen { padding-inline: 8px; }
+      #screen-purchase .purchase-debt-summary-bar { gap: 8px; padding-top: 7px; }
+      #screen-purchase .purchase-debt-summary-bar > div { min-height: 54px; border-radius: 18px; padding: 8px 9px 8px 12px; }
+      #screen-purchase > .purchase-list-panel { border-radius: 22px; padding: 9px 8px 13px; }
+    }
 
 
     /* Nợ KH • world-class source chart first, list opens after tap */
@@ -14640,12 +14907,23 @@ window.__TK_APP_VERSION__ = 'v20260501_1907_customer_debt_visible_top_controls';
       </div>
     </section>
 
-    <section id="screen-purchase" class="screen purchase-screen-full">
-      <div class="search-wrapper">
+    <section id="screen-purchase" class="screen purchase-screen-full purchase-debt-sync-screen">
+      <div class="purchase-debt-summary-bar" aria-label="Tổng quan nhập hàng">
+        <div>
+          <span>PHIẾU NHẬP</span>
+          <strong id="purchaseSummaryReceiptCount">0</strong>
+        </div>
+        <div>
+          <span>TỔNG NHẬP</span>
+          <strong id="purchaseSummaryTotalAmount">0đ</strong>
+        </div>
+      </div>
+
+      <div class="search-wrapper purchase-debt-top-controls">
         <button id="purchaseBackBtn" class="toolbar-btn" title="Quay lại"><i class="fa-solid fa-arrow-left"></i></button>
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input id="purchaseFilterInput" placeholder="Tìm sản phẩm để nhập" />
+          <input id="purchaseFilterInput" placeholder="Tìm phiếu / NCC / sản phẩm" />
           <button id="purchaseToolbarAddBtn" class="search-inline-btn" data-require-screen="purchase" data-feature-key="purchase.quickadd" data-feature-label="Nhập: thêm nhanh sản phẩm" data-require-feature="purchase.quickadd" title="Thêm hàng nếu chưa có"><i class="fa-solid fa-plus"></i></button>
         </div>
       </div>
@@ -16359,6 +16637,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1907_customer_debt_visible_top_controls';
     const salesRecentOrdersEl = document.getElementById('salesRecentOrders');
     const recentPurchasesEl = document.getElementById('recentPurchases');
     const recentPurchasesHomeEl = document.getElementById('recentPurchasesHome');
+    const purchaseSummaryReceiptCountEl = document.getElementById('purchaseSummaryReceiptCount');
+    const purchaseSummaryTotalAmountEl = document.getElementById('purchaseSummaryTotalAmount');
     const supplierStatusBadgeEl = document.getElementById('supplierStatusBadge');
     const supplierDebtCaptionEl = document.getElementById('supplierDebtCaption');
     const supplierDebtTotalEl = document.getElementById('supplierDebtTotal');
@@ -26346,6 +26626,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1907_customer_debt_visible_top_controls';
             item.mode,
             item.batchCode,
           ].join(' ')).includes(query));
+
+      const purchaseTotalAmount = sourceItems.reduce((sum, item) => sum + (Number(item?.totalAmount || item?.total || item?.amount || 0) || 0), 0);
+      if (purchaseSummaryReceiptCountEl) purchaseSummaryReceiptCountEl.textContent = Number(sourceItems.length || 0).toLocaleString('vi-VN');
+      if (purchaseSummaryTotalAmountEl) purchaseSummaryTotalAmountEl.textContent = money(purchaseTotalAmount);
 
       document.getElementById('purchaseCount').textContent = query
         ? `${filtered.length}/${sourceItems.length || 0} phiếu`
