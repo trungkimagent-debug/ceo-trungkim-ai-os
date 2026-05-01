@@ -1,7 +1,9 @@
 {
-  "version": "v20260501_1827_customer_debt_source_scoped_cards",
-  "updatedAt": "2026-05-01T18:27:00+0700",
+  "version": "v20260501_1856_customer_debt_top_search_row",
+  "updatedAt": "2026-05-01T18:56:00+0700",
   "changedModules": [
+    "customer-debt-chart-below-controls",
+    "customer-debt-top-search-row",
     "customer-debt-source-filter-total-fix",
     "customer-debt-source-scoped-cards",
     "customer-debt-compact-selected-chart",
