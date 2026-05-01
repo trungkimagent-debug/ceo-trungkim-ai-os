@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
+window.__TK_APP_VERSION__ = 'v20260501_2142_request_card_compact_staff_product_name';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -11439,22 +11439,24 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
     }
 
     .sales-accessory-card-staff {
-      grid-column: 1 / -1;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      width: fit-content;
-      max-width: 100%;
-      padding: 4px 9px;
+      justify-content: flex-end;
+      gap: 4px;
+      min-width: 0;
+      max-width: 42%;
+      margin-left: auto;
+      padding: 3px 7px;
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,247,237,0.98), rgba(254,243,199,0.94));
-      border: 1px solid rgba(245,158,11,0.24);
+      background: linear-gradient(180deg, rgba(255,247,237,0.96), rgba(254,243,199,0.88));
+      border: 1px solid rgba(245,158,11,0.20);
       color: #7c2d12;
-      font-size: clamp(10px, 2.7vw, 12px);
+      font-size: clamp(9px, 2.45vw, 11px);
       font-weight: 900;
-      line-height: 1.15;
+      line-height: 1.1;
       letter-spacing: .01em;
-      box-shadow: 0 8px 18px rgba(245,158,11,0.10);
+      box-shadow: 0 6px 14px rgba(245,158,11,0.08);
+      flex: 0 1 auto;
     }
 
     .sales-accessory-card-staff span {
@@ -11462,10 +11464,6 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-
-    .sales-accessory-pending-card.processing-compact .sales-accessory-card-staff {
-      margin-bottom: 1px;
     }
 
     .sales-accessory-ticket-code-row {
@@ -11593,7 +11591,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
     }
 
     .sales-accessory-pending-card.waiting-inline-head .sales-accessory-pending-thumb,
-    .sales-accessory-pending-card.waiting-inline-head .sales-accessory-item-tile,
+    .sales-accessory-pending-card.waiting-inline-head .sales-accessory-item-frame,
     .sales-accessory-pending-card.waiting-inline-head .sales-accessory-item-media,
     .sales-accessory-pending-card.waiting-inline-head .sales-accessory-item-qty {
       border-color: rgba(17,24,39,0.18);
@@ -11858,20 +11856,31 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
 
     .sales-accessory-item-tile {
       display: grid;
-      gap: 6px;
+      gap: 5px;
       min-width: 0;
-      padding: 8px;
+      padding: 0;
       border-radius: 13px;
-      border: 1px solid rgba(245,158,11,0.14);
-      background: rgba(255,255,255,0.82);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.88);
+      border: 0;
+      background: transparent;
+      box-shadow: none;
     }
 
     .sales-accessory-pending-card.waiting-inline-head .sales-accessory-item-tile {
       width: 100%;
       min-width: 0;
+      padding: 0;
+      border-radius: 15px;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .sales-accessory-item-frame {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
       padding: 7px;
       border-radius: 15px;
+      border: 1px solid rgba(245,158,11,0.14);
       background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,249,240,0.92));
       box-shadow: 0 10px 24px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.94);
     }
@@ -17173,7 +17182,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
     function buildSalesAccessoryRequestCreatorMarkup(item = {}) {
       const label = getSalesAccessoryRequestCreatorLabel(item);
       return label
-        ? `<div class="sales-accessory-card-staff"><i class="fa-solid fa-user-tag"></i><span>NV tạo: ${escapeHtml(label)}</span></div>`
+        ? `<span class="sales-accessory-card-staff"><i class="fa-solid fa-user-tag"></i><span>${escapeHtml(label)}</span></span>`
         : '';
     }
 
@@ -20085,11 +20094,13 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
             const qty = Math.max(1, Number(entry?.quantity || 0) || 1).toLocaleString('vi-VN');
             return `
               <div class="sales-accessory-item-tile">
-                <div class="sales-accessory-item-media">${imageUrl
-                  ? `<img src="${imageUrl}" alt="${label}" loading="lazy" decoding="async" />`
-                  : '<i class="fa-solid fa-plug-circle-bolt"></i>'}</div>
+                <div class="sales-accessory-item-frame">
+                  <div class="sales-accessory-item-media">${imageUrl
+                    ? `<img src="${imageUrl}" alt="${label}" loading="lazy" decoding="async" />`
+                    : '<i class="fa-solid fa-plug-circle-bolt"></i>'}</div>
+                  <div class="sales-accessory-item-qty">X ${qty}</div>
+                </div>
                 <div class="sales-accessory-item-name">${label}</div>
-                <div class="sales-accessory-item-qty">X ${qty}</div>
               </div>
             `;
           }).join('')
@@ -20128,14 +20139,13 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
       const creatorMarkup = buildSalesAccessoryRequestCreatorMarkup(item);
       return `
         <div class="stock-request-card sales-accessory-pending-card ${toneClass}${activeClass}${isWaitingLaneCard ? ' waiting-inline-head' : ''}${isProcessingLaneCard ? ' processing-compact' : ''}">
-          ${creatorMarkup}
           <div class="ticket-head">
             <div class="ticket-main">
               <div class="ticket-icon sales-accessory-pending-thumb">${previewImageUrl
                 ? `<img src="${previewImageUrl}" alt="${previewLabel}" loading="lazy" decoding="async" />`
                 : '<i class="fa-solid fa-layer-group"></i>'}</div>
               <div class="sales-accessory-ticket-copy">
-                <div class="ticket-title sales-accessory-ticket-code-row"><span class="sales-accessory-ticket-code-group"><span class="sales-accessory-ticket-code">${requestCode}</span>${amountMarkup}</span></div>
+                <div class="ticket-title sales-accessory-ticket-code-row"><span class="sales-accessory-ticket-code-group"><span class="sales-accessory-ticket-code">${requestCode}</span>${amountMarkup}</span>${creatorMarkup}</div>
                 <div class="ticket-sub">${subtitleText}</div>
               </div>
             </div>
@@ -21098,11 +21108,13 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
         const qty = Math.max(1, Number(entry?.quantity || 0) || 1).toLocaleString('vi-VN');
         return `
           <div class="sales-accessory-item-tile">
-            <div class="sales-accessory-item-media">${imageUrl
-              ? `<img src="${imageUrl}" alt="${label}" loading="lazy" decoding="async" />`
-              : '<i class="fa-solid fa-plug-circle-bolt"></i>'}</div>
+            <div class="sales-accessory-item-frame">
+              <div class="sales-accessory-item-media">${imageUrl
+                ? `<img src="${imageUrl}" alt="${label}" loading="lazy" decoding="async" />`
+                : '<i class="fa-solid fa-plug-circle-bolt"></i>'}</div>
+              <div class="sales-accessory-item-qty">X ${qty}</div>
+            </div>
             <div class="sales-accessory-item-name">${label}</div>
-            <div class="sales-accessory-item-qty">X ${qty}</div>
           </div>
         `;
       }).join('');
@@ -21120,14 +21132,13 @@ window.__TK_APP_VERSION__ = 'v20260501_2136_request_item_name_under_frame';
           : `<span class="badge ${status === 'completed' ? 'ok' : 'warn'}">${escapeHtml(getSalesAccessoryStatusLabel(status))}</span>`;
       return `
         <div class="stock-request-card sales-accessory-pending-card waiting-inline-head stock-accessory-waiting-card">
-          ${creatorMarkup}
           <div class="ticket-head">
             <div class="ticket-main">
               <div class="ticket-icon sales-accessory-pending-thumb">${previewImageUrl
                 ? `<img src="${previewImageUrl}" alt="${previewLabel}" loading="lazy" decoding="async" />`
                 : '<i class="fa-solid fa-layer-group"></i>'}</div>
               <div class="sales-accessory-ticket-copy">
-                <div class="ticket-title sales-accessory-ticket-code-row"><span class="sales-accessory-ticket-code-group"><span class="sales-accessory-ticket-code">${requestCode}</span>${amountMarkup}</span></div>
+                <div class="ticket-title sales-accessory-ticket-code-row"><span class="sales-accessory-ticket-code-group"><span class="sales-accessory-ticket-code">${requestCode}</span>${amountMarkup}</span>${creatorMarkup}</div>
                 <div class="ticket-sub">${subtitleText}</div>
               </div>
             </div>

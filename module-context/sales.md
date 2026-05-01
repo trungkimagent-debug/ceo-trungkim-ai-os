@@ -166,3 +166,12 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Added `.sales-accessory-item-name` and rendered the product label directly under each item image frame, before the quantity pill.
 - Applies to both Sales waiting cards and Stock/Kho accessory request cards because they share the same item tile markup.
 - Verification marker/version: `v20260501_2136_request_item_name_under_frame`.
+
+## 2026-05-01 — Compact creator badge and product name outside frame
+
+- Trigger: Chủ tịch yêu cầu bỏ chữ `NV tạo:`, chỉ còn icon + tên nhân viên và chuyển sang phải cùng hàng mã HĐ; tên sản phẩm nằm ngoài khung sản phẩm.
+- `buildSalesAccessoryRequestCreatorMarkup()` now renders only icon + employee name.
+- Creator badge moved from top standalone row into `.sales-accessory-ticket-code-row`, aligned right of the HĐ/amount row.
+- Item tile now uses `.sales-accessory-item-frame` around image + quantity only; `.sales-accessory-item-name` renders below/outside that frame.
+- Applies to Sales waiting cards and Stock/Kho request cards.
+- Verification marker/version: `v20260501_2142_request_card_compact_staff_product_name`.
