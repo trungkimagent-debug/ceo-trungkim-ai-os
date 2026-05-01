@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
+window.__TK_APP_VERSION__ = 'v20260501_2102_systemwide_instant_hydration';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -65,7 +65,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
   </script>
   <script src="/realtime-runtime.js?v20260428_200400"></script>
   <script src="/realtime-bootstrap.js?v20260428_200400"></script>
-  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2048_instant_tab_snapshots" fetchpriority="high" />
+  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2102_systemwide_instant_hydration" fetchpriority="high" />
   <title>TRUNG HẬU KIM DUNG</title>
   <meta name="description" content="Di Động Trung Hậu Kim Dung." />
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
@@ -21496,7 +21496,11 @@ window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
     }
 
     async function loadPrintJobs() {
-      const data = await callApi('/internal/pos/print/jobs/recent');
+      const path = '/internal/pos/print/jobs/recent';
+      renderApiSnapshot(path, (snapshot) => {
+        renderPrintJobs(Array.isArray(snapshot?.items) ? snapshot.items : []);
+      }, API_SNAPSHOT_PERSIST_MAX_AGE_MS);
+      const data = await callApi(path, { cacheTtlMs: API_SNAPSHOT_DEFAULT_MAX_AGE_MS });
       renderPrintJobs(data.items || []);
     }
 
@@ -22343,6 +22347,45 @@ window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
       const target = String(screen || '').trim().toLowerCase();
       const maxAgeMs = API_SNAPSHOT_PERSIST_MAX_AGE_MS;
       try {
+        if (target === 'home') {
+          renderApiSnapshot('/internal/pos/dashboard', (snapshot) => {
+            renderDashboard(snapshot?.summary || {});
+            state.recentOrders = Array.isArray(snapshot?.recentOrders) ? snapshot.recentOrders : [];
+            renderRecentOrders(state.recentOrders);
+            if (!state.printPreviewOrder && state.recentOrders.length) renderPrintPreview(state.recentOrders[0]);
+          }, maxAgeMs);
+          return;
+        }
+        if (target === 'sales') {
+          const filter = normalizeSalesRequestFilter(state.salesRequestFilter || 'waiting');
+          const query = String(state.salesRequestQuery || '').trim();
+          const cachedItems = getSalesAccessoryPendingCachedItems(filter, query);
+          const snapshot = !cachedItems ? getSalesAccessoryPendingSnapshotItems(filter, query) : null;
+          if (Array.isArray(cachedItems)) {
+            renderSalesAccessoryPendingFinalizeQueue(cachedItems, {
+              filter,
+              summary: state.salesAccessoryPendingSummary,
+              renderBuckets: false,
+            });
+          } else if (snapshot) {
+            renderSalesAccessoryPendingFinalizeQueue(snapshot.items || [], {
+              filter,
+              summary: snapshot.summary,
+              renderBuckets: false,
+            });
+          }
+          return;
+        }
+        if (target === 'print') {
+          renderApiSnapshot('/internal/pos/print/jobs/recent', (snapshot) => {
+            renderPrintJobs(Array.isArray(snapshot?.items) ? snapshot.items : []);
+          }, maxAgeMs);
+          renderApiSnapshot('/internal/pos/dashboard', (snapshot) => {
+            state.recentOrders = Array.isArray(snapshot?.recentOrders) ? snapshot.recentOrders : [];
+            if (!state.printPreviewOrder && state.recentOrders.length) renderPrintPreview(state.recentOrders[0]);
+          }, maxAgeMs);
+          return;
+        }
         if (target === 'purchase') {
           renderApiSnapshot('/internal/pos/purchase/recent', (snapshot) => {
             state.recentPurchases = Array.isArray(snapshot?.items) ? snapshot.items : [];
@@ -22841,11 +22884,20 @@ window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
         ensureHomeRankMounted().catch((error) => {
           console.error('Không mount được Home Rank', error);
         });
+        scheduleTabNetworkRefresh('home', () => {
+          loadDashboard().catch(() => {});
+        }, 120);
       }
       if (nextName === 'star') {
         ensureStarNativeMounted().catch((error) => {
           console.error('Không mount được Star native', error);
         });
+      }
+      if (nextName === 'print') {
+        scheduleTabNetworkRefresh('print', () => {
+          loadPrintJobs().catch(() => {});
+          loadDashboard().catch(() => {});
+        }, 180);
       }
       if (nextName === 'team') {
         loadStaffAdminData().catch((error) => {
@@ -22895,8 +22947,10 @@ window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
       if (nextName === 'sales') {
         renderSalesAccessoryFlow();
         syncSalesAccessoryFlowRealtimeWatch();
-        loadSalesAccessoryPendingFinalizeQueue({ silent: true, preserveFocus: true }).catch(() => {});
-        if (!state.salesAccessoryPopupOpen) scheduleSalesAccessoryCatalogWarm(1200);
+        scheduleTabNetworkRefresh('sales', () => {
+          loadSalesAccessoryPendingFinalizeQueue({ silent: true, preserveFocus: true }).catch(() => {});
+          if (!state.salesAccessoryPopupOpen) scheduleSalesAccessoryCatalogWarm(1200);
+        }, 160);
       } else {
         stopSalesAccessoryFlowRealtimeWatch();
         clearSalesAccessoryPendingAutoRefreshTimer();
@@ -28630,13 +28684,17 @@ window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
 
     function runPostLoginWarmup(launchScreen = 'home') {
       const screen = String(launchScreen || '').trim();
+      ['home', 'sales', 'purchase', 'stock', 'supplier', 'customer', 'returns', 'print'].forEach((candidate, index) => {
+        if (candidate === screen || !hasScreenPermission(candidate)) return;
+        runAppIdleTask(() => hydrateScreenSnapshotFast(candidate), 700 + (index * 360));
+      });
       runAppIdleTask(() => {
         if (!String(state.sessionToken || '').trim()) return;
-        if (screen !== 'home' && hasScreenPermission('home')) loadDashboard().catch(() => {});
+        if (screen !== 'home' && hasScreenPermission('home')) scheduleTabNetworkRefresh('warm-home', () => loadDashboard().catch(() => {}), 220);
       }, 1200);
       runAppIdleTask(() => {
         if (!String(state.sessionToken || '').trim()) return;
-        if (screen !== 'purchase' && hasScreenPermission('purchase')) loadRecentPurchases().catch(() => {});
+        if (screen !== 'purchase' && hasScreenPermission('purchase')) scheduleTabNetworkRefresh('warm-purchase', () => loadRecentPurchases().catch(() => {}), 360);
       }, 2600);
       runAppIdleTask(() => {
         if (!String(state.sessionToken || '').trim()) return;
@@ -28646,16 +28704,37 @@ window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
 
     async function hydrateLaunchScreenFast(launchScreen = 'home') {
       const screen = String(launchScreen || '').trim();
+      hydrateScreenSnapshotFast(screen);
       if (screen === 'home' && hasScreenPermission('home')) {
-        await loadDashboard().catch(() => {});
+        scheduleTabNetworkRefresh('launch-home', () => loadDashboard().catch(() => {}), 120);
         return;
       }
       if (screen === 'purchase' && hasScreenPermission('purchase')) {
-        await loadRecentPurchases().catch(() => {});
+        scheduleTabNetworkRefresh('launch-purchase', () => loadRecentPurchases().catch(() => {}), 120);
+        return;
+      }
+      if (screen === 'sales' && hasScreenPermission('sales')) {
+        scheduleTabNetworkRefresh('launch-sales', () => loadSalesAccessoryPendingFinalizeQueue({ silent: true, preserveFocus: true }).catch(() => {}), 160);
         return;
       }
       if (screen === 'stock' && hasScreenPermission('stock')) {
-        await ensureStockDataFresh({ note: 'Đang đồng bộ tồn kho thật...' }).catch(() => {});
+        scheduleTabNetworkRefresh('launch-stock', () => ensureStockDataFresh({ note: 'Đang đồng bộ tồn kho thật...' }).catch(() => {}), 180);
+        return;
+      }
+      if (screen === 'supplier' && hasScreenPermission('supplier')) {
+        scheduleTabNetworkRefresh('launch-supplier', () => loadSupplierDebtHub({ silent: true }).catch(() => {}), 160);
+        return;
+      }
+      if (screen === 'customer' && hasScreenPermission('customer')) {
+        scheduleTabNetworkRefresh('launch-customer', () => loadCustomerDebtHub({ silent: true }).catch(() => {}), 160);
+        return;
+      }
+      if (screen === 'returns' && hasScreenPermission('returns')) {
+        scheduleTabNetworkRefresh('launch-returns', () => loadSupplierReturnHub({ silent: true, preserveComposer: true }).catch(() => {}), 160);
+        return;
+      }
+      if (screen === 'print' && hasScreenPermission('print')) {
+        scheduleTabNetworkRefresh('launch-print', () => loadPrintJobs().catch(() => {}), 180);
         return;
       }
       if (screen === 'team' && hasScreenPermission('team')) {

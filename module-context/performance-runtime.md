@@ -9,7 +9,7 @@ Last reviewed: 2026-05-01.
 - `public/home-rank.js` Home Rank Firestore refresh loop.
 - `public/version.json` version/update metadata.
 
-## Current behavior after v20260501_2048_instant_tab_snapshots
+## Current behavior after v20260501_2102_systemwide_instant_hydration
 
 - Duplicate background version polling was reduced: `window.__TK_RT_ROLLOUT__.enabled = false`; visible topbar update check remains active every 60s via `APP_UPDATE_CHECK_MS`.
 - Legacy service-worker/cache cleanup is delayed to idle time in `realtime-runtime.js` instead of competing with first paint.
@@ -95,6 +95,14 @@ Last reviewed: 2026-05-01.
 - Purchase tab now refreshes recent purchases on open after instant snapshot hydration, while purchase resource warmup remains deferred.
 - Stock tab now hydrates summary, IMEI list, and accessory list snapshots first; live sync and request queue load happen after the first paint window.
 
+## Added in v20260501_2102_systemwide_instant_hydration
+
+- Expanded `hydrateScreenSnapshotFast()` system-wide to Home, Sales, Print, Purchase, Supplier debt, Customer debt, Returns, and Stock.
+- Home now snapshot-hydrates Dashboard/recent orders before its network refresh; Print snapshot-hydrates recent print jobs and recent-order preview; Sales snapshot-hydrates the pending accessory queue from hot in-memory/persisted waiting snapshots.
+- Launch-screen hydration is now non-blocking: it paints snapshots immediately and schedules live network refresh via `scheduleTabNetworkRefresh()` instead of awaiting network before the app settles.
+- Post-login warmup now hydrates other tab snapshots progressively during idle windows, not all at once, so future tab opens feel instant without a first-login render spike.
+- Print jobs now use the API snapshot cache (`/internal/pos/print/jobs/recent`) so the Print tab can show recent queue state instantly while refreshing in the background.
+
 ## Safe edit points
 
 - Increase/decrease `APP_UPDATE_CHECK_MS`, `AUTO_REFRESH_MS`, or API snapshot TTLs.
@@ -110,6 +118,6 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains 85 files.
-- `/1` contains current `window.__TK_APP_VERSION__`, `rel="modulepreload"` for Home Rank, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `PERF_COOLDOWN_LONGTASK_MS`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `hydrateScreenSnapshotFast`, `scheduleTabNetworkRefresh`, `warmDynamicModule`, `scheduleDynamicModuleWarmup`, `initLocalPerformanceObservers`, `PerformanceObserver`, `tk-performance-cooldown`, visual cooldown CSS (`box-shadow: none`, `backdrop-filter: none`), `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
+- `/1` contains current `window.__TK_APP_VERSION__`, `rel="modulepreload"` for Home Rank, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `PERF_COOLDOWN_LONGTASK_MS`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `hydrateScreenSnapshotFast` with Home/Sales/Print/Purchase/Supplier/Customer/Returns/Stock branches, `scheduleTabNetworkRefresh`, `warmDynamicModule`, `scheduleDynamicModuleWarmup`, `initLocalPerformanceObservers`, `PerformanceObserver`, `tk-performance-cooldown`, visual cooldown CSS (`box-shadow: none`, `backdrop-filter: none`), `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
 - `/home-rank.js` contains `HOME_RANK_CACHE_KEY`, visible-screen guard, and `AUTO_REFRESH_MS = 60_000`.
 - `/realtime-runtime.js` contains `scheduleIdleCleanupLegacyBrowserCache()`.
