@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
+window.__TK_APP_VERSION__ = 'v20260501_2010_smart_module_warmup';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -65,6 +65,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
   </script>
   <script src="/realtime-runtime.js?v20260428_200400"></script>
   <script src="/realtime-bootstrap.js?v20260428_200400"></script>
+  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2010_smart_module_warmup" fetchpriority="high" />
   <title>TRUNG HẬU KIM DUNG</title>
   <meta name="description" content="Di Động Trung Hậu Kim Dung." />
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
@@ -17603,6 +17604,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
     let purchaseSupplierSearchTimer = null;
     let purchaseFilterTimer = null;
     const uiTaskTimers = new Map();
+    const dynamicModuleWarmupPromises = new Map();
     let productCategoriesPromise = null;
     let productCategoriesLoadedAtMs = 0;
     let productCategoriesWarmTimer = 0;
@@ -21533,7 +21535,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
       if (!homeRankHost || homeRankHost.dataset.loaded === 'true') return;
       homeRankHost.dataset.loaded = 'loading';
       try {
-        const mod = await import(buildVersionedModuleUrl('./home-rank.js'));
+        const mod = await warmDynamicModule('./home-rank.js', 'home-rank', { critical: true });
         await mod.mountHomeRank(homeRankHost);
         homeRankHost.dataset.loaded = 'true';
       } catch (error) {
@@ -21547,7 +21549,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
       if (!starNativeHost || starNativeHost.dataset.loaded === 'true') return;
       starNativeHost.dataset.loaded = 'loading';
       try {
-        const mod = await import(buildVersionedModuleUrl('./star-native.js'));
+        const mod = await warmDynamicModule('./star-native.js', 'star-native', { critical: true });
         await mod.mountStarNative(starNativeHost);
         starNativeHost.dataset.loaded = 'true';
       } catch (error) {
@@ -22292,6 +22294,44 @@ window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
       return versionTag ? `${cleanBase}${cleanBase.includes('?') ? '&' : '?'}_v=${versionTag}` : cleanBase;
     }
 
+
+    function canWarmNonCriticalModules() {
+      try {
+        if (!isRealtimePageVisible() || state.batterySaver) return false;
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+        if (connection?.saveData) return false;
+        const effectiveType = String(connection?.effectiveType || '').toLowerCase();
+        if (effectiveType === 'slow-2g' || effectiveType === '2g') return false;
+        return true;
+      } catch (_) {
+        return isRealtimePageVisible() && !state.batterySaver;
+      }
+    }
+
+    async function warmDynamicModule(path = '', key = '', options = {}) {
+      const modulePath = String(path || '').trim();
+      const moduleKey = String(key || modulePath).trim();
+      if (!modulePath || !moduleKey) return null;
+      if (!options.critical && !canWarmNonCriticalModules()) return null;
+      if (dynamicModuleWarmupPromises.has(moduleKey)) return dynamicModuleWarmupPromises.get(moduleKey);
+      const promise = import(buildVersionedModuleUrl(modulePath)).catch((error) => {
+        dynamicModuleWarmupPromises.delete(moduleKey);
+        throw error;
+      });
+      dynamicModuleWarmupPromises.set(moduleKey, promise);
+      return promise;
+    }
+
+    function scheduleDynamicModuleWarmup() {
+      if (!canWarmNonCriticalModules()) return;
+      scheduleIdle(() => {
+        if (!canWarmNonCriticalModules()) return;
+        if (hasScreenPermission('star')) {
+          warmDynamicModule('./star-native.js', 'star-native').catch(() => {});
+        }
+      }, 2200);
+    }
+
     function getRoleDefaultScreens(role = 'staff') {
       const key = String(role || 'staff').trim().toLowerCase();
       return Array.from(POS_ROLE_DEFAULT_SCREENS[key] || POS_SCREEN_KEYS);
@@ -22668,6 +22708,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
 
       state.activeScreen = nextName;
       syncTopbarBranding(nextName);
+      scheduleDynamicModuleWarmup();
       document.body.classList.remove('screen-home-headless');
       document.body.classList.toggle('home-star-theme', nextName === 'home');
       document.body.classList.toggle('stock-accessory-request-focus', nextName === 'stock');
@@ -25277,6 +25318,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
     window.visualViewport?.addEventListener('resize', () => scheduleHomeLayoutSync(140), { passive: true });
     syncBatterySaverState();
     syncHomeLayoutVars();
+    scheduleDynamicModuleWarmup();
 
     function getApiSnapshotKey(path = '') {
       return `${API_SNAPSHOT_PREFIX}${String(path || '').trim()}`;
@@ -28841,7 +28883,10 @@ window.__TK_APP_VERSION__ = 'v20260501_1958_cool_instant_scheduler';
     window.addEventListener('focus', () => checkAppUpdateForAllUsers({ immediate: true }));
     window.addEventListener('online', () => checkAppUpdateForAllUsers({ immediate: true }));
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) checkAppUpdateForAllUsers({ immediate: true });
+      if (!document.hidden) {
+        checkAppUpdateForAllUsers({ immediate: true });
+        scheduleDynamicModuleWarmup();
+      }
     });
     ensureGlobalAppUpdateWatch();
     employeeNameBtn?.addEventListener('click', () => {

@@ -9,7 +9,7 @@ Last reviewed: 2026-05-01.
 - `public/home-rank.js` Home Rank Firestore refresh loop.
 - `public/version.json` version/update metadata.
 
-## Current behavior after v20260501_1958_cool_instant_scheduler
+## Current behavior after v20260501_2010_smart_module_warmup
 
 - Duplicate background version polling was reduced: `window.__TK_RT_ROLLOUT__.enabled = false`; visible topbar update check remains active every 60s via `APP_UPDATE_CHECK_MS`.
 - Legacy service-worker/cache cleanup is delayed to idle time in `realtime-runtime.js` instead of competing with first paint.
@@ -68,6 +68,13 @@ Last reviewed: 2026-05-01.
 - Progressive list background chunks now pause while the app is hidden and resume only when visible, avoiding wasted battery/heat from offscreen DOM work.
 - `scheduleIdle()` now uses background-priority scheduler tasks when supported, keeping non-urgent cache/render chunks behind touch/visible UI work.
 
+## Added in v20260501_2010_smart_module_warmup
+
+- Added `rel="modulepreload"` for the critical Home Rank module using the current app version query, so the default home screen module can arrive before the first dynamic import needs it.
+- Added `warmDynamicModule()` import promise caching so repeated Home/Star opens reuse the same module import promise instead of creating duplicate dynamic import work.
+- Added battery/data-saver-aware idle warmup for the Star module: it only preloads when the page is visible, not in battery saver mode, not on `saveData`, and not on 2G/slow-2G.
+- Visibility/focus/screen-open now opportunistically schedules this warmup without blocking first paint or active touch work.
+
 ## Safe edit points
 
 - Increase/decrease `APP_UPDATE_CHECK_MS`, `AUTO_REFRESH_MS`, or API snapshot TTLs.
@@ -83,6 +90,6 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains 85 files.
-- `/1` contains current `window.__TK_APP_VERSION__`, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
+- `/1` contains current `window.__TK_APP_VERSION__`, `rel="modulepreload"` for Home Rank, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `warmDynamicModule`, `scheduleDynamicModuleWarmup`, `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
 - `/home-rank.js` contains `HOME_RANK_CACHE_KEY`, visible-screen guard, and `AUTO_REFRESH_MS = 60_000`.
 - `/realtime-runtime.js` contains `scheduleIdleCleanupLegacyBrowserCache()`.
