@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1944_sales_gift_editor_free_mode';
+window.__TK_APP_VERSION__ = 'v20260501_1955_global_update_button';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -16405,6 +16405,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1944_sales_gift_editor_free_mode';
       SHARED_INTERNAL_ACTOR_SESSION_STORAGE_KEY,
       CACHE_BUST_APPLIED_STORAGE_KEY,
     ];
+    const APP_UPDATE_VERSION_URL = './version.json';
+    const APP_UPDATE_CHECK_MS = 8000;
     const POS_SCREEN_KEYS = ['home', 'sales', 'purchase', 'stock', 'returns', 'supplier', 'customer', 'print', 'posgoc', 'thumay', 'star', 'team'];
     const POS_ROLE_DEFAULT_SCREENS = {
       chairman: [...POS_SCREEN_KEYS],
@@ -16583,6 +16585,9 @@ window.__TK_APP_VERSION__ = 'v20260501_1944_sales_gift_editor_free_mode';
       pendingAppUpdateVersion: '',
       pendingAppUpdateMeta: null,
       applyingAppUpdate: false,
+      appUpdateCheckTimer: 0,
+      appUpdateCheckInFlight: false,
+      appUpdateLastSeenVersion: '',
       systemLockActive: false,
       chairmanControlBusy: false,
       chairmanControlMode: '',
@@ -21563,6 +21568,52 @@ window.__TK_APP_VERSION__ = 'v20260501_1944_sales_gift_editor_free_mode';
       state.pendingAppUpdateMeta = null;
       state.applyingAppUpdate = false;
       renderTopbarUpdateState();
+    }
+
+    function getCurrentAppVersion() {
+      return String(window.__TK_APP_VERSION__ || '').trim();
+    }
+
+    function buildAppUpdateVersionUrl() {
+      const base = String(window.__TK_RT_ROLLOUT__?.versionUrl || APP_UPDATE_VERSION_URL || './version.json').trim() || './version.json';
+      const sep = base.includes('?') ? '&' : '?';
+      return `${base}${sep}_=${Date.now()}`;
+    }
+
+    async function checkAppUpdateForAllUsers({ immediate = false } = {}) {
+      if (state.appUpdateCheckInFlight || state.applyingAppUpdate) return;
+      state.appUpdateCheckInFlight = true;
+      try {
+        const res = await fetch(buildAppUpdateVersionUrl(), { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const remoteVersion = String(data?.version || data?.updatedAt || '').trim();
+        const currentVersion = getCurrentAppVersion();
+        if (!remoteVersion || !currentVersion) return;
+        state.appUpdateLastSeenVersion = remoteVersion;
+        if (remoteVersion !== currentVersion) {
+          queueTopbarAppUpdate(remoteVersion, {
+            ...(data && typeof data === 'object' ? data : {}),
+            source: 'global-version-check',
+          });
+          return;
+        }
+        if (String(state.pendingAppUpdateVersion || '').trim() === remoteVersion) {
+          clearTopbarAppUpdate();
+        }
+      } catch (_) {
+        if (immediate) renderTopbarUpdateState();
+      } finally {
+        state.appUpdateCheckInFlight = false;
+      }
+    }
+
+    function ensureGlobalAppUpdateWatch() {
+      if (state.appUpdateCheckTimer) return;
+      checkAppUpdateForAllUsers({ immediate: true });
+      state.appUpdateCheckTimer = window.setInterval(() => {
+        checkAppUpdateForAllUsers();
+      }, APP_UPDATE_CHECK_MS);
     }
 
     function snapshotUpdatePreservedStorage() {
@@ -28196,7 +28247,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1944_sales_gift_editor_free_mode';
       const detail = event?.detail || {};
       if (String(detail.pageId || '').trim() !== 'index') return;
       const version = String(detail.version || '').trim();
-      if (!version || version === String(window.__TK_APP_VERSION__ || '').trim()) return;
+      if (!version || version === getCurrentAppVersion()) return;
       queueTopbarAppUpdate(version, detail.meta || null);
     });
     window.addEventListener('tk:hard-reload-start', (event) => {
@@ -28205,6 +28256,13 @@ window.__TK_APP_VERSION__ = 'v20260501_1944_sales_gift_editor_free_mode';
       state.applyingAppUpdate = true;
       renderTopbarUpdateState();
     });
+    window.addEventListener('tk:soft-runtime-ready', () => ensureGlobalAppUpdateWatch());
+    window.addEventListener('focus', () => checkAppUpdateForAllUsers({ immediate: true }));
+    window.addEventListener('online', () => checkAppUpdateForAllUsers({ immediate: true }));
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) checkAppUpdateForAllUsers({ immediate: true });
+    });
+    ensureGlobalAppUpdateWatch();
     employeeNameBtn?.addEventListener('click', () => {
       if (employeeInfoSheet?.classList.contains('open')) {
         closeEmployeeInfoSheet();

@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_1944_sales_gift_editor_free_mode",
-  "updatedAt": "2026-05-01T11:44:00.000Z",
+  "version": "v20260501_1955_global_update_button",
+  "updatedAt": "2026-05-01T11:55:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -434,5 +434,5 @@
     "stock-audio-5min-reminders",
     "index.html"
   ],
-  "label": "Ẩn ô giá trong popup chọn quà tặng miễn phí"
+  "label": "Hiển thị nút cập nhật bản mới cho tất cả nhân viên"
 }
