@@ -1,6 +1,6 @@
 {
-  "version": "v20260501_2034_adaptive_visual_cooldown",
-  "updatedAt": "2026-05-01T13:34:00.000Z",
+  "version": "v20260501_2048_instant_tab_snapshots",
+  "updatedAt": "2026-05-01T13:48:00.000Z",
   "changedModules": [
     "sales-top-kpi-controls",
     "sales-dark-gold-menu",
@@ -479,7 +479,10 @@
     "bfcache-resume-sample",
     "adaptive-visual-cooldown-css",
     "performance-cooldown-realtime-throttle",
-    "cooldown-stops-noncritical-warmup"
+    "cooldown-stops-noncritical-warmup",
+    "instant-tab-snapshot-hydration",
+    "deferred-tab-network-refresh",
+    "battery-aware-tab-refresh-delay"
   ],
   "label": "Boot mát hơn: bộ quét camera chỉ tải khi thật sự bấm quét, màn hình chính hiện nhanh hơn"
 }

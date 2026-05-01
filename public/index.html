@@ -51,7 +51,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_2034_adaptive_visual_cooldown';
+window.__TK_APP_VERSION__ = 'v20260501_2048_instant_tab_snapshots';
     window.__TK_RT_ROLLOUT__ = {
       enabled: false,
       pageId: 'index',
@@ -65,7 +65,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2034_adaptive_visual_cooldown';
   </script>
   <script src="/realtime-runtime.js?v20260428_200400"></script>
   <script src="/realtime-bootstrap.js?v20260428_200400"></script>
-  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2034_adaptive_visual_cooldown" fetchpriority="high" />
+  <link rel="modulepreload" href="./home-rank.js?_v=v20260501_2048_instant_tab_snapshots" fetchpriority="high" />
   <title>TRUNG HẬU KIM DUNG</title>
   <meta name="description" content="Di Động Trung Hậu Kim Dung." />
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
@@ -22339,6 +22339,78 @@ window.__TK_APP_VERSION__ = 'v20260501_2034_adaptive_visual_cooldown';
     }
 
 
+    function hydrateScreenSnapshotFast(screen = '') {
+      const target = String(screen || '').trim().toLowerCase();
+      const maxAgeMs = API_SNAPSHOT_PERSIST_MAX_AGE_MS;
+      try {
+        if (target === 'purchase') {
+          renderApiSnapshot('/internal/pos/purchase/recent', (snapshot) => {
+            state.recentPurchases = Array.isArray(snapshot?.items) ? snapshot.items : [];
+            renderRecentPurchases(state.recentPurchases, { updateHome: true });
+          }, maxAgeMs);
+          return;
+        }
+        if (target === 'supplier') {
+          renderApiSnapshot('/internal/pos/supplier-debts/overview', (snapshot) => {
+            state.supplierDebtSummary = snapshot?.summary || {};
+            state.supplierDebtItems = Array.isArray(snapshot?.topSuppliers) ? snapshot.topSuppliers : [];
+            state.supplierDebtActivities = Array.isArray(snapshot?.recentActivities) ? snapshot.recentActivities : [];
+            state.supplierDebtFetchedAt = snapshot?.fetchedAt || '';
+            renderSupplierDebtSummary(state.supplierDebtSummary, state.supplierDebtFetchedAt);
+            renderSupplierDebtList(state.supplierDebtItems);
+            renderSupplierDebtActivities(state.supplierDebtActivities);
+          }, maxAgeMs);
+          return;
+        }
+        if (target === 'customer') {
+          renderApiSnapshot('/internal/pos/customer-debts/overview', (snapshot) => {
+            state.customerDebtSummary = snapshot?.summary || {};
+            state.customerDebtItems = (Array.isArray(snapshot?.items) ? snapshot.items : []).map((item) => normalizeCustomerDebtItem(item)).filter((item) => item.id);
+            state.customerDebtFetchedAt = snapshot?.fetchedAt || '';
+            renderCustomerDebtSummary(state.customerDebtSummary, state.customerDebtFetchedAt);
+            renderCustomerDebtList(state.customerDebtItems);
+          }, maxAgeMs);
+          return;
+        }
+        if (target === 'returns') {
+          renderApiSnapshot('/internal/pos/supplier-returns/sources', (snapshot) => {
+            state.supplierReturnSourceReceipts = Array.isArray(snapshot?.items) ? snapshot.items : [];
+            renderSupplierReturnSourceList(state.supplierReturnSourceReceipts);
+          }, maxAgeMs);
+          renderApiSnapshot('/internal/pos/supplier-returns/recent', (snapshot) => {
+            state.supplierReturnRecent = Array.isArray(snapshot?.items) ? snapshot.items : [];
+            renderRecentSupplierReturns(state.supplierReturnRecent);
+          }, maxAgeMs);
+          return;
+        }
+        if (target === 'stock') {
+          const imeiQuery = (stockImeiSearchInput?.value || '').trim();
+          const accessoryQuery = (stockAccessorySearchInput?.value || '').trim();
+          renderApiSnapshot('/internal/pos/stock/summary', (snapshot) => renderStockSummary(snapshot?.summary || {}), maxAgeMs);
+          renderApiSnapshot(`/internal/pos/stock/imei?query=${encodeURIComponent(imeiQuery)}`, (snapshot) => {
+            state.stockImeis = Array.isArray(snapshot?.items) ? snapshot.items : [];
+            state.stockImeiMeta = snapshot?.meta || null;
+            renderStockImeis(state.stockImeis);
+          }, maxAgeMs);
+          renderApiSnapshot(`/internal/pos/stock/accessories?query=${encodeURIComponent(accessoryQuery)}`, (snapshot) => {
+            state.stockAccessories = Array.isArray(snapshot?.items) ? snapshot.items : [];
+            state.stockAccessoryMeta = snapshot?.meta || null;
+            renderStockAccessories(state.stockAccessories);
+          }, maxAgeMs);
+        }
+      } catch (_) {}
+    }
+
+    function scheduleTabNetworkRefresh(key = '', callback, delay = 140) {
+      if (typeof callback !== 'function') return;
+      const requestedDelay = state.performanceCooldown ? Math.max(delay, 420) : (state.batterySaver ? Math.max(delay, 260) : delay);
+      scheduleUiTask(`tab-refresh:${String(key || 'screen')}`, callback, {
+        delay: requestedDelay,
+        priority: 'user-visible',
+      });
+    }
+
+
     function canWarmNonCriticalModules() {
       try {
         if (!isRealtimePageVisible() || state.batterySaver || state.performanceCooldown) return false;
@@ -22764,6 +22836,7 @@ window.__TK_APP_VERSION__ = 'v20260501_2034_adaptive_visual_cooldown';
       screens.forEach(screen => screen.classList.toggle('active', screen.id === `screen-${nextName}`));
       navButtons.forEach(button => button.classList.toggle('active', button.dataset.screen === nextName));
       purchaseFab.classList.toggle('hidden', nextName !== 'purchase');
+      hydrateScreenSnapshotFast(nextName);
       if (nextName === 'home') {
         ensureHomeRankMounted().catch((error) => {
           console.error('Không mount được Home Rank', error);
@@ -22780,30 +22853,41 @@ window.__TK_APP_VERSION__ = 'v20260501_2034_adaptive_visual_cooldown';
         });
       }
       if (nextName === 'supplier') {
-        loadSupplierDebtHub({ silent: true }).catch((error) => {
-          setMsg(supplierScreenMsg, error.message || String(error), 'error');
+        scheduleTabNetworkRefresh('supplier', () => {
+          loadSupplierDebtHub({ silent: true }).catch((error) => {
+            setMsg(supplierScreenMsg, error.message || String(error), 'error');
+          });
         });
       }
       if (nextName === 'customer') {
-        loadCustomerDebtHub({ silent: true }).catch((error) => {
-          setMsg(customerScreenMsg, error.message || String(error), 'error');
+        scheduleTabNetworkRefresh('customer', () => {
+          loadCustomerDebtHub({ silent: true }).catch((error) => {
+            setMsg(customerScreenMsg, error.message || String(error), 'error');
+          });
         });
       }
       if (nextName === 'returns') {
-        loadSupplierReturnHub({ silent: true, preserveComposer: true }).catch((error) => {
-          setMsg(returnsMsg, error.message || String(error), 'error');
+        scheduleTabNetworkRefresh('returns', () => {
+          loadSupplierReturnHub({ silent: true, preserveComposer: true }).catch((error) => {
+            setMsg(returnsMsg, error.message || String(error), 'error');
+          });
         });
       }
       if (nextName === 'purchase') {
-        warmPurchaseEntryResources();
+        scheduleTabNetworkRefresh('purchase', () => {
+          loadRecentPurchases().catch(() => {});
+          warmPurchaseEntryResources();
+        }, 120);
       }
       if (nextName === 'stock') {
-        ensureStockDataFresh({ note: 'Đang đồng bộ tồn kho thật...' }).catch((error) => {
-          setStockSyncState('error', error?.message || String(error));
-        });
-        loadStockAccessoryRequestQueue({ silent: true }).catch((error) => {
-          if (stockAccessoryRequestMsgEl) setMsg(stockAccessoryRequestMsgEl, error.message || String(error), 'error');
-        });
+        scheduleTabNetworkRefresh('stock', () => {
+          ensureStockDataFresh({ note: 'Đang đồng bộ tồn kho thật...' }).catch((error) => {
+            setStockSyncState('error', error?.message || String(error));
+          });
+          loadStockAccessoryRequestQueue({ silent: true }).catch((error) => {
+            if (stockAccessoryRequestMsgEl) setMsg(stockAccessoryRequestMsgEl, error.message || String(error), 'error');
+          });
+        }, 180);
       } else {
         clearStockAutoRefreshTimer();
         syncStockAccessoryRequestBackgroundWatch();

@@ -9,7 +9,7 @@ Last reviewed: 2026-05-01.
 - `public/home-rank.js` Home Rank Firestore refresh loop.
 - `public/version.json` version/update metadata.
 
-## Current behavior after v20260501_2034_adaptive_visual_cooldown
+## Current behavior after v20260501_2048_instant_tab_snapshots
 
 - Duplicate background version polling was reduced: `window.__TK_RT_ROLLOUT__.enabled = false`; visible topbar update check remains active every 60s via `APP_UPDATE_CHECK_MS`.
 - Legacy service-worker/cache cleanup is delayed to idle time in `realtime-runtime.js` instead of competing with first paint.
@@ -88,6 +88,13 @@ Last reviewed: 2026-05-01.
 - Realtime/background timers now slow down further during performance cooldown (`3x` for non-urgent work) to reduce heat and main-thread/network pressure.
 - Non-critical dynamic module warmup now stops during performance cooldown, so the app does not prefetch extra modules while the device is already struggling.
 
+## Added in v20260501_2048_instant_tab_snapshots
+
+- Added `hydrateScreenSnapshotFast()` on tab open for Purchase, Supplier debt, Customer debt, Returns, and Stock. It renders hot/session/local/IndexedDB snapshots immediately using a longer persisted snapshot window before any network refresh starts.
+- Added `scheduleTabNetworkRefresh()` so tab-open network refreshes are deferred by a small frame-safe delay; the delay increases automatically on battery saver or performance cooldown. This lets the visible tab and cached data paint first, then fresh data updates in the background.
+- Purchase tab now refreshes recent purchases on open after instant snapshot hydration, while purchase resource warmup remains deferred.
+- Stock tab now hydrates summary, IMEI list, and accessory list snapshots first; live sync and request queue load happen after the first paint window.
+
 ## Safe edit points
 
 - Increase/decrease `APP_UPDATE_CHECK_MS`, `AUTO_REFRESH_MS`, or API snapshot TTLs.
@@ -103,6 +110,6 @@ Last reviewed: 2026-05-01.
 ## Verification
 
 - `public/` remains 85 files.
-- `/1` contains current `window.__TK_APP_VERSION__`, `rel="modulepreload"` for Home Rank, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `PERF_COOLDOWN_LONGTASK_MS`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `warmDynamicModule`, `scheduleDynamicModuleWarmup`, `initLocalPerformanceObservers`, `PerformanceObserver`, `tk-performance-cooldown`, visual cooldown CSS (`box-shadow: none`, `backdrop-filter: none`), `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
+- `/1` contains current `window.__TK_APP_VERSION__`, `rel="modulepreload"` for Home Rank, `API_SNAPSHOT_PREFIX`, `API_SNAPSHOT_IDB_NAME`, `PERF_SAMPLE_STORAGE_KEY`, `PERF_COOLDOWN_LONGTASK_MS`, `BATTERY_SAVER_MEMORY_GB`, `UI_INPUT_DEBOUNCE_MS`, `getRealtimeDelay`, `scheduleUiTask`, `runUiTask`, `hydrateScreenSnapshotFast`, `scheduleTabNetworkRefresh`, `warmDynamicModule`, `scheduleDynamicModuleWarmup`, `initLocalPerformanceObservers`, `PerformanceObserver`, `tk-performance-cooldown`, visual cooldown CSS (`box-shadow: none`, `backdrop-filter: none`), `syncBatterySaverState`, `ensurePurchaseScannerLibrary`, `shouldSkipRender`, `renderProgressiveList`, `content-visibility`, nonblocking Font Awesome, `APP_UPDATE_CHECK_MS = 60000`, and rollout `enabled: false`; it should not boot-load `/vendor/html5-qrcode.min.js` via a static script tag.
 - `/home-rank.js` contains `HOME_RANK_CACHE_KEY`, visible-screen guard, and `AUTO_REFRESH_MS = 60_000`.
 - `/realtime-runtime.js` contains `scheduleIdleCleanupLegacyBrowserCache()`.
