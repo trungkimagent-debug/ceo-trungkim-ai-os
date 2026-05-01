@@ -183,3 +183,12 @@ After success: `renderPrintPreview(result)`, optionally `queueReceiptPrint`, cle
 - Popup now forces `inset: 0`, `width: 100vw`, `height/min/max-height: 100dvh`, `z-index: 180`, `padding: 0`, no radius/shadow so it fills the visible mobile viewport instead of sitting below the app topbar area.
 - Preserve product grid, gift mode, footer send button, and editor behavior.
 - Verification marker/version: `v20260501_2147_sales_gift_popup_fullscreen`.
+
+## 2026-05-01 — Gift/accessory popup catalog de-duplicate in-stock products
+
+- Trigger: Chủ tịch gửi ảnh popup quà tặng bị trùng nhiều card `Bia Cammel` và yêu cầu “Chỉ hiển thị một mã sản phẩm còn hàng”.
+- Added display-only de-duplication helpers before `renderSalesAccessoryPopupCatalog()`:
+  - `getSalesAccessoryCatalogDisplayKey()` groups by product id/code/sku first, then normalized product name fallback.
+  - `dedupeSalesAccessoryCatalogDisplayItems()` keeps one representative card per product, preferring selected batch, higher remaining stock, then item with image.
+- This only changes popup display; cached catalog and warehouse request payload still use the selected representative batch id.
+- Verification marker/version: `v20260501_2153_gift_catalog_dedupe_in_stock`.
