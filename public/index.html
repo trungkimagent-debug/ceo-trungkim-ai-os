@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1418_customer_debt_mobile_fit';
+window.__TK_APP_VERSION__ = 'v20260501_1430_customer_debt_keyboard_fit';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -5329,6 +5329,23 @@ window.__TK_APP_VERSION__ = 'v20260501_1418_customer_debt_mobile_fit';
       .customer-settlement-pay-actions { gap: 5px; grid-template-columns: .68fr .68fr 1fr; }
       .customer-settlement-pay-actions .btn { min-height: 32px; border-radius: 10px; font-size: 10px; padding: 0 5px; gap: 4px; }
       #customerDebtDetailMsg { margin: 0; font-size: 10px; line-height: 1.25; }
+      #customerDebtDetailModal.customer-keyboard-open {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 4px 4px max(4px, var(--tk-customer-keyboard-bottom, 4px));
+      }
+      #customerDebtDetailModal.customer-keyboard-open .customer-settlement-detail-card {
+        margin: 0;
+        max-height: calc(100dvh - var(--tk-customer-keyboard-bottom, 0px) - 8px);
+      }
+      #customerDebtDetailModal.customer-keyboard-open .customer-settlement-detail-summary,
+      #customerDebtDetailModal.customer-keyboard-open .customer-settlement-detail-list {
+        display: none;
+      }
+      #customerDebtDetailModal.customer-keyboard-open .customer-settlement-pay-card {
+        border-color: rgba(245,158,11,.28);
+        box-shadow: 0 10px 32px rgba(15, 23, 42, 0.16);
+      }
     }
 
     .supplier-debt-open,
@@ -23881,8 +23898,24 @@ window.__TK_APP_VERSION__ = 'v20260501_1418_customer_debt_mobile_fit';
       return (state.customerDebtItems || []).find((item) => String(item.id || '').trim() === targetId) || null;
     }
 
+    function syncCustomerDebtKeyboardViewport() {
+      if (!customerDebtDetailModal) return;
+      const viewport = window.visualViewport;
+      const keyboardBottom = viewport
+        ? Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop))
+        : 0;
+      customerDebtDetailModal.style.setProperty('--tk-customer-keyboard-bottom', `${keyboardBottom}px`);
+    }
+
+    function setCustomerDebtKeyboardMode(enabled = false) {
+      if (!customerDebtDetailModal) return;
+      customerDebtDetailModal.classList.toggle('customer-keyboard-open', Boolean(enabled));
+      syncCustomerDebtKeyboardViewport();
+    }
+
     function closeCustomerDebtDetail() {
       state.customerDebtActiveId = '';
+      setCustomerDebtKeyboardMode(false);
       customerDebtDetailModal?.classList.remove('open');
       setMsg(customerDebtDetailMsg, '', '');
     }
@@ -23942,6 +23975,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1418_customer_debt_mobile_fit';
       if (customerDebtPaySubmitBtn) customerDebtPaySubmitBtn.disabled = item.status === 'paid' || state.customerDebtPaying;
       if (customerDebtRemindBtn) customerDebtRemindBtn.disabled = state.customerDebtReminding;
       customerDebtDetailModal?.classList.add('open');
+      syncCustomerDebtKeyboardViewport();
     }
 
     async function openCustomerDebtDetail(debtId = '') {
@@ -26300,6 +26334,29 @@ window.__TK_APP_VERSION__ = 'v20260501_1418_customer_debt_mobile_fit';
       submitCustomerDebtReminder().catch((error) => {
         setMsg(customerDebtDetailMsg, error.message || String(error), 'error');
       });
+    });
+
+    [customerDebtPayAmountInput, customerDebtPayNoteInput].forEach((field) => {
+      field?.addEventListener('focus', () => {
+        setCustomerDebtKeyboardMode(true);
+        window.setTimeout(() => {
+          syncCustomerDebtKeyboardViewport();
+          field.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        }, 80);
+      });
+      field?.addEventListener('blur', () => {
+        window.setTimeout(() => {
+          const active = document.activeElement;
+          const stillInsidePay = active === customerDebtPayAmountInput || active === customerDebtPayNoteInput;
+          if (!stillInsidePay) setCustomerDebtKeyboardMode(false);
+        }, 120);
+      });
+    });
+    window.visualViewport?.addEventListener('resize', () => {
+      if (customerDebtDetailModal?.classList.contains('open')) syncCustomerDebtKeyboardViewport();
+    });
+    window.visualViewport?.addEventListener('scroll', () => {
+      if (customerDebtDetailModal?.classList.contains('open')) syncCustomerDebtKeyboardViewport();
     });
 
     customerDebtPayAmountInput?.addEventListener('keydown', (event) => {
