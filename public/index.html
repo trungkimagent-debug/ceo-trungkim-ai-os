@@ -18,7 +18,7 @@
     })();
   </script>
   <script>
-window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
+window.__TK_APP_VERSION__ = 'v20260501_1758_customer_debt_source_history';
     window.__TK_RT_ROLLOUT__ = {
       enabled: true,
       pageId: 'index',
@@ -4809,7 +4809,8 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
 
     .customer-debt-type-filter {
       height: 30px;
-      max-width: 96px;
+      max-width: 124px;
+      min-width: 86px;
       flex: 0 0 auto;
       border: 1px solid rgba(245, 158, 11, 0.26);
       border-radius: 999px;
@@ -5074,7 +5075,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
       .customer-settlement-filters { display: none; gap: 8px; padding: 0 14px 8px; }
       .customer-settlement-filters select { height: 40px; font-size: 13px; }
       .customer-settlement-search-row { grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; padding: 8px 10px 9px; }
-      .customer-debt-type-filter { max-width: 82px; height: 28px; padding-left: 8px; padding-right: 22px; font-size: 10px; }
+      .customer-debt-type-filter { max-width: 104px; min-width: 76px; height: 28px; padding-left: 8px; padding-right: 22px; font-size: 10px; }
       .customer-settlement-summary-bar { gap: 8px; padding: 0 8px 8px; }
       .customer-settlement-summary-bar > div { min-height: 50px; padding: 8px 8px 8px 11px; border-radius: 15px; }
       .customer-settlement-summary-bar span { font-size: 9px; }
@@ -5756,7 +5757,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
       #screen-customer .customer-settlement-titlebar h3 { font-size: 11px; }
       #screen-customer .customer-settlement-titlebar h3::after { font-size: 7px; padding: 2px 6px; margin-left: 5px; }
       #screen-customer .customer-settlement-search-row { padding: 4px 9px 9px; }
-      #screen-customer .customer-debt-type-filter { max-width: 78px; height: 28px; font-size: 9.5px; }
+      #screen-customer .customer-debt-type-filter { max-width: 104px; min-width: 76px; height: 28px; font-size: 9.5px; }
       #screen-customer .customer-settlement-summary-bar { padding: 11px 8px 6px; }
       #screen-customer .customer-settlement-summary-bar > div { min-height: 58px; border-radius: 17px; }
       #screen-customer .customer-settlement-card { width: calc(100% - 16px); margin-inline: 8px; padding: 10px; border-radius: 17px; }
@@ -5966,6 +5967,178 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
 
       #screen-customer .customer-settlement-titlebar { padding: 4px 10px 4px; }
       #screen-customer .customer-settlement-search { height: 41px; }
+    }
+
+
+    /* Nợ KH • split debt sources + invoice/payment history */
+    #screen-customer .customer-debt-source-breakdown {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+      margin-top: 1px;
+    }
+
+    #screen-customer .customer-debt-source-mini {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 5px;
+      min-height: 24px;
+      padding: 4px 7px;
+      border-radius: 10px;
+      border: 1px solid rgba(245, 198, 96, 0.16);
+      background: rgba(255, 247, 223, 0.045);
+    }
+
+    #screen-customer .customer-debt-source-mini span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: rgba(255, 247, 223, 0.66);
+      font-size: 9.5px;
+      font-weight: 850;
+    }
+
+    #screen-customer .customer-debt-source-mini strong {
+      color: #6ff1d1;
+      font-family: var(--font-num);
+      font-size: 10.5px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    #screen-customer .customer-debt-source-more {
+      color: rgba(255, 231, 170, .62);
+      font-size: 9.5px;
+      font-weight: 850;
+      align-self: center;
+      padding-left: 4px;
+    }
+
+    #customerDebtDetailModal .customer-debt-source-panel,
+    #customerDebtDetailModal .customer-debt-history-panel {
+      display: grid;
+      gap: 6px;
+      padding: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 198, 96, 0.20);
+      background: linear-gradient(180deg, rgba(30,29,26,.82), rgba(12,12,12,.82));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055);
+    }
+
+    #customerDebtDetailModal .customer-debt-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: rgba(255,247,223,.72);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+    }
+
+    #customerDebtDetailModal .customer-debt-section-head i { color: #f5c660; }
+
+    #customerDebtDetailModal .customer-debt-source-row,
+    #customerDebtDetailModal .customer-debt-history-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) auto;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.065);
+      background: rgba(255,255,255,.035);
+    }
+
+    #customerDebtDetailModal .customer-debt-source-row-main,
+    #customerDebtDetailModal .customer-debt-history-main {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    #customerDebtDetailModal .customer-debt-source-row-main strong,
+    #customerDebtDetailModal .customer-debt-history-main strong {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #fff7df;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    #customerDebtDetailModal .customer-debt-source-row-main span,
+    #customerDebtDetailModal .customer-debt-history-main span {
+      color: rgba(255,247,223,.54);
+      font-size: 9.5px;
+      font-weight: 700;
+    }
+
+    #customerDebtDetailModal .customer-debt-source-amounts,
+    #customerDebtDetailModal .customer-debt-history-money {
+      display: grid;
+      gap: 2px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    #customerDebtDetailModal .customer-debt-source-amounts strong,
+    #customerDebtDetailModal .customer-debt-history-money strong {
+      color: #6ff1d1;
+      font-family: var(--font-num);
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    #customerDebtDetailModal .customer-debt-source-amounts span,
+    #customerDebtDetailModal .customer-debt-history-money span {
+      color: rgba(255,247,223,.48);
+      font-size: 9px;
+      font-weight: 750;
+    }
+
+    #customerDebtDetailModal .customer-debt-history-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    #customerDebtDetailModal .customer-debt-history-col {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    #customerDebtDetailModal .customer-debt-history-col-title {
+      color: rgba(255, 231, 170, 0.72);
+      font-size: 9.5px;
+      font-weight: 950;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    #customerDebtDetailModal .customer-debt-history-empty {
+      padding: 8px;
+      border-radius: 11px;
+      border: 1px dashed rgba(245,198,96,.18);
+      color: rgba(255,247,223,.48);
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 640px) {
+      #screen-customer .customer-debt-source-breakdown { gap: 4px; }
+      #screen-customer .customer-debt-source-mini { min-height: 22px; padding: 3px 6px; border-radius: 9px; }
+      #screen-customer .customer-debt-source-mini span { font-size: 8.8px; }
+      #screen-customer .customer-debt-source-mini strong { font-size: 9.6px; }
+      #customerDebtDetailModal .customer-debt-history-tabs { grid-template-columns: 1fr; }
+      #customerDebtDetailModal .customer-debt-source-row,
+      #customerDebtDetailModal .customer-debt-history-row { padding: 6px 7px; border-radius: 10px; }
     }
 
     .supplier-debt-open,
@@ -14452,7 +14625,14 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
             <select id="customerDebtTypeFilter" class="customer-debt-type-filter" aria-label="Lọc loại công nợ">
               <option value="all">Tất cả</option>
               <option value="nch">NCH</option>
-              <option value="credit">Credit</option>
+              <option value="fe-credit">FE Credit</option>
+              <option value="home-credit">Home Credit</option>
+              <option value="hd-saison">HD Saison</option>
+              <option value="mcredit">Mcredit</option>
+              <option value="mirae-asset">Mirae Asset</option>
+              <option value="rut-the">Rút thẻ</option>
+              <option value="credit">Cty TC</option>
+              <option value="other">Khác</option>
             </select>
           </div>
           <button id="customerDebtExportBtn" class="customer-settlement-download" type="button" aria-label="Xuất dữ liệu"><i class="fa-solid fa-download"></i></button>
@@ -24457,15 +24637,200 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
       const raw = String(name || '').trim();
       const text = normalizeSearch(raw);
       if (!text) return '';
-      if (text.includes('credit') || text.includes('fe credit') || text.includes('fecredit')) return 'credit';
       if (text.includes('nch')) return 'nch';
+      if (text.includes('rut the') || text.includes('rut thẻ') || text.includes('quẹt thẻ') || text.includes('quet the')) return 'rut-the';
+      if (text.includes('home credit') || text.includes('homecredit')) return 'home-credit';
+      if (text.includes('hd saison') || text.includes('hdsaison') || text.includes('hd saision')) return 'hd-saison';
+      if (text.includes('mcredit') || text.includes('m credit') || text.includes('mc credit')) return 'mcredit';
+      if (text.includes('mirae') || text.includes('mafc')) return 'mirae-asset';
+      if (text.includes('fe credit') || text.includes('fecredit')) return 'fe-credit';
+      if (text.includes('credit') || text.includes('tai chinh') || text.includes('tài chính') || text.includes('cty tc') || text.includes('cong ty tc')) return 'credit';
       return 'other';
     }
 
     function getCustomerDebtKindLabel(code = '', fallback = '') {
-      if (code === 'credit') return 'Credit';
-      if (code === 'nch') return 'NCH';
+      const key = String(code || '').trim().toLowerCase();
+      if (key === 'nch') return 'NCH';
+      if (key === 'fe-credit') return 'FE Credit';
+      if (key === 'home-credit') return 'Home Credit';
+      if (key === 'hd-saison') return 'HD Saison';
+      if (key === 'mcredit') return 'Mcredit';
+      if (key === 'mirae-asset') return 'Mirae Asset';
+      if (key === 'rut-the') return 'Rút thẻ';
+      if (key === 'credit') return 'Cty tài chính';
       return String(fallback || 'Khác').trim() || 'Khác';
+    }
+
+    function isCustomerDebtCreditCode(code = '') {
+      return ['credit', 'fe-credit', 'home-credit', 'hd-saison', 'mcredit', 'mirae-asset'].includes(String(code || '').trim().toLowerCase());
+    }
+
+    function getCustomerDebtEntryAmount(entry = {}, keys = []) {
+      for (const key of keys) {
+        if (entry && Object.prototype.hasOwnProperty.call(entry, key)) {
+          const value = Number(entry[key]);
+          if (Number.isFinite(value) && value >= 0) return value;
+        }
+      }
+      return null;
+    }
+
+    function buildCustomerDebtBreakdownEntries(item = {}) {
+      const sourceEntries = Array.isArray(item.debtEntries) ? item.debtEntries : [];
+      const baseEntries = sourceEntries.length
+        ? sourceEntries
+        : (item.debtNames || []).map((name) => ({ name }));
+      const fallbackName = String(item.debtName || item.debtType || item.paymentMethodLabel || '').trim();
+      if (!baseEntries.length && fallbackName) baseEntries.push({ name: fallbackName });
+      if (!baseEntries.length) baseEntries.push({ name: 'Khoản nợ', amount: item.amount, originalAmount: item.originalAmount, paidAmount: item.paidAmount });
+      const rows = baseEntries.map((entry = {}, index) => {
+        const rawName = String(entry.name || entry.type || entry.label || entry.source || fallbackName || `Khoản ${index + 1}`).trim();
+        const code = String(entry.code || getCustomerDebtKindCode(rawName) || 'other').trim().toLowerCase();
+        const label = getCustomerDebtKindLabel(code, rawName);
+        const amount = getCustomerDebtEntryAmount(entry, ['amount', 'remainingAmount', 'unpaidAmount', 'balance', 'debtAmount', 'currentAmount']);
+        const originalAmount = getCustomerDebtEntryAmount(entry, ['originalAmount', 'totalAmount', 'principalAmount', 'sourceAmount', 'debtOriginalAmount']);
+        const paidAmount = getCustomerDebtEntryAmount(entry, ['paidAmount', 'collectedAmount', 'receivedAmount', 'paid', 'received']);
+        return {
+          id: String(entry.id || entry.debtId || entry.orderId || entry.receiptId || `${code}-${index}`).trim(),
+          code,
+          label,
+          name: rawName || label,
+          amount,
+          originalAmount,
+          paidAmount,
+          note: String(entry.note || entry.description || '').trim(),
+          createdAt: entry.createdAt || entry.updatedAt || item.createdAt || '',
+          raw: entry,
+        };
+      });
+      const hasAnyAmount = rows.some((row) => row.amount !== null || row.originalAmount !== null || row.paidAmount !== null);
+      if (!hasAnyAmount && rows.length === 1) {
+        rows[0].amount = Math.max(0, Number(item.amount || 0) || 0);
+        rows[0].originalAmount = Math.max(Number(item.originalAmount || 0) || 0, rows[0].amount);
+        rows[0].paidAmount = Math.max(0, Number(item.paidAmount || 0) || 0);
+      }
+      return rows.map((row) => {
+        const amount = row.amount === null ? null : Math.max(0, Number(row.amount || 0) || 0);
+        const originalAmount = row.originalAmount === null
+          ? (amount === null ? null : Math.max(amount, Number(row.paidAmount || 0) + amount))
+          : Math.max(0, Number(row.originalAmount || 0) || 0);
+        const paidAmount = row.paidAmount === null
+          ? (originalAmount !== null && amount !== null ? Math.max(0, originalAmount - amount) : null)
+          : Math.max(0, Number(row.paidAmount || 0) || 0);
+        return { ...row, amount, originalAmount, paidAmount };
+      });
+    }
+
+    function buildCustomerDebtSourceMiniHtml(item = {}) {
+      const rows = (item.debtBreakdown || buildCustomerDebtBreakdownEntries(item)).filter((row) => row.label);
+      if (!rows.length) return '';
+      const visible = rows.slice(0, 4).map((row) => {
+        const amountText = row.amount === null ? '—' : money(row.amount);
+        return `<span class="customer-debt-source-mini ${escapeHtml(row.code)}"><span>${escapeHtml(row.label)}</span><strong>${amountText}</strong></span>`;
+      }).join('');
+      const more = rows.length > 4 ? `<span class="customer-debt-source-more">+${rows.length - 4}</span>` : '';
+      return `<div class="customer-debt-source-breakdown">${visible}${more}</div>`;
+    }
+
+    function buildCustomerDebtSourcePanelHtml(item = {}) {
+      const rows = (item.debtBreakdown || buildCustomerDebtBreakdownEntries(item)).filter((row) => row.label);
+      if (!rows.length) return '';
+      const body = rows.map((row) => {
+        const original = row.originalAmount === null ? 'Chưa tách tổng' : `Tổng ${money(row.originalAmount)}`;
+        const paid = row.paidAmount === null ? 'Đã thu: chờ dữ liệu' : `Đã thu ${money(row.paidAmount)}`;
+        const amount = row.amount === null ? 'Chưa tách' : money(row.amount);
+        const note = row.note ? ` • ${escapeHtml(row.note)}` : '';
+        return `
+          <div class="customer-debt-source-row ${escapeHtml(row.code)}">
+            <div class="customer-debt-source-row-main">
+              <strong>${escapeHtml(row.label)}</strong>
+              <span>${escapeHtml(original)} • ${escapeHtml(paid)}${note}</span>
+            </div>
+            <div class="customer-debt-source-amounts">
+              <strong>${amount}</strong>
+              <span>còn nợ</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+      return `
+        <div class="customer-debt-source-panel">
+          <div class="customer-debt-section-head"><span><i class="fa-solid fa-layer-group"></i> Tách theo nguồn nợ</span><span>${rows.length} khoản</span></div>
+          ${body}
+        </div>
+      `;
+    }
+
+    function collectCustomerDebtHistoryRows(item = {}, type = 'invoice') {
+      const invoiceKeys = ['invoices', 'invoiceHistory', 'orders', 'orderHistory', 'receipts', 'billHistory'];
+      const paymentKeys = ['payments', 'paymentHistory', 'paymentLogs', 'transactions', 'paidHistory'];
+      const keys = type === 'payment' ? paymentKeys : invoiceKeys;
+      const rows = [];
+      keys.forEach((key) => {
+        const list = Array.isArray(item[key]) ? item[key] : [];
+        list.forEach((row) => rows.push(row));
+      });
+      if (type === 'invoice' && !rows.length) {
+        rows.push({
+          code: item.orderCode || item.id || 'Khoản nợ',
+          amount: item.originalAmount || item.amount || 0,
+          createdAt: item.createdAt || item.updatedAt || '',
+          note: item.note || 'Hóa đơn phát sinh công nợ',
+        });
+      }
+      if (type === 'payment' && !rows.length && Number(item.paidAmount || 0) > 0) {
+        rows.push({
+          code: item.paidAt ? 'Đã ghi nhận' : 'Tổng đã thu',
+          amount: item.paidAmount,
+          createdAt: item.paidAt || item.updatedAt || '',
+          note: item.paymentNote || item.note || 'Tổng tiền đã thu theo hồ sơ',
+        });
+      }
+      return rows;
+    }
+
+    function buildCustomerDebtHistoryListHtml(rows = [], type = 'invoice') {
+      if (!rows.length) {
+        return `<div class="customer-debt-history-empty">${type === 'payment' ? 'Chưa có lịch sử thanh toán riêng từ backend.' : 'Chưa có lịch sử hóa đơn riêng.'}</div>`;
+      }
+      return rows.slice(0, 8).map((row = {}) => {
+        const code = String(row.code || row.orderCode || row.receiptCode || row.id || (type === 'payment' ? 'Thanh toán' : 'Hóa đơn')).trim();
+        const at = formatCustomerDebtDateTime(row.createdAt || row.paidAt || row.updatedAt || row.date || '');
+        const amount = Math.max(0, Number(row.amount || row.totalAmount || row.paidAmount || row.debtAmount || 0) || 0);
+        const note = String(row.note || row.description || row.method || row.status || '').trim();
+        return `
+          <div class="customer-debt-history-row">
+            <div class="customer-debt-history-main">
+              <strong>${escapeHtml(code)}</strong>
+              <span>${escapeHtml([at || 'Realtime', note].filter(Boolean).join(' • '))}</span>
+            </div>
+            <div class="customer-debt-history-money">
+              <strong>${money(amount)}</strong>
+              <span>${type === 'payment' ? 'đã thu' : 'hóa đơn'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function buildCustomerDebtHistoryPanelHtml(item = {}) {
+      const invoices = collectCustomerDebtHistoryRows(item, 'invoice');
+      const payments = collectCustomerDebtHistoryRows(item, 'payment');
+      return `
+        <div class="customer-debt-history-panel">
+          <div class="customer-debt-section-head"><span><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</span><span>Hóa đơn / thanh toán</span></div>
+          <div class="customer-debt-history-tabs">
+            <div class="customer-debt-history-col">
+              <div class="customer-debt-history-col-title">Hóa đơn</div>
+              ${buildCustomerDebtHistoryListHtml(invoices, 'invoice')}
+            </div>
+            <div class="customer-debt-history-col">
+              <div class="customer-debt-history-col-title">Thanh toán</div>
+              ${buildCustomerDebtHistoryListHtml(payments, 'payment')}
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function buildCustomerDebtKindTagsHtml(item = {}) {
@@ -24491,11 +24856,17 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
       const debtEntries = Array.isArray(item.debtEntries) ? item.debtEntries : [];
       const fallbackDebtName = String(item.debtName || item.debtType || item.paymentMethodLabel || '').trim();
       const debtNames = Array.from(new Set([
-        ...debtEntries.map((entry) => String(entry?.name || entry?.type || '').trim()).filter(Boolean),
+        ...debtEntries.map((entry) => String(entry?.name || entry?.type || entry?.label || entry?.source || '').trim()).filter(Boolean),
         fallbackDebtName,
       ].filter(Boolean)));
-      const debtKinds = debtNames.map((name) => ({ code: getCustomerDebtKindCode(name), label: getCustomerDebtKindLabel(getCustomerDebtKindCode(name), name) }));
-      const debtKindCodes = Array.from(new Set(debtKinds.map((entry) => entry.code).filter(Boolean)));
+      const debtBreakdown = buildCustomerDebtBreakdownEntries({ ...item, amount, originalAmount, paidAmount, debtEntries, debtNames });
+      const debtKinds = debtBreakdown.length
+        ? debtBreakdown.map((entry) => ({ code: entry.code, label: entry.label }))
+        : debtNames.map((name) => ({ code: getCustomerDebtKindCode(name), label: getCustomerDebtKindLabel(getCustomerDebtKindCode(name), name) }));
+      const debtKindCodes = Array.from(new Set([
+        ...debtKinds.map((entry) => entry.code).filter(Boolean),
+        ...(debtKinds.some((entry) => isCustomerDebtCreditCode(entry.code)) ? ['credit'] : []),
+      ]));
       const customerName = String(item.debtCustomerName || item.customerName || '').trim() || 'Khách chưa rõ';
       const customerPhone = String(item.customerPhone || '').trim();
       const orderCode = String(item.orderCode || '').trim();
@@ -24514,6 +24885,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
         status,
         debtEntries,
         debtNames,
+        debtBreakdown,
         debtKinds,
         debtKindCodes,
         customerName,
@@ -24524,7 +24896,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
         ageDays,
         overdueDays,
         isOverdue,
-        searchText: normalizeSearch([customerName, customerPhone, orderCode, debtNames.join(' '), debtKinds.map((entry) => entry.label).join(' '), item.paymentMethodLabel || '', item.note || ''].join(' ')),
+        searchText: normalizeSearch([customerName, customerPhone, orderCode, debtNames.join(' '), debtKinds.map((entry) => entry.label).join(' '), debtBreakdown.map((entry) => `${entry.label} ${entry.amount === null ? '' : entry.amount}`).join(' '), item.paymentMethodLabel || '', item.note || ''].join(' ')),
       };
     }
 
@@ -24547,6 +24919,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
       const orderCode = escapeHtml(item.orderCode || item.id || '--');
       const updatedAt = formatCustomerDebtDateTime(item.updatedAt || item.createdAt || item.dueDate || '');
       const debtPreview = buildCustomerDebtKindTagsHtml(item);
+      const sourceBreakdown = buildCustomerDebtSourceMiniHtml(item);
       const statusText = item.status === 'paid' ? 'Xong' : (item.isOverdue ? `QH ${item.overdueDays} ngày` : 'Nợ mở');
       const paidAmount = Math.max(0, Number(item.paidAmount || 0) || 0);
       const originalAmount = Math.max(Number(item.originalAmount || 0) || 0, paidAmount + Math.max(0, Number(item.amount || 0) || 0));
@@ -24558,10 +24931,11 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
             <span class="customer-settlement-date"><i class="fa-solid fa-sack-dollar"></i>${updatedAt ? escapeHtml(updatedAt) : '--'}</span>
           </div>
           <div class="customer-settlement-row">
-            <span class="customer-settlement-label">Chi tiết</span>
+            <span class="customer-settlement-label">Nguồn nợ</span>
             <span class="customer-settlement-value customer-debt-kind-tags">${debtPreview}</span>
             <span class="customer-settlement-note">${customerPhone}</span>
           </div>
+          ${sourceBreakdown}
           <div class="customer-settlement-row">
             <span class="customer-settlement-label">Đơn</span>
             <span class="customer-settlement-value">${orderCode}</span>
@@ -24662,7 +25036,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
       const total = filtered.reduce((sum, item) => sum + Math.max(0, Number(item.amount || 0) || 0), 0);
       const filter = String(state.customerDebtStatusFilter || 'unpaid').trim().toLowerCase();
       const typeFilter = String(state.customerDebtTypeFilter || 'all').trim().toLowerCase();
-      const typeLabel = typeFilter === 'nch' ? 'NCH' : typeFilter === 'credit' ? 'Credit' : 'Tất cả';
+      const typeLabel = typeFilter === 'all' ? 'Tất cả' : getCustomerDebtKindLabel(typeFilter);
       if (customerDebtListTitleEl) {
         customerDebtListTitleEl.textContent = filter === 'overdue' ? 'Nợ quá hẹn' : filter === 'paid' ? 'Lịch sử thu nợ' : filter === 'all' ? 'Tất cả công nợ' : 'Nợ cần thu';
       }
@@ -24709,11 +25083,13 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
             <span class="customer-settlement-status">${escapeHtml(statusLabel)}</span>
           </div>
           <div class="customer-settlement-row customer-settlement-row-money">
-            <span class="customer-settlement-label">Còn nợ</span>
+            <span class="customer-settlement-label">Tổng/còn</span>
             <span class="customer-settlement-money">${money(item.originalAmount || item.amount || 0)}</span>
             <span class="customer-settlement-money green">${money(item.amount || 0)}</span>
           </div>
         </div>
+        ${buildCustomerDebtSourcePanelHtml(item)}
+        ${buildCustomerDebtHistoryPanelHtml(item)}
       `;
     }
 
@@ -24724,7 +25100,7 @@ window.__TK_APP_VERSION__ = 'v20260501_1747_customer_debt_executive_header';
         return;
       }
       if (customerDebtDetailTitleEl) customerDebtDetailTitleEl.textContent = item.customerName;
-      if (customerDebtDetailSubtitleEl) customerDebtDetailSubtitleEl.textContent = [item.orderCode, item.customerPhone, item.debtNames?.join(' • ')].filter(Boolean).join(' • ') || 'Chưa có số điện thoại';
+      if (customerDebtDetailSubtitleEl) customerDebtDetailSubtitleEl.textContent = [item.orderCode, item.customerPhone, (item.debtBreakdown || []).map((entry) => entry.label).filter(Boolean).join(' • ')].filter(Boolean).join(' • ') || 'Chưa có số điện thoại';
       if (customerDebtDetailAmountEl) customerDebtDetailAmountEl.textContent = money(item.amount);
       if (customerDebtDetailPaidEl) customerDebtDetailPaidEl.textContent = money(item.paidAmount);
       if (customerDebtDetailDueDateEl) customerDebtDetailDueDateEl.textContent = item.dueDate ? formatCustomerDebtDateOnly(item.dueDate) : '--';

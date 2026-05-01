@@ -194,3 +194,10 @@ Last reviewed: 2026-05-01.
 - User said the top area looked low-class/"kém sang" in the dark luxury Nợ KH screenshot.
 - Added scoped CSS polish for `.topbar[data-screen="customer"]` plus `#screen-customer .customer-settlement-summary-hero/titlebar/search`: calmer glass header, smaller circular logo, less garish employee/action buttons, lower glow, tighter premium KPI cards.
 - Scope is visual-only for Nợ KH active topbar and customer debt header area; no IDs, APIs, navigation handlers, or other screen logic changed.
+
+## 2026-05-01 — Source split + invoice/payment history UI
+
+- User requested Nợ KH split by exact debt source: NCH, FE Credit, Home Credit, HD Saison, Mcredit, Mirae Asset, Rút thẻ, Khác/Tự nhập, with amounts visible per source.
+- Extended frontend normalization to derive detailed `debtBreakdown` rows from `debtEntries` when backend provides per-source amounts; if backend only sends one total, UI avoids inventing split amounts and marks rows as chưa tách.
+- List cards now show compact per-source remaining amounts; detail modal now shows “Tách theo nguồn nợ” plus “Lịch sử” columns for hóa đơn and thanh toán using available item arrays (`invoices`, `payments`, etc.) or the current invoice/paid summary fallback.
+- Added individual source filter options while preserving old grouped `credit` behavior; no API paths/payloads changed.
