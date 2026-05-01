@@ -175,3 +175,9 @@ Last reviewed: 2026-05-01.
 - Screenshot showed detail modal text like “Khoản phải thu” was too dark/low-contrast on the dark luxury background.
 - Added scoped contrast overrides for `#customerDebtDetailModal .customer-settlement-*` labels/values/money/date/status/note so all detail rows are readable while keeping the dark/gold style.
 - No DOM/logic/API changes; preserved pay amount/note IDs and avoided keyboard reflow.
+
+## 2026-05-01 — KPI-first header correction
+
+- User objected that `ĐÃ THU` / `CÒN NỢ` should be above the moon/briefcase action row and that raw title `Nợ KH` looked bad.
+- Reordered only `#screen-customer` DOM so summary KPI cards render first, above the title/actions/search.
+- Changed visible title copy from `Nợ KH` to compact `Công nợ khách hàng` with a smaller Realtime badge; kept all KPI IDs (`customerDebtPaid`, `customerDebtTotal`) and action IDs unchanged.
